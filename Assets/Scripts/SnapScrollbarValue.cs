@@ -3,17 +3,41 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections;
 
-public class SnapScrollbarValue : MonoBehaviour, IPointerDownHandler ,IPointerUpHandler, IDragHandler
+public class SnapScrollbarValue : MonoBehaviour, IPointerDownHandler ,IPointerUpHandler
 {
     [SerializeField] private Scrollbar timelineScrollbar;
     [SerializeField] int steps = 1;
     [SerializeField] private float transitionDuration = 1f;
+    [SerializeField] DetectUIDrag handleDrag; 
+
     private bool shouldEase = false;
     private float previousValue = 0f;   
     private float currentValue = 0f;
     private float targetValue = 0f;
 
     private float elapsedTime = 0f;
+
+
+    void Start()
+    {
+        //handleDrag.OnBeginDragEvent += (eventData) => OnBeginDrag();
+        handleDrag.OnDragEvent += (eventData) => OnDrag(eventData);
+        handleDrag.OnEndDragEvent += (eventData)  => OnEndDrag();
+    }
+
+
+    private void OnDrag(PointerEventData eventData)
+    {
+        StopEase();
+        currentValue = GetValueFromPointer(eventData);
+    }
+
+    private void OnEndDrag()
+    {
+        float roundedValue = Mathf.Round(currentValue*steps) / steps;
+        Ease(roundedValue);
+    }
+
 
     public void OnPointerDown(PointerEventData eventData)
     {
@@ -51,14 +75,8 @@ public class SnapScrollbarValue : MonoBehaviour, IPointerDownHandler ,IPointerUp
             }
         }
 
+
         timelineScrollbar.value = currentValue;
-    }
-
-
-    public void OnDrag(PointerEventData eventData)
-    {
-        currentValue = timelineScrollbar.value;
-        StopEase();
     }
 
 
@@ -69,6 +87,7 @@ public class SnapScrollbarValue : MonoBehaviour, IPointerDownHandler ,IPointerUp
         Ease(roundedValue);
     }
  
+
     private float GetValueFromPointer(PointerEventData eventData)
     {
        

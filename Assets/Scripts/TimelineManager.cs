@@ -7,6 +7,7 @@ public class TimelineManager : MonoBehaviour
     [SerializeField] private Scrollbar timelineScrollbar;
     [SerializeField] private GameObject memoryLayout;
 
+
     private float layoutWidth;
 
     void Awake()
@@ -29,7 +30,7 @@ public class TimelineManager : MonoBehaviour
     void Update()
     {
         memoryLayout.GetComponent<RectTransform>().anchoredPosition 
-            = new Vector2(timelineScrollbar.value * (layoutWidth - Screen.width), 0f);
+            = new Vector2(timelineScrollbar.value * (layoutWidth - 1920), 0f);
     }
 
 
