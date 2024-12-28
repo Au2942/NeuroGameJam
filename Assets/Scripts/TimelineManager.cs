@@ -1,11 +1,17 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Video;
 
 public class TimelineManager : MonoBehaviour 
 {
     public static TimelineManager Instance;
+    [SerializeField] private GameObject memoriesLayout;
+    [SerializeField] private GameObject stream;
     [SerializeField] private Scrollbar timelineScrollbar;
-    [SerializeField] private GameObject memoryLayout;
+
+    private GameObject nextMemory;
+
+    public int MemoriesCount { get; set; } = 1;
 
 
     private float layoutWidth;
@@ -24,16 +30,35 @@ public class TimelineManager : MonoBehaviour
 
     void Start()
     {
-        layoutWidth = memoryLayout.GetComponent<RectTransform>().rect.width;
+        LayoutRebuilder.ForceRebuildLayoutImmediate(memoriesLayout.GetComponent<RectTransform>());
+        layoutWidth = memoriesLayout.GetComponent<RectTransform>().rect.width;
     }
 
     void Update()
     {
-        memoryLayout.GetComponent<RectTransform>().anchoredPosition 
-            = new Vector2(timelineScrollbar.value * (layoutWidth - 1920), 0f);
+        memoriesLayout.GetComponent<RectTransform>().anchoredPosition 
+            = new Vector2(timelineScrollbar.value * layoutWidth, 0f);
     }
 
+    public void SetStream(StreamSO stream)
+    {
+        this.stream.GetComponent<VideoPlayer>().clip = stream.clip;
+        nextMemory = stream.memory;
+    }
 
+    private void AddNextMemory()
+    {
+        AddMemory(nextMemory);
+    }
 
+    public void AddMemory(GameObject memory)
+    {
+        MemoriesCount++;
+        memory = Instantiate(memory, memoriesLayout.transform);
+        memory.name = "Memory " + MemoriesCount;
+        layoutWidth = memoriesLayout.GetComponent<RectTransform>().rect.width;
+        timelineScrollbar.GetComponent<RectTransform>().sizeDelta = new Vector2(200*MemoriesCount, 60);
+    }
+    
 
 }

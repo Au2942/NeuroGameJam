@@ -6,9 +6,9 @@ using System.Collections;
 public class SnapScrollbarValue : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     [SerializeField] private Scrollbar timelineScrollbar;
-    [SerializeField] int steps = 1; //steps will number of memories
     [SerializeField] private float transitionDuration = 1f;
     [SerializeField] DetectUIDrag handleDrag; 
+    private int steps => TimelineManager.Instance.MemoriesCount + 1; //steps will number of memories
 
     private bool shouldEase = false;
     private bool isDragging = false;
@@ -27,7 +27,6 @@ public class SnapScrollbarValue : MonoBehaviour, IPointerDownHandler, IPointerUp
         //handleDrag.OnBeginDragEvent += (eventData) => OnBeginDrag();
         handleDrag.OnDragEvent += (eventData) => OnDrag(eventData);
         handleDrag.OnEndDragEvent += (eventData)  => OnEndDrag();
-        UpdateAttribute();
     }
 
 
@@ -70,12 +69,6 @@ public class SnapScrollbarValue : MonoBehaviour, IPointerDownHandler, IPointerUp
         shouldEase = false;
     }
 
-    private void UpdateAttribute()
-    {
-        timelineScrollbar.size = 1f / (steps+1);
-
-    }
-
     void Update()
     {
         float inputValue = HandleInput();
@@ -94,9 +87,9 @@ public class SnapScrollbarValue : MonoBehaviour, IPointerDownHandler, IPointerUp
         {
             roundingDelay -= Time.deltaTime;
         }
-        else
+        else if(Mathf.Abs(currentValue - Mathf.Round(currentValue)) > 1e-2f)
         {
-            StartEase(Mathf.Round(targetValue * steps) / steps);
+            StartEase(Mathf.Round(currentValue * steps) / steps);
         }
         //do the cubic easeout
         if (shouldEase)
@@ -105,7 +98,7 @@ public class SnapScrollbarValue : MonoBehaviour, IPointerDownHandler, IPointerUp
             float t = elapsedTime / transitionDuration;
             t = t - 1;
             currentValue = Mathf.Lerp(previousValue, targetValue, t * t * t + 1);
-            if (t >= 0)
+            if (t >= 1)
             {
                 currentValue = targetValue;
                 shouldEase = false;
