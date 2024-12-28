@@ -3,19 +3,23 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections;
 
-public class SnapScrollbarValue : MonoBehaviour, IPointerDownHandler ,IPointerUpHandler
+public class SnapScrollbarValue : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
     [SerializeField] private Scrollbar timelineScrollbar;
-    [SerializeField] int steps = 1;
+    [SerializeField] int steps = 1; //steps will number of memories
     [SerializeField] private float transitionDuration = 1f;
     [SerializeField] DetectUIDrag handleDrag; 
 
     private bool shouldEase = false;
+    private bool isDragging = false;
+    private bool isHolding = false;
     private float previousValue = 0f;   
     private float currentValue = 0f;
     private float targetValue = 0f;
 
+    private float roundingDelay = 0f;
     private float elapsedTime = 0f;
+    
 
 
     void Start()
@@ -23,28 +27,36 @@ public class SnapScrollbarValue : MonoBehaviour, IPointerDownHandler ,IPointerUp
         //handleDrag.OnBeginDragEvent += (eventData) => OnBeginDrag();
         handleDrag.OnDragEvent += (eventData) => OnDrag(eventData);
         handleDrag.OnEndDragEvent += (eventData)  => OnEndDrag();
+        UpdateAttribute();
     }
 
 
     private void OnDrag(PointerEventData eventData)
     {
         StopEase();
+        isDragging = true;
         currentValue = GetValueFromPointer(eventData);
+        targetValue = currentValue;
     }
 
     private void OnEndDrag()
     {
-        float roundedValue = Mathf.Round(currentValue*steps) / steps;
-        Ease(roundedValue);
+        isDragging = false;
     }
 
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        Ease(GetValueFromPointer(eventData));
+        isHolding = true;
+        StartEase(GetValueFromPointer(eventData));
     }
 
-    private void Ease(float value)
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        isHolding = false;
+    }
+
+    private void StartEase(float value)
     {
         targetValue = value;
         previousValue = currentValue;
@@ -58,8 +70,34 @@ public class SnapScrollbarValue : MonoBehaviour, IPointerDownHandler ,IPointerUp
         shouldEase = false;
     }
 
+    private void UpdateAttribute()
+    {
+        timelineScrollbar.size = 1f / (steps+1);
+
+    }
+
     void Update()
     {
+        float inputValue = HandleInput();
+        if(inputValue != 0)
+        {
+            StartEase(Mathf.Clamp01(currentValue + inputValue));
+            roundingDelay = 0.5f;
+        }
+
+        if(isDragging || isHolding)
+        {
+            roundingDelay = 0.1f;
+        }
+
+        if(roundingDelay > 0)
+        {
+            roundingDelay -= Time.deltaTime;
+        }
+        else
+        {
+            StartEase(Mathf.Round(targetValue * steps) / steps);
+        }
         //do the cubic easeout
         if (shouldEase)
         {
@@ -75,18 +113,24 @@ public class SnapScrollbarValue : MonoBehaviour, IPointerDownHandler ,IPointerUp
             }
         }
 
-
+        Mathf.Clamp01(currentValue);
         timelineScrollbar.value = currentValue;
     }
 
-
-
-    public void OnPointerUp(PointerEventData eventData)
+    private float HandleInput()
     {
-        float roundedValue = Mathf.Round(targetValue*steps) / steps;
-        Ease(roundedValue);
+        Vector2 scrollWheelInput = InputManager.Instance.ScrollWheel.ReadValue<Vector2>();
+        Vector2 navigateInput = InputManager.Instance.Navigate.ReadValue<Vector2>();
+        if(scrollWheelInput.y < 0 || navigateInput.x > 0)
+        {
+            return -0.2f;
+        }
+        else if(scrollWheelInput.y > 0 || navigateInput.x < 0)
+        {
+            return 0.2f;
+        }
+        return 0;
     }
- 
 
     private float GetValueFromPointer(PointerEventData eventData)
     {
