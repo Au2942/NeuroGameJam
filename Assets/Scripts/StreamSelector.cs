@@ -4,8 +4,10 @@ using System.Collections.Generic;
 public class StreamSelector : MonoBehaviour
 {
     [SerializeField] private StreamCardSO[] streamCards;
-    [SerializeField] private GameObject streamSelectorLayout;
+    [SerializeField] private GameObject streamSelectionLayout;
+    [SerializeField] private GameObject streamCardLayout;
     [SerializeField] private GameObject streamCard;
+
     [SerializeField] private int cardCount = 2;
 
     private List<GameObject> streamCardList = new List<GameObject>();
@@ -15,12 +17,11 @@ public class StreamSelector : MonoBehaviour
     void Start()
     {
         availableStreams.AddRange(streamCards);
-        OpenUI();
     }
 
     public void OpenUI()
     {
-        streamSelectorLayout.SetActive(true);
+        streamSelectionLayout.SetActive(true);
         Setup();
     }
 
@@ -30,7 +31,7 @@ public class StreamSelector : MonoBehaviour
         selectedStreams.Clear();
         for(int i = streamCardList.Count; i < cardCount; i++)
         {
-            GameObject newStreamCard = Instantiate(streamCard, streamSelectorLayout.transform);
+            GameObject newStreamCard = Instantiate(streamCard, streamCardLayout.transform);
             newStreamCard.GetComponent<StreamCard>().OnSelect += (stream) => AddStream(stream);
             streamCardList.Add(newStreamCard);
         }
@@ -46,13 +47,14 @@ public class StreamSelector : MonoBehaviour
 
     private void AddStream(StreamSO stream)
     {
-        TimelineManager.Instance.SetStream(stream);
+        GameManager.Instance.SetStream(stream);
+        GameManager.Instance.PlayStream();
         CloseUI();
     }
 
     public void CloseUI()
     {
-        streamSelectorLayout.SetActive(false);
+        streamSelectionLayout.SetActive(false);
     }
 
 }

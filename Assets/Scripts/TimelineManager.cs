@@ -6,7 +6,6 @@ public class TimelineManager : MonoBehaviour
 {
     public static TimelineManager Instance;
     [SerializeField] private GameObject memoriesLayout;
-    [SerializeField] private GameObject stream;
     [SerializeField] private Scrollbar timelineScrollbar;
 
     private GameObject nextMemory;
@@ -38,17 +37,6 @@ public class TimelineManager : MonoBehaviour
     {
         memoriesLayout.GetComponent<RectTransform>().anchoredPosition 
             = new Vector2(timelineScrollbar.value * layoutWidth, 0f);
-    }
-
-    public void SetStream(StreamSO stream)
-    {
-        this.stream.GetComponent<VideoPlayer>().clip = stream.clip;
-        nextMemory = stream.memory;
-    }
-
-    private void AddNextMemory()
-    {
-        AddMemory(nextMemory);
     }
 
     public void AddMemory(GameObject memory)
