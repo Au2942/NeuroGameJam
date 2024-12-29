@@ -3,35 +3,36 @@ using UnityEngine;
 public abstract class MemoryEntity : MonoBehaviour
 {
     [SerializeField] protected DialogueManager dialogueManager;
-    [SerializeField] protected DialogueTextSO dialogueTextSO;
+    [SerializeField] protected DialogueInfoSO dialogueTextSO;
     [SerializeField] private float timeToShutup = 5f;
 
     [SerializeField] protected GameObject npcVisual;
 
-    private float elapsedTimeSinceUninteractable = 0f;
+    private float elapsedTimeSinceInFocus = 0f;
     public int Integrity {get; set;}
     public int MaxIntegrity {get; set;}
     public int Influence {get; set;}
     public int MaxInfluence {get; set;}
-    public bool Interactable {get; set;} = false;
+    [SerializeField] public bool InFocus = false;
     public abstract void Interact();
 
     protected virtual void Update()
     {
 
         //Interactable = IsPlayerInRange();
-        if(InputManager.Instance.Submit.triggered && Interactable)
+        if(InputManager.Instance.Submit.triggered && InFocus)
         {
             Interact();
         }
 
-        if (dialogueManager.IsDialoguePlaying && !Interactable)
+        if (dialogueManager.IsDialoguePlaying && !InFocus)
         {
-            elapsedTimeSinceUninteractable += Time.deltaTime;
-            if (elapsedTimeSinceUninteractable >= timeToShutup)
+            dialogueManager.PlaySound = false;
+            elapsedTimeSinceInFocus += Time.deltaTime;
+            if (elapsedTimeSinceInFocus >= timeToShutup)
             {
                 ShutUp();
-                elapsedTimeSinceUninteractable = 0f;
+                elapsedTimeSinceInFocus = 0f;
             }
         }
     }

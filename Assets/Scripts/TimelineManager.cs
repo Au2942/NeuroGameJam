@@ -8,7 +8,7 @@ public class TimelineManager : MonoBehaviour
     [SerializeField] private GameObject memoryLayout;
     [SerializeField] private Scrollbar timelineScrollbar;
     private GameObject nextMemory;
-    public int MemoriesCount { get; set; } = 1;
+    public int MemoriesCount { get; set; } = 0;
     private float layoutWidth;
 
     void Awake()
@@ -26,7 +26,18 @@ public class TimelineManager : MonoBehaviour
     void Start()
     {
         LayoutRebuilder.ForceRebuildLayoutImmediate(memoryLayout.GetComponent<RectTransform>());
+        timelineScrollbar.GetComponent<RectTransform>().sizeDelta = new Vector2(60*(MemoriesCount+1), 60);
         layoutWidth = memoryLayout.GetComponent<RectTransform>().rect.width;
+
+        MemoryEntity[] memoryEntities = FindObjectsByType<MemoryEntity>( FindObjectsSortMode.None);
+        foreach(MemoryEntity memoryEntity in memoryEntities)
+        {
+            nextMemory = AddMemoryToTimeline(memoryEntity.gameObject);
+        }
+        if(MemoriesCount == 0)
+        {
+            timelineScrollbar.gameObject.SetActive(false);
+        }
     }
 
     void Update()
@@ -35,25 +46,20 @@ public class TimelineManager : MonoBehaviour
             = new Vector2(timelineScrollbar.value * (layoutWidth - 1920) , 0f);
     }
 
-    public void SetValue(float value)
-    {
-        timelineScrollbar.value = value;
-    }
 
-    public float GetValue()
-    {
-        return timelineScrollbar.value;
-    }
 
-    public void AddMemory(GameObject memory)
+    public GameObject AddMemoryToTimeline(GameObject newMemory)
     {
         MemoriesCount++;
-        memory = Instantiate(memory, memoryLayout.transform);
+        GameObject memory = Instantiate(newMemory, memoryLayout.transform);
         memory.transform.SetSiblingIndex(1);
         memory.name = "Memory " + MemoriesCount;
+
+        timelineScrollbar.gameObject.SetActive(true);
         LayoutRebuilder.ForceRebuildLayoutImmediate(memoryLayout.GetComponent<RectTransform>());
         layoutWidth = memoryLayout.GetComponent<RectTransform>().rect.width;
-        timelineScrollbar.GetComponent<RectTransform>().sizeDelta = new Vector2(200*MemoriesCount, 60);
+        timelineScrollbar.GetComponent<RectTransform>().sizeDelta = new Vector2(60*(MemoriesCount+1), 60);
+        return memory;
     }
     
 }

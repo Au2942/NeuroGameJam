@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
     [SerializeField] private VideoPlayer streamVideoPlayer;
     [SerializeField] private StreamSelector streamSelector;
+    [SerializeField] private ScrollbarValueController scrollbarController;
     [SerializeField] private TextMeshProUGUI dayText;
     [SerializeField] private List<MemoryEntity> memoryEntities;
 
@@ -30,12 +31,14 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
+        streamVideoPlayer.prepareCompleted += OnPrepareCompleted;
         memoryEntities.AddRange(FindObjectsByType<MemoryEntity>(FindObjectsSortMode.None));
         DayStart();
     }
 
     public void DayStart()
     {
+        //memoryEntities.ForEach(entity => entity.Integrity = entity.MaxIntegrity);
         currentDay++;
         dayText.text = "Day " + currentDay;
         streamSelector.OpenUI();
@@ -63,29 +66,60 @@ public class GameManager : MonoBehaviour
 
     private void CheckEntityInteractability()
     {
-        memoryEntities.ForEach(memoryEntity => memoryEntity.Interactable = false);
-        float scrollbarValue = TimelineManager.Instance.GetValue();
-        int screenIndex = Mathf.RoundToInt(scrollbarValue * (memoryEntities.Count));
-        Debug.Log(screenIndex);
+        float scrollbarValue = scrollbarController.GetValue();
+        int screenIndex = Mathf.RoundToInt(scrollbarValue * memoryEntities.Count);
 
-        if (screenIndex > 0 && screenIndex <= memoryEntities.Count)
+        for(int i = 0; i < memoryEntities.Count; i++)
         {
-            MemoryEntity memoryEntity = memoryEntities[memoryEntities.Count - screenIndex];
-            memoryEntity.Interactable = true;
+            MemoryEntity memoryEntity = memoryEntities[i];
+            if (i == memoryEntities.Count - screenIndex)
+            {
+                memoryEntity.InFocus = true;
+            }
+            else
+            {
+                memoryEntity.InFocus = false;
+            }
         }
+    }
+
+    public void PrepareStream()
+    {
+        
+        streamVideoPlayer.clip = CurrentStream.clip;
+        streamVideoPlayer.Prepare();
+
+    }
+
+    void OnPrepareCompleted(VideoPlayer videoPlayer)
+    {
+        StartStream();
+        videoPlayer.Play();
     }
 
     public void StartStream()
     {
-        streamVideoPlayer.clip = CurrentStream.clip;
         streamTime = 10f * currentDay;
         isStreaming = true;
-        TimelineManager.Instance.SetValue(0);
+        scrollbarController.SetValue(0);
     }
 
     public void DayEnd()
     {
-        TimelineManager.Instance.AddMemory(CurrentStream.memory);
-        memoryEntities.Add(CurrentStream.memory.GetComponent<MemoryEntity>());
+        memoryEntities.ForEach(entity => entity.InFocus = false);
+        memoryEntities.ForEach(entity => entity.ShutUp());
+        isStreaming = false;
+        streamVideoPlayer.Stop();
+        
+        MemoryEntity memoryEntity = CurrentStream.memory.GetComponent<MemoryEntity>();
+        if (!memoryEntities.Exists(entity => entity.GetType() == memoryEntity.GetType()))
+        {
+            GameObject memory = TimelineManager.Instance.AddMemoryToTimeline(CurrentStream.memory);
+            memoryEntities.Add(memory.GetComponent<MemoryEntity>());
+        }
+        else
+        {
+            Debug.Log("MemoryEntity of this type already exists.");
+        }
     }
 }

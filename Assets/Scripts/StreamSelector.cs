@@ -46,7 +46,7 @@ public class StreamSelector : MonoBehaviour
     private void AddStream(StreamSO stream)
     {
         GameManager.Instance.SetStream(stream);
-        GameManager.Instance.StartStream();
+        GameManager.Instance.PrepareStream();
         CloseUI();
     }
 
