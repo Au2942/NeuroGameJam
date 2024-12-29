@@ -1,9 +1,10 @@
 using UnityEngine;
 
-public class Dummy : NPC
+public class Dummy : MemoryEntity
 {
     public override void Interact()
     {
         Talk();
     }
+
 }

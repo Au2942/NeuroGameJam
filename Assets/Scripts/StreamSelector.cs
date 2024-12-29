@@ -7,9 +7,7 @@ public class StreamSelector : MonoBehaviour
     [SerializeField] private GameObject streamSelectionLayout;
     [SerializeField] private GameObject streamCardLayout;
     [SerializeField] private GameObject streamCard;
-
     [SerializeField] private int cardCount = 2;
-
     private List<GameObject> streamCardList = new List<GameObject>();
     private List<StreamCardSO> selectedStreams = new List<StreamCardSO>(); 
     private List<StreamCardSO> availableStreams = new List<StreamCardSO>();
@@ -48,7 +46,7 @@ public class StreamSelector : MonoBehaviour
     private void AddStream(StreamSO stream)
     {
         GameManager.Instance.SetStream(stream);
-        GameManager.Instance.PlayStream();
+        GameManager.Instance.StartStream();
         CloseUI();
     }
 

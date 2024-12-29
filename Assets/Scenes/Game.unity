@@ -314,7 +314,7 @@ GameObject:
   - component: {fileID: 261946644}
   - component: {fileID: 261946645}
   m_Layer: 5
-  m_Name: MemoriesLayout
+  m_Name: MemoryLayout
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1562,7 +1562,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29d6a56876938ac40aad79f6e991d2fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memoriesLayout: {fileID: 261946642}
+  memoryLayout: {fileID: 261946642}
   timelineScrollbar: {fileID: 1025344122}
 --- !u!4 &1919729813
 Transform:

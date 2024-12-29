@@ -5,14 +5,10 @@ using UnityEngine.Video;
 public class TimelineManager : MonoBehaviour 
 {
     public static TimelineManager Instance;
-    [SerializeField] private GameObject memoriesLayout;
+    [SerializeField] private GameObject memoryLayout;
     [SerializeField] private Scrollbar timelineScrollbar;
-
     private GameObject nextMemory;
-
     public int MemoriesCount { get; set; } = 1;
-
-
     private float layoutWidth;
 
     void Awake()
@@ -29,24 +25,35 @@ public class TimelineManager : MonoBehaviour
 
     void Start()
     {
-        LayoutRebuilder.ForceRebuildLayoutImmediate(memoriesLayout.GetComponent<RectTransform>());
-        layoutWidth = memoriesLayout.GetComponent<RectTransform>().rect.width;
+        LayoutRebuilder.ForceRebuildLayoutImmediate(memoryLayout.GetComponent<RectTransform>());
+        layoutWidth = memoryLayout.GetComponent<RectTransform>().rect.width;
     }
 
     void Update()
     {
-        memoriesLayout.GetComponent<RectTransform>().anchoredPosition 
-            = new Vector2(timelineScrollbar.value * layoutWidth, 0f);
+        memoryLayout.GetComponent<RectTransform>().anchoredPosition 
+            = new Vector2(timelineScrollbar.value * (layoutWidth - 1920) , 0f);
+    }
+
+    public void SetValue(float value)
+    {
+        timelineScrollbar.value = value;
+    }
+
+    public float GetValue()
+    {
+        return timelineScrollbar.value;
     }
 
     public void AddMemory(GameObject memory)
     {
         MemoriesCount++;
-        memory = Instantiate(memory, memoriesLayout.transform);
+        memory = Instantiate(memory, memoryLayout.transform);
+        memory.transform.SetSiblingIndex(1);
         memory.name = "Memory " + MemoriesCount;
-        layoutWidth = memoriesLayout.GetComponent<RectTransform>().rect.width;
+        LayoutRebuilder.ForceRebuildLayoutImmediate(memoryLayout.GetComponent<RectTransform>());
+        layoutWidth = memoryLayout.GetComponent<RectTransform>().rect.width;
         timelineScrollbar.GetComponent<RectTransform>().sizeDelta = new Vector2(200*MemoriesCount, 60);
     }
     
-
 }

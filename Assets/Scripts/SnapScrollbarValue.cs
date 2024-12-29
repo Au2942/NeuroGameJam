@@ -8,7 +8,7 @@ public class SnapScrollbarValue : MonoBehaviour, IPointerDownHandler, IPointerUp
     [SerializeField] private Scrollbar timelineScrollbar;
     [SerializeField] private float transitionDuration = 1f;
     [SerializeField] DetectUIDrag handleDrag; 
-    private int steps => TimelineManager.Instance.MemoriesCount + 1; //steps will number of memories
+    private int steps => TimelineManager.Instance.MemoriesCount; //steps will number of memories
 
     private bool shouldEase = false;
     private bool isDragging = false;
