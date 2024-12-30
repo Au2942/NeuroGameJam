@@ -8,7 +8,7 @@ public class PlayerStatUI : MonoBehaviour
     
     void Update()
     {
-        healthText.text = (PlayerManager.Instance.health/100).ToString();
-        scoreText.text = "viewers: " + PlayerManager.Instance.score.ToString();
+        healthText.text = (PlayerManager.Instance.Health/100).ToString();
+        scoreText.text = "viewers: " + PlayerManager.Instance.Score.ToString();
     }
 }

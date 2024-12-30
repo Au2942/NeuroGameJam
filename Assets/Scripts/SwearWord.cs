@@ -18,15 +18,16 @@ public class SwearWord : RainObject
     void Update()
     {
         transform.localPosition += (Vector3)(moveDirection * Time.deltaTime * moveSpeed);
-        OutOfBoundsCheck();
+        ReachEdgeCheck();
     }
 
-    private void OutOfBoundsCheck()
+    private void ReachEdgeCheck()
     {
-        if (transform.localPosition.x > 1920 / 2 || transform.localPosition.x < -1920 / 2 ||
-            transform.localPosition.y > 1080 / 2 || transform.localPosition.y < -1080 / 2)
+        if (transform.localPosition.x > 1536 / 2 || transform.localPosition.x < -1536 / 2 ||
+            transform.localPosition.y > 864 / 2 || transform.localPosition.y < -864 / 2)
         {
-            Destroy(gameObject);
+            RainingObject.RespawnObject(gameObject);
+            PlayerManager.Instance.TakeDamage(1);
         }
     }
 

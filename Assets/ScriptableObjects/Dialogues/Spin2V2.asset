@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbc05572f0a83fc4c858d5f8ba7913f4, type: 3}
   m_Name: Spin2V2
   m_EditorClassIdentifier: 
-  speakerName: 
+  speakerName: Spinning Nuru
   dialogueText:
   - Is it me or the world that is spinning?
   - It doesn't matter

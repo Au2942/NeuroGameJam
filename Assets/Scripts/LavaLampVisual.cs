@@ -7,6 +7,6 @@ public class LavaLampVisual : MonoBehaviour
     
     void Update()
     {
-        healthText.text = (PlayerManager.Instance.health/100).ToString();
+        healthText.text = (PlayerManager.Instance.Health/100).ToString();
     }
 }

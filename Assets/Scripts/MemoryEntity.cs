@@ -8,7 +8,7 @@ public abstract class MemoryEntity : MonoBehaviour
     [SerializeField] protected DialogueInfoSO[] pThreeDialogueTextSOs; //phase 3 dialogues
     [SerializeField] public int Integrity = 100;
     [SerializeField] public int MaxIntegrity = 100;
-    [SerializeField] public float decayTimer = 1f;
+    [SerializeField] public float decayTimer = 3f;
     [SerializeField] private float timeToShutup = 5f;
     [SerializeField] protected GameObject[] appearancePhases;
 
@@ -45,6 +45,7 @@ public abstract class MemoryEntity : MonoBehaviour
     }
     protected virtual void Update()
     {
+        if(!GameManager.Instance.isStreaming) return;
         //Interactable = IsPlayerInRange();
         if(InputManager.Instance.Submit.triggered && InFocus)
         {

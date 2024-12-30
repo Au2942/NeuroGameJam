@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc93247a98ba29d4bb832cacc44a0937, type: 3}
-  m_Name: KaraokeCard
+  m_Name: SingCard
   m_EditorClassIdentifier: 
   stream: {fileID: 11400000, guid: deed090b83ffa6840be2b4e5bf18b30e, type: 2}
   icon: {fileID: 21300000, guid: 119f93d0bcbf1e743bf5fcf237507d39, type: 3}

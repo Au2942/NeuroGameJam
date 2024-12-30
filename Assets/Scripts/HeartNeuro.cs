@@ -16,7 +16,6 @@ public class HeartNeuro : MemoryEntity
 
     protected override void PhaseTwoBehaviour()
     {
-        Debug.Log(rainingObject.isActive);
         if(!rainingObject.isActive && cooldownTimer < cooldown)
         {
             cooldownTimer += Time.deltaTime;

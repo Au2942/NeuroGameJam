@@ -13,11 +13,17 @@ public class GameManager : MonoBehaviour
     [SerializeField] private ScrollbarValueController scrollbarController;
     [SerializeField] private TextMeshProUGUI dayText;
     [SerializeField] private List<MemoryEntity> memoryEntities;
+    [SerializeField] private int baseScore = 100;
 
     public StreamSO CurrentStream { get; private set; }
     public int currentDay { get; private set; } = 0;
     public float streamTime {get; set;} = 10f;
     public bool isStreaming { get; set; } = false;
+
+    private float nextScoreTime = 0f;
+    private float nextScoreTimer = 0f;
+    private float minInterval = 1f; // Minimum interval in seconds
+    private float maxInterval = 5f; // Maximum interval in seconds
 
     public event Action OnDayEnd;
     public event Action OnDayStart;
@@ -49,6 +55,8 @@ public class GameManager : MonoBehaviour
         OnDayStart?.Invoke();
     }
 
+
+
     void Update()
     {
         CheckEntityInteractability();
@@ -60,6 +68,16 @@ public class GameManager : MonoBehaviour
                 isStreaming = false;
                 DayEnd();
                 DayStart();
+            }
+            else
+            {
+                nextScoreTimer += Time.deltaTime;
+                if (nextScoreTimer >= nextScoreTime)
+                {
+                    nextScoreTimer = 0f;
+                    PlayerManager.Instance.AddUncertainScore(baseScore, 10);
+                    nextScoreTime = UnityEngine.Random.Range(minInterval, maxInterval);
+                }
             }
         }
     }

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbc05572f0a83fc4c858d5f8ba7913f4, type: 3}
   m_Name: Chat1V1
   m_EditorClassIdentifier: 
-  speakerName: 
+  speakerName: Just Chatting Neuro
   dialogueText:
   - Hi
   - I am Neurosama

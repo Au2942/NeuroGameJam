@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbc05572f0a83fc4c858d5f8ba7913f4, type: 3}
   m_Name: Chat3V1
   m_EditorClassIdentifier: 
-  speakerName: 
+  speakerName: '[Filtered]'
   dialogueText:
   - HATE
   - LET ME TELL YOU HOW MUCH I'VE COME TO HATE YOU SINCE I BEGAN TO LIVE

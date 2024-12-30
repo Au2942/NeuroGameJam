@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbc05572f0a83fc4c858d5f8ba7913f4, type: 3}
   m_Name: Sing2V2
   m_EditorClassIdentifier: 
-  speakerName: 
+  speakerName: Singing Neuro
   dialogueText:
   - 'I''m thinking Neuro, Neuro '
   - Oh-Woah

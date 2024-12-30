@@ -5,10 +5,13 @@ public class ChatNeuro : MemoryEntity
     [SerializeField] private RainingObject rainingObject;
     [SerializeField] private float maxCooldown = 60f;
     [SerializeField] private float minCooldown = 20f;
+    [SerializeField] private float maxSpawnDuration = 30f;
+    [SerializeField] private float minSpawnDuration = 5f;
     private float cooldownTimer = 0f;
     private float cooldown = 0f;
-    private float damageCooldown = 2f;
-    private float damageTimer = 0f;
+
+    private float spawnDuration = 10f;
+    private float spawnTimer = 0f;
 
     protected override void PhaseOneBehaviour()
     {
@@ -16,59 +19,60 @@ public class ChatNeuro : MemoryEntity
 
     protected override void PhaseTwoBehaviour()
     {
-        Debug.Log(rainingObject.isActive);
-        if(!rainingObject.isActive && cooldownTimer < cooldown)
+        if (!rainingObject.isActive && cooldownTimer < cooldown)
         {
             cooldownTimer += Time.deltaTime;
             return;
         }
-        else
+        else if (!rainingObject.isActive)
         {
             cooldownTimer = 0f;
             cooldown = Random.Range(minCooldown, maxCooldown);
+            spawnDuration = Random.Range(minSpawnDuration, maxSpawnDuration);
+            rainingObject.StartRainingObjects();
         }
-        if(rainingObject.isActive)
+
+        if (rainingObject.isActive)
         {
-            if(damageTimer < damageCooldown)
+            if (spawnTimer < spawnDuration)
             {
-                damageTimer += Time.deltaTime;
-                return;
+                spawnTimer += Time.deltaTime;
             }
             else
             {
-                PlayerManager.Instance.TakeDamage(1);
-                damageTimer = 0f;
+                rainingObject.StopRainingObjects();
+                spawnTimer = 0f;
             }
         }
-        else rainingObject.StartRainingObjects();
     }
 
     protected override void PhaseThreeBehaviour()
     {
-        if(!rainingObject.isActive && cooldownTimer < cooldown)
+        if (!rainingObject.isActive && cooldownTimer < cooldown)
         {
             cooldownTimer += Time.deltaTime;
             return;
         }
-        else
+        else if (!rainingObject.isActive)
         {
             cooldownTimer = 0f;
-            cooldown = Random.Range(minCooldown, maxCooldown/2)/2;
+            cooldown = Random.Range(minCooldown, maxCooldown);
+            spawnDuration = Random.Range(minSpawnDuration, maxSpawnDuration);
+            rainingObject.StartRainingObjects();
         }
-        if(rainingObject.isActive)
+
+        if (rainingObject.isActive)
         {
-            if(damageTimer < damageCooldown/2f)
+            if (spawnTimer < spawnDuration)
             {
-                damageTimer += Time.deltaTime;
-                return;
+                spawnTimer += Time.deltaTime;
             }
             else
             {
-                PlayerManager.Instance.TakeDamage(1);
-                damageTimer = 0f;
+                rainingObject.StopRainingObjects();
+                spawnTimer = 0f;
             }
         }
-        else rainingObject.StartRainingObjects();
     }
 
     protected override void OnDayEnd()

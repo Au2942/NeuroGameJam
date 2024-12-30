@@ -12,6 +12,8 @@ public class StreamSelector : MonoBehaviour
     private List<StreamCardSO> selectedStreams = new List<StreamCardSO>(); 
     private List<StreamCardSO> availableStreams = new List<StreamCardSO>();
 
+    private StreamSO previousStream;
+
     void Start()
     {
         availableStreams.AddRange(streamCards);
@@ -25,7 +27,7 @@ public class StreamSelector : MonoBehaviour
 
     private void Setup()
     {
-        availableStreams.AddRange(selectedStreams);
+        List<StreamCardSO> selectableStreams = new List<StreamCardSO>(streamCards);
         selectedStreams.Clear();
         for(int i = streamCardList.Count; i < cardCount; i++)
         {
@@ -35,16 +37,32 @@ public class StreamSelector : MonoBehaviour
         }
         foreach(GameObject streamCard in streamCardList)
         {
-            int randomIndex = Random.Range(0, availableStreams.Count);
-            streamCard.GetComponent<StreamCard>().Setup(availableStreams[randomIndex]);
-            availableStreams.RemoveAt(randomIndex);
-            selectedStreams.Add(streamCards[randomIndex]);
+            int randomIndex = Random.Range(0, selectableStreams.Count);
+            streamCard.GetComponent<StreamCard>().Setup(selectableStreams[randomIndex]);
+            selectedStreams.Add(selectableStreams[randomIndex]);
+            selectableStreams.RemoveAt(randomIndex);
         }
-
     }
 
     private void AddStream(StreamSO stream)
     {
+        if(previousStream != null)
+        {
+            if(previousStream == stream)
+            {
+                PlayerManager.Instance.BadStreak++;
+                PlayerManager.Instance.Streak = 0;
+            }
+            else
+            {
+                PlayerManager.Instance.Streak++;
+                PlayerManager.Instance.BadStreak = 0;
+            }
+        }
+        Debug.Log("good" + PlayerManager.Instance.Streak);
+        Debug.Log("bad" + PlayerManager.Instance.BadStreak);
+
+        previousStream = stream;
         GameManager.Instance.SetStream(stream);
         GameManager.Instance.PrepareStream();
         CloseUI();
