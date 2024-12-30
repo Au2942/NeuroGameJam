@@ -53,7 +53,6 @@ public class TimelineManager : MonoBehaviour
         MemoriesCount++;
         GameObject memory = Instantiate(newMemory, memoryLayout.transform);
         memory.transform.SetSiblingIndex(1);
-        memory.name = "Memory " + MemoriesCount;
 
         timelineScrollbar.gameObject.SetActive(true);
         LayoutRebuilder.ForceRebuildLayoutImmediate(memoryLayout.GetComponent<RectTransform>());

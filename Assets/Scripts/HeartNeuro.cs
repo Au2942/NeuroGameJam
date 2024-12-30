@@ -3,8 +3,13 @@ using UnityEngine;
 public class HeartNeuro : MemoryEntity
 {
     [SerializeField] private RainingObject rainingObject;
-    [SerializeField] private float maxCooldown = 60f;
-    [SerializeField] private float minCooldown = 20f;
+    [SerializeField] private float maxX = 600f;
+    [SerializeField] private float minX = -600f;
+    [SerializeField] private float maxY = 300f;
+    [SerializeField] private float minY = -300f;
+    [SerializeField] private float maxCooldown = 30f;
+    [SerializeField] private float minCooldown = 15f;
+
     private float cooldownTimer = 0f;
     private float cooldown = 0f;
     private float damageCooldown = 2f;
@@ -39,9 +44,24 @@ public class HeartNeuro : MemoryEntity
                 damageTimer = 0f;
             }
         }
-        else rainingObject.StartRainingObjects(-600f, 600 , -300, 300);
+        else rainingObject.StartRainingObjects(minX, maxX, minY, maxY);
     }
 
+    protected override void PreparePhaseOne()
+    {
+        base.PreparePhaseOne();
+        rainingObject.StopRainingObjects();
+    }
+    protected override void PreparePhaseTwo()
+    {
+        base.PreparePhaseTwo();
+        rainingObject.setSpawnTimer(1f);
+    }
+    protected override void PreparePhaseThree()
+    {
+        base.PreparePhaseThree();
+        rainingObject.setSpawnTimer(0.75f);
+    }
     protected override void PhaseThreeBehaviour()
     {
         if(!rainingObject.isActive && cooldownTimer < cooldown)
@@ -67,7 +87,7 @@ public class HeartNeuro : MemoryEntity
                 damageTimer = 0f;
             }
         }
-        else rainingObject.StartRainingObjects();
+        else rainingObject.StartRainingObjects(minX, maxX, minY, maxY);
     }
 
     protected override void OnDayEnd()

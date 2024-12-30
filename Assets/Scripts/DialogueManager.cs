@@ -12,6 +12,7 @@ public class DialogueManager : MonoBehaviour
     private DialogueInfoSO currentDialogueInfo;
     private Queue<string> dialogueTextQueue = new Queue<string>();
     private Coroutine typingCoroutine;
+    private Coroutine waitAndPlayNextDialogueCoroutine;
     public bool IsTyping {get; private set;} = false;
     public bool PlaySound {get; set;} = true;
 
@@ -24,8 +25,13 @@ public class DialogueManager : MonoBehaviour
 
 
 
-    public void PlayDialogue(DialogueInfoSO dialogueTextSO)
+    public void PlayDialogue(DialogueInfoSO dialogueTextSO, bool playerInitiated = true)
     {
+        if(playerInitiated && waitAndPlayNextDialogueCoroutine != null)
+        {
+            StopCoroutine(waitAndPlayNextDialogueCoroutine);
+        }
+
         if(IsDialoguePlaying)
         {
             if(IsTyping && typingCoroutine != null)
@@ -83,6 +89,13 @@ public class DialogueManager : MonoBehaviour
         IsTyping = false;
     }
 
+    private IEnumerator WaitAndPlayNextDialogue()
+    {
+        yield return new WaitForSeconds(1f);
+        NextDialogue();
+
+    }
+
 
 
     public void EndDialogue()
@@ -90,6 +103,10 @@ public class DialogueManager : MonoBehaviour
         if(typingCoroutine != null)
         {
             StopCoroutine(typingCoroutine);
+        }
+        if(waitAndPlayNextDialogueCoroutine != null)
+        {
+            StopCoroutine(waitAndPlayNextDialogueCoroutine);
         }
         IsDialoguePlaying = false;
         speakerNameText.text = "";
@@ -127,6 +144,7 @@ public class DialogueManager : MonoBehaviour
             }
         }
         IsTyping = false;
+        waitAndPlayNextDialogueCoroutine = StartCoroutine(WaitAndPlayNextDialogue());
     }
 
     private void PlayDialogueTypingSound(int currentCharacterIndex, char currentCharacter)

@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: SingCard
   m_EditorClassIdentifier: 
   stream: {fileID: 11400000, guid: deed090b83ffa6840be2b4e5bf18b30e, type: 2}
-  icon: {fileID: 21300000, guid: 119f93d0bcbf1e743bf5fcf237507d39, type: 3}
+  icon: {fileID: 198563320867267784, guid: 235fc0622b565984d97de2d6ab3ced8d, type: 3}
   streamDesc: From break and ruin, the most beautiful performance begins.

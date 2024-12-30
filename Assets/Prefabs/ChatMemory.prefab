@@ -242,6 +242,7 @@ MonoBehaviour:
   MaxIntegrity: 100
   decayTimer: 1
   timeToShutup: 5
+  attemptTalkCD: 2
   appearancePhases:
   - {fileID: 8100809654805267359}
   - {fileID: 2735921663962449038}
@@ -265,8 +266,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 2670954169948010756, guid: b53ee0f6c4c420e49860e4d8c63cfa01, type: 3}
-  spawnRate: 3
-  poolSize: 5
+  spawnTimer: 1
+  poolSize: 20
+  reuseObjectsInUse: 0
 --- !u!114 &4881109412136145500 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3912631305385984544, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}

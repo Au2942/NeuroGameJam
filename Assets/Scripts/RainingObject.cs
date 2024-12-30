@@ -5,8 +5,9 @@ using UnityEngine;
 public class RainingObject : MonoBehaviour
 {
     [SerializeField] private RainObject prefab;
-    [SerializeField] public float spawnRate = 0.5f;
+    [SerializeField] public float spawnTimer = 0.5f;
     [SerializeField] private int poolSize = 3;
+    [SerializeField] private bool reuseObjectsInUse = false;
 
     public bool isActive { get; private set; } = false;
 
@@ -42,7 +43,7 @@ public class RainingObject : MonoBehaviour
             objectInUse.Add(obj);
             return obj;
         }
-        else if (objectInUse.Count > 0)
+        else if (reuseObjectsInUse && objectInUse.Count > 0)
         {
             GameObject obj = objectInUse[0];
             objectInUse.RemoveAt(0);
@@ -92,9 +93,9 @@ public class RainingObject : MonoBehaviour
         }
     }
 
-    public void setSpawnRate(float rate)
+    public void setSpawnTimer(float rate)
     {
-        spawnRate = rate;
+        spawnTimer = rate;
     }
 
     private IEnumerator SpawnObjectsContinuously(float minX = 0, float maxX = 0, float minY = 0, float maxY = 0)
@@ -103,7 +104,7 @@ public class RainingObject : MonoBehaviour
         while (objectInUse.Count > 0)
         {
             SpawnObjectInArea(minX, maxX, minY, maxY);
-            yield return new WaitForSeconds(spawnRate);
+            yield return new WaitForSeconds(spawnTimer);
         }
         isActive = false;
     }

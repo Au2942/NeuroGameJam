@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20d20916443097142bc00e35de18b753, type: 3}
   m_Name: SpinStream
   m_EditorClassIdentifier: 
+  streamName: Spin
   clip: {fileID: 32900000, guid: 2b5084a06d393b14ca6f675963c5c281, type: 3}
-  memory: {fileID: 0}
+  memory: {fileID: 2786027055462242103, guid: 6828fb178711fcc41bb240e36bcccca8, type: 3}

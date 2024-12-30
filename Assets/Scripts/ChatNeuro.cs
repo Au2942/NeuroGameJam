@@ -3,8 +3,8 @@ using UnityEngine;
 public class ChatNeuro : MemoryEntity
 {
     [SerializeField] private RainingObject rainingObject;
-    [SerializeField] private float maxCooldown = 60f;
-    [SerializeField] private float minCooldown = 20f;
+    [SerializeField] private float maxCooldown = 30f;
+    [SerializeField] private float minCooldown = 15f;
     [SerializeField] private float maxSpawnDuration = 30f;
     [SerializeField] private float minSpawnDuration = 5f;
     private float cooldownTimer = 0f;

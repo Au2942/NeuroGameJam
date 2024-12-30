@@ -10,11 +10,15 @@ public abstract class MemoryEntity : MonoBehaviour
     [SerializeField] public int MaxIntegrity = 100;
     [SerializeField] public float decayTimer = 3f;
     [SerializeField] private float timeToShutup = 5f;
+    [SerializeField] private float attemptTalkCD = 2f;
     [SerializeField] protected GameObject[] appearancePhases;
+    [SerializeField] private int talkPerRecovery = 3; 
 
-    protected int phase = 0;
+    public int phase {get; private set;} = 0;
     private float decayTimerElapsed = 0f;
     private float elapsedTimeSinceInFocus = 0f;
+    private float attemptTalkTimer = 0f;
+    private float talkCount = 0;
 
     // public int Influence {get; set;}
     // public int MaxInfluence {get; set;}
@@ -25,7 +29,7 @@ public abstract class MemoryEntity : MonoBehaviour
     protected abstract void PhaseThreeBehaviour();
     protected virtual void Interact()
     {
-        Talk();
+        Converse();
     }
 
     protected virtual void Awake()
@@ -37,7 +41,7 @@ public abstract class MemoryEntity : MonoBehaviour
 
     protected virtual void OnDayEnd()
     {
-
+        dialogueManager.EndDialogue();
     }
     protected virtual void OnDayStart()
     {
@@ -47,14 +51,30 @@ public abstract class MemoryEntity : MonoBehaviour
     {
         if(!GameManager.Instance.isStreaming) return;
         //Interactable = IsPlayerInRange();
-        if(InputManager.Instance.Submit.triggered && InFocus)
-        {
-            Interact();
-        }
 
-        if (dialogueManager.IsDialoguePlaying && !InFocus)
+        if(InFocus)
         {
-            dialogueManager.PlaySound = false;
+            if(InputManager.Instance.Submit.triggered)
+            {
+                Interact();
+            }
+            //random chance to talk
+            if(!dialogueManager.IsDialoguePlaying)
+            {
+                attemptTalkTimer += Time.deltaTime;
+                if(attemptTalkTimer >= attemptTalkCD)
+                {
+                    if(Random.Range(0, 100) < 25)
+                    {
+                        Speak();
+                        AddIntegrity(1); //a lil bonus
+                    }
+                    attemptTalkTimer = 0f;
+                }
+            }
+        }
+        else if (dialogueManager.IsDialoguePlaying)
+        {
             elapsedTimeSinceInFocus += Time.deltaTime;
             if (elapsedTimeSinceInFocus >= timeToShutup)
             {
@@ -65,6 +85,19 @@ public abstract class MemoryEntity : MonoBehaviour
         Behave();
         Decay();
         UpdatePhase();
+    }
+
+    public void AddIntegrity(int amount)
+    {
+        Integrity += amount;
+        if (Integrity > MaxIntegrity)
+        {
+            Integrity = MaxIntegrity;
+        }
+        if (Integrity < 0)
+        {
+            Integrity = 0;
+        }
     }
 
     protected virtual void UpdatePhase()
@@ -168,7 +201,23 @@ public abstract class MemoryEntity : MonoBehaviour
     //     return rectTransform.rect.Contains(localPoint);
     // }
 
-    public void Talk()
+    public void Converse()
+    {
+        Talk();
+        talkCount++;
+        if(talkCount >= talkPerRecovery)
+        {
+            talkCount = 0;
+            AddIntegrity(1);
+        }
+    }
+
+    public void Speak()
+    {
+        Talk(false);      
+    }
+
+    private void Talk(bool playerInitiated = true)
     {
         if (dialogueManager == null || pOneDialogueTextSOs == null)
         {
@@ -195,11 +244,13 @@ public abstract class MemoryEntity : MonoBehaviour
             return;
         }
         int randomIndex = Random.Range(0, dialogues.Length);
-        dialogueManager.PlayDialogue(dialogues[randomIndex]);
+        dialogueManager.PlayDialogue(dialogues[randomIndex], playerInitiated);
     }
+
 
     public void ShutUp()
     {
+        talkCount = 0;
         dialogueManager.EndDialogue();
     }
 }

@@ -12,18 +12,21 @@ public class GameManager : MonoBehaviour
     [SerializeField] private StreamSelector streamSelector;
     [SerializeField] private ScrollbarValueController scrollbarController;
     [SerializeField] private TextMeshProUGUI dayText;
-    [SerializeField] private List<MemoryEntity> memoryEntities;
-    [SerializeField] private int baseScore = 100;
+    [SerializeField] private TextMeshProUGUI roomText;
+    [SerializeField] public List<MemoryEntity> MemoryEntities;
+    [SerializeField] private float addScorePercentage = 1;
 
     public StreamSO CurrentStream { get; private set; }
     public int currentDay { get; private set; } = 0;
-    public float streamTime {get; set;} = 10f;
+    public float streamTime {get; set;} = 30f;
     public bool isStreaming { get; set; } = false;
 
     private float nextScoreTime = 0f;
     private float nextScoreTimer = 0f;
-    private float minInterval = 1f; // Minimum interval in seconds
-    private float maxInterval = 5f; // Maximum interval in seconds
+    private float minInterval = 5f; // Minimum interval in seconds
+    private float maxInterval = 20f; // Maximum interval in seconds
+
+    private float streamTimer = 0f;
 
     public event Action OnDayEnd;
     public event Action OnDayStart;
@@ -42,7 +45,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         streamVideoPlayer.prepareCompleted += OnPrepareCompleted;
-        memoryEntities.AddRange(FindObjectsByType<MemoryEntity>(FindObjectsSortMode.None));
+        MemoryEntities.AddRange(FindObjectsByType<MemoryEntity>(FindObjectsSortMode.None));
         DayStart();
     }
 
@@ -52,6 +55,13 @@ public class GameManager : MonoBehaviour
         currentDay++;
         dayText.text = "Day " + currentDay;
         streamSelector.OpenUI();
+        foreach(MemoryEntity entity in MemoryEntities)
+        {
+            if(entity.phase == 0)
+            {
+                PlayerManager.Instance.Buff += 0.1f;
+            }
+        }
         OnDayStart?.Invoke();
     }
 
@@ -59,11 +69,11 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        CheckEntityInteractability();
+        CheckCurrentRoom();
         if (isStreaming)
         { 
-            streamTime -= Time.deltaTime;
-            if (streamTime <= 0)
+            streamTimer += Time.deltaTime;
+            if (streamTimer >= streamTime)
             {
                 isStreaming = false;
                 DayEnd();
@@ -75,7 +85,7 @@ public class GameManager : MonoBehaviour
                 if (nextScoreTimer >= nextScoreTime)
                 {
                     nextScoreTimer = 0f;
-                    PlayerManager.Instance.AddUncertainScore(baseScore, 10);
+                    PlayerManager.Instance.AddScoreByPercentage(addScorePercentage, 10);
                     nextScoreTime = UnityEngine.Random.Range(minInterval, maxInterval);
                 }
             }
@@ -87,17 +97,24 @@ public class GameManager : MonoBehaviour
         CurrentStream = newStream;
     }
 
-    private void CheckEntityInteractability()
+    private void CheckCurrentRoom()
     {
         float scrollbarValue = scrollbarController.GetValue();
-        int screenIndex = Mathf.RoundToInt(scrollbarValue * memoryEntities.Count);
-
-        for(int i = 0; i < memoryEntities.Count; i++)
+        int screenIndex = Mathf.RoundToInt(scrollbarValue * MemoryEntities.Count);
+        if(screenIndex == 0)
         {
-            MemoryEntity memoryEntity = memoryEntities[i];
-            if (i == memoryEntities.Count - screenIndex)
+            roomText.text = "Stream";
+            return;
+        }
+        streamVideoPlayer.SetDirectAudioVolume(0, 1f-screenIndex*0.25f);
+
+        for(int i = 0; i < MemoryEntities.Count; i++)
+        {
+            MemoryEntity memoryEntity = MemoryEntities[i];
+            if (i == MemoryEntities.Count - screenIndex)
             {
                 memoryEntity.InFocus = true;
+                roomText.text = "Memory of " + memoryEntity.name + " stream";
             }
             else
             {
@@ -122,28 +139,37 @@ public class GameManager : MonoBehaviour
 
     public void StartStream()
     {
-        streamTime = 10f * currentDay;
+        streamTime += 10f;
+        streamTimer = 0f;
         isStreaming = true;
         scrollbarController.SetValue(0);
     }
 
     public void DayEnd()
     {
-        memoryEntities.ForEach(entity => entity.InFocus = false);
-        memoryEntities.ForEach(entity => entity.ShutUp());
+        MemoryEntities.ForEach(entity => entity.InFocus = false);
+        MemoryEntities.ForEach(entity => entity.ShutUp());
         isStreaming = false;
         streamVideoPlayer.Stop();
         
         MemoryEntity memoryEntity = CurrentStream.memory.GetComponent<MemoryEntity>();
-        if (!memoryEntities.Exists(entity => entity.GetType() == memoryEntity.GetType()))
+        MemoryEntity existingEntity = MemoryEntities.Find(entity => entity.GetType() == memoryEntity.GetType());
+        if (existingEntity == null)
         {
             GameObject memory = TimelineManager.Instance.AddMemoryToTimeline(CurrentStream.memory);
-            memoryEntities.Add(memory.GetComponent<MemoryEntity>());
+            memory.name = CurrentStream.streamName;
+            MemoryEntities.Add(memory.GetComponent<MemoryEntity>());
         }
         else
         {
             Debug.Log("MemoryEntity of this type already exists.");
+            existingEntity.AddIntegrity(25); // Increase integrity of the existing memory entity by 10
         }
+
+        PlayerManager.Instance.Buff = 0;
+        PlayerManager.Instance.Debuff = 0;
+        PlayerManager.Instance.TakeDamage(-10);
+
         OnDayEnd?.Invoke();
     }
 }

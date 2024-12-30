@@ -26,8 +26,8 @@ public class SwearWord : RainObject
         if (transform.localPosition.x > 1536 / 2 || transform.localPosition.x < -1536 / 2 ||
             transform.localPosition.y > 864 / 2 || transform.localPosition.y < -864 / 2)
         {
-            RainingObject.RespawnObject(gameObject);
             PlayerManager.Instance.TakeDamage(1);
+            RainingObject.RespawnObject(gameObject);
         }
     }
 

@@ -48,19 +48,16 @@ public class StreamSelector : MonoBehaviour
     {
         if(previousStream != null)
         {
-            if(previousStream == stream)
+            if(previousStream.streamName == stream.streamName)
             {
-                PlayerManager.Instance.BadStreak++;
-                PlayerManager.Instance.Streak = 0;
+                PlayerManager.Instance.Debuff += 0.1f;
             }
             else
             {
-                PlayerManager.Instance.Streak++;
-                PlayerManager.Instance.BadStreak = 0;
+                PlayerManager.Instance.Buff += 0.1f;
             }
         }
-        Debug.Log("good" + PlayerManager.Instance.Streak);
-        Debug.Log("bad" + PlayerManager.Instance.BadStreak);
+
 
         previousStream = stream;
         GameManager.Instance.SetStream(stream);
