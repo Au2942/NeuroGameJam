@@ -9,9 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc93247a98ba29d4bb832cacc44a0937, type: 3}
-  m_Name: JCCard
+  m_Script: {fileID: 11500000, guid: dbc05572f0a83fc4c858d5f8ba7913f4, type: 3}
+  m_Name: Heart2V1
   m_EditorClassIdentifier: 
-  stream: {fileID: 11400000, guid: c3a646e50b6ae0f42bc3233e9fb75bee, type: 2}
-  icon: {fileID: 2747690628134850419, guid: 16037dbd798344f57a526d53d48f5ead, type: 3}
-  streamDesc: Chill with chats
+  speakerName: 
+  dialogueText:
+  - HeartHeartHeart
+  speakSpeed: 0.04
+  audioClips:
+  - {fileID: 8300000, guid: 3a2533218763f464a987dfc50f0c025e, type: 3}
+  MaxPitch: 1
+  MinPitch: 1
+  frequency: 5

@@ -9,9 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc93247a98ba29d4bb832cacc44a0937, type: 3}
-  m_Name: HeartCard
+  m_Script: {fileID: 11500000, guid: 20d20916443097142bc00e35de18b753, type: 3}
+  m_Name: ChatStream
   m_EditorClassIdentifier: 
-  stream: {fileID: 11400000, guid: f95c7bd089fd10f4db4434f013f3c930, type: 2}
-  icon: {fileID: 9179129158161844192, guid: bf16c3ce063cb41468925496b65e68a4, type: 3}
-  streamDesc: HEARTHEARTHEART
+  clip: {fileID: 32900000, guid: 7fc07a831359fcf4786eb3b15e0c636a, type: 3}
+  memory: {fileID: 3367336840930842900, guid: 2f2bd6c212ff13544890676d7095cceb, type: 3}

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.Video;
 using TMPro;
@@ -17,6 +18,9 @@ public class GameManager : MonoBehaviour
     public int currentDay { get; private set; } = 0;
     public float streamTime {get; set;} = 10f;
     public bool isStreaming { get; set; } = false;
+
+    public event Action OnDayEnd;
+    public event Action OnDayStart;
 
     void Awake()
     {
@@ -42,6 +46,7 @@ public class GameManager : MonoBehaviour
         currentDay++;
         dayText.text = "Day " + currentDay;
         streamSelector.OpenUI();
+        OnDayStart?.Invoke();
     }
 
     void Update()
@@ -121,5 +126,6 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("MemoryEntity of this type already exists.");
         }
+        OnDayEnd?.Invoke();
     }
 }

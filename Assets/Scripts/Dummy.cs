@@ -2,9 +2,17 @@ using UnityEngine;
 
 public class Dummy : MemoryEntity
 {
-    public override void Interact()
+    protected override void PhaseOneBehaviour()
     {
-        Talk();
     }
+
+    protected override void PhaseTwoBehaviour()
+    {
+    }
+
+    protected override void PhaseThreeBehaviour()
+    {
+    }
+
 
 }

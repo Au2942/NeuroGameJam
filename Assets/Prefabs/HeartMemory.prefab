@@ -104,8 +104,103 @@ PrefabInstance:
       propertyPath: m_Name
       value: HeartMemory
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3133413388662785481, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6578199205212244328, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4630224699381702892}
+    - targetCorrespondingSourceObject: {fileID: 6578199205212244328, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 515110213736942597}
+    - targetCorrespondingSourceObject: {fileID: 6578199205212244328, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2927781136705775014}
   m_SourcePrefab: {fileID: 100100000, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+--- !u!1 &2442859898082900254 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6578199205212244328, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+  m_PrefabInstance: {fileID: 8839648463347642486}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4630224699381702892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2442859898082900254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 197dc50e8a086144c950e2b6d84d21fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialogueManager: {fileID: 5539647445395518038}
+  pOneDialogueTextSOs:
+  - {fileID: 11400000, guid: 5661f8ab815c049439f214aa5f35016c, type: 2}
+  - {fileID: 11400000, guid: e0fa14e85a292d84aa014f65a71b3fc6, type: 2}
+  - {fileID: 11400000, guid: 5c422bf63f938f94cb4632f5fc2f5672, type: 2}
+  pTwoDialogueTextSOs:
+  - {fileID: 11400000, guid: cdf56ef6358a43248b2fb16443945da2, type: 2}
+  pThreeDialogueTextSOs: []
+  Integrity: 100
+  MaxIntegrity: 100
+  decayTimer: 1
+  timeToShutup: 5
+  appearancePhases: []
+  InFocus: 0
+  rainingObject: {fileID: 515110213736942597}
+  maxCooldown: 60
+  minCooldown: 20
+--- !u!114 &515110213736942597
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2442859898082900254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e44bf717878763441944133645bd042d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 6718416205080808026, guid: e4cc0818decd7a949bd71ca85be5dea8, type: 3}
+  spawnRate: 1.5
+  poolSize: 20
+--- !u!114 &2927781136705775014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2442859898082900254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d851af2ffa0aeef41beddcc4054ef7bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  indicator: {fileID: 3967232144985073581}
+  entity: {fileID: 4630224699381702892}
+--- !u!114 &3967232144985073581 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5594260103637325787, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+  m_PrefabInstance: {fileID: 8839648463347642486}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2442859898082900254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5539647445395518038 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3912631305385984544, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+  m_PrefabInstance: {fileID: 8839648463347642486}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2442859898082900254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 584513c97eb7815409c5bf06e15191d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

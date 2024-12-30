@@ -9,8 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20d20916443097142bc00e35de18b753, type: 3}
-  m_Name: JCStream
+  m_Script: {fileID: 11500000, guid: dbc05572f0a83fc4c858d5f8ba7913f4, type: 3}
+  m_Name: Heart1V1
   m_EditorClassIdentifier: 
-  clip: {fileID: 32900000, guid: 7fc07a831359fcf4786eb3b15e0c636a, type: 3}
-  memory: {fileID: 3367336840930842900, guid: 2f2bd6c212ff13544890676d7095cceb, type: 3}
+  speakerName: 
+  dialogueText:
+  - Heart
+  speakSpeed: 0.04
+  audioClips:
+  - {fileID: 8300000, guid: 3a2533218763f464a987dfc50f0c025e, type: 3}
+  MaxPitch: 1
+  MinPitch: 1
+  frequency: 5

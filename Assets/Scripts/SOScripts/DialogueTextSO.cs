@@ -6,7 +6,7 @@ public class DialogueInfoSO : ScriptableObject
     public string speakerName;
     [TextArea(3, 10)]
     public string[] dialogueText;
-    public float speakSpeed = 0.4f;
+    public float speakSpeed = 0.04f;
 
     [Header("Audio")]
     public AudioClip[] audioClips;

@@ -101,16 +101,30 @@ public class DialogueManager : MonoBehaviour
     {
         IsTyping = true;
         dialogueText.maxVisibleCharacters = 0;
-        int counter = 0;
+        int charCount = 0;
+        int validCharCount = 0;
         foreach(char letter in dialogueText.text.ToCharArray())
         {
-            if(PlaySound && currentDialogueInfo.audioClips.Length > 0)
+            if(!char.IsWhiteSpace(letter) && !char.IsSymbol(letter) && !char.IsPunctuation(letter))
             {
-                PlayDialogueTypingSound(counter, dialogueText.text[counter]);
+                if(PlaySound && currentDialogueInfo.audioClips.Length > 0)
+                {
+                    PlayDialogueTypingSound(validCharCount, dialogueText.text[charCount]);
+                }
+                charCount++;
+                validCharCount++;
+                dialogueText.maxVisibleCharacters = charCount;
+                yield return new WaitForSeconds(currentDialogueInfo.speakSpeed);
             }
-            counter++;
-            dialogueText.maxVisibleCharacters = counter;
-            yield return new WaitForSeconds(currentDialogueInfo.speakSpeed);
+            else
+            {
+                charCount++;
+                dialogueText.maxVisibleCharacters = charCount;
+                if(letter == '.' )
+                {
+                    yield return new WaitForSeconds(currentDialogueInfo.speakSpeed);
+                }
+            }
         }
         IsTyping = false;
     }
@@ -122,6 +136,7 @@ public class DialogueManager : MonoBehaviour
         float minPitch = currentDialogueInfo.MinPitch;
         float maxPitch = currentDialogueInfo.MaxPitch;
         int frequency = currentDialogueInfo.frequency;
+
 
         if(currentCharacterIndex % frequency == 0)
         {

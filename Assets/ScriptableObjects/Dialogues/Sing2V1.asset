@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbc05572f0a83fc4c858d5f8ba7913f4, type: 3}
+  m_Name: Sing2V1
+  m_EditorClassIdentifier: 
+  speakerName: 
+  dialogueText:
+  - I LOVE SINGING!
+  speakSpeed: 0.04
+  audioClips:
+  - {fileID: 8300000, guid: 946d8d732f85b9743a8beaaf1749cc0f, type: 3}
+  - {fileID: 8300000, guid: 2578171dfa9bfea4aaffce4bbd94a5e0, type: 3}
+  - {fileID: 8300000, guid: 767aee83a1138034299a66074025f77b, type: 3}
+  - {fileID: 8300000, guid: 0653a18e28e154e4f99071c83756c6db, type: 3}
+  MaxPitch: 1
+  MinPitch: 0
+  frequency: 2

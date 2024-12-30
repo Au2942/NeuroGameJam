@@ -9,9 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc93247a98ba29d4bb832cacc44a0937, type: 3}
-  m_Name: HeartCard
+  m_Script: {fileID: 11500000, guid: dbc05572f0a83fc4c858d5f8ba7913f4, type: 3}
+  m_Name: Heart1V2
   m_EditorClassIdentifier: 
-  stream: {fileID: 11400000, guid: f95c7bd089fd10f4db4434f013f3c930, type: 2}
-  icon: {fileID: 9179129158161844192, guid: bf16c3ce063cb41468925496b65e68a4, type: 3}
-  streamDesc: HEARTHEARTHEART
+  speakerName: 
+  dialogueText:
+  - Heart!
+  speakSpeed: 0.04
+  audioClips:
+  - {fileID: 8300000, guid: 3a2533218763f464a987dfc50f0c025e, type: 3}
+  MaxPitch: 1
+  MinPitch: 1
+  frequency: 5

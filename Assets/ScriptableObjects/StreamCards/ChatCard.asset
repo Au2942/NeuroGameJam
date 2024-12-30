@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc93247a98ba29d4bb832cacc44a0937, type: 3}
-  m_Name: HeartCard
+  m_Name: ChatCard
   m_EditorClassIdentifier: 
-  stream: {fileID: 11400000, guid: f95c7bd089fd10f4db4434f013f3c930, type: 2}
-  icon: {fileID: 9179129158161844192, guid: bf16c3ce063cb41468925496b65e68a4, type: 3}
-  streamDesc: HEARTHEARTHEART
+  stream: {fileID: 11400000, guid: c3a646e50b6ae0f42bc3233e9fb75bee, type: 2}
+  icon: {fileID: 2747690628134850419, guid: 16037dbd798344f57a526d53d48f5ead, type: 3}
+  streamDesc: Chill with chats

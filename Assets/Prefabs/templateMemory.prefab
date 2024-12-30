@@ -380,9 +380,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogueManager: {fileID: 3912631305385984544}
-  dialogueTextSO: {fileID: 11400000, guid: 496e24422e6605c4599c05eb9d785503, type: 2}
+  pOneDialogueTextSOs:
+  - {fileID: 11400000, guid: 496e24422e6605c4599c05eb9d785503, type: 2}
+  pTwoDialogueTextSOs: []
+  pThreeDialogueTextSOs: []
+  Integrity: 100
+  MaxIntegrity: 100
+  decayTimer: 1
   timeToShutup: 5
-  npcVisual: {fileID: 0}
+  appearancePhases: []
   InFocus: 0
 --- !u!114 &3912631305385984544
 MonoBehaviour:
