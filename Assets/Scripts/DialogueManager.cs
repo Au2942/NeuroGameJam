@@ -9,6 +9,8 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI speakerNameText;
     [SerializeField] private TextMeshProUGUI dialogueText;
     [SerializeField] private DialogueInfoSO defaultDialogueInfo;
+    [SerializeField] private bool stayOnScreen = false;
+    private AudioSource audioSource;
     private DialogueInfoSO currentDialogueInfo;
     private Queue<string> dialogueTextQueue = new Queue<string>();
     private Coroutine typingCoroutine;
@@ -22,7 +24,6 @@ public class DialogueManager : MonoBehaviour
     {
         dialoguePanel.SetActive(false);
     }
-
 
 
     public void PlayDialogue(DialogueInfoSO dialogueTextSO, bool playerInitiated = true)
