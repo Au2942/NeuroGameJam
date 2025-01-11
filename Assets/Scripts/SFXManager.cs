@@ -43,7 +43,7 @@ public class SFXManager : MonoBehaviour
 
     }
 
-    private AudioSource GetAudioSource()
+    public AudioSource GetAudioSource()
     {
         if (audioSourcePool.Count > 0)
         {
@@ -58,7 +58,7 @@ public class SFXManager : MonoBehaviour
         }
     }
 
-    private void ReturnAudioSource(AudioSource audioSource)
+    public void ReturnAudioSource(AudioSource audioSource)
     {
         if (audioSource != null)
         {
@@ -68,7 +68,7 @@ public class SFXManager : MonoBehaviour
         }
     }
 
-    public void PlaySoundFX(AudioClip clip, Transform transform, float volume = 0.5f)
+    public AudioSource PlaySoundFX(AudioClip clip, Transform transform, float volume = 0.5f)
     {
         AudioSource audioSource = GetAudioSource();
         if (audioSource != null)
@@ -81,12 +81,13 @@ public class SFXManager : MonoBehaviour
             // Return the audio source to the pool after it finishes playing
             StartCoroutine(ReturnToPoolAfterPlaying(audioSource, clip.length));
         }
+        return audioSource;
     }
 
-    public void PlaySoundFX(List<AudioClip> clips, Transform transform, float volume = 1f)
+    public AudioSource PlaySoundFX(List<AudioClip> clips, Transform transform, float volume = 1f)
     {
         int randomIndex = Random.Range(0, clips.Count);
-        PlaySoundFX(clips[randomIndex], transform, volume);
+        return PlaySoundFX(clips[randomIndex], transform, volume);
     }
 
     private IEnumerator<WaitForSeconds> ReturnToPoolAfterPlaying(AudioSource audioSource, float delay)

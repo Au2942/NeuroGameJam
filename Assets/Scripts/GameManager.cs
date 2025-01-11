@@ -1,8 +1,11 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Video;
 using TMPro;
+using System.Collections;
+using UnityEngine.SceneManagement;
 
 
 public class GameManager : MonoBehaviour
@@ -10,15 +13,20 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
     [SerializeField] private VideoPlayer streamVideoPlayer;
     [SerializeField] private StreamSelector streamSelector;
-    [SerializeField] private ScrollbarValueController scrollbarController;
     [SerializeField] private TextMeshProUGUI dayText;
     [SerializeField] private TextMeshProUGUI roomText;
     [SerializeField] public List<MemoryEntity> MemoryEntities;
+    [SerializeField] private Image integrityBar;
     [SerializeField] private float addScorePercentage = 1;
+    [SerializeField] private DialogueManager endGameDialogueManager;
+    [SerializeField] private DialogueInfoSO[] endGameDialogues;
+    [SerializeField] private TextMeshProUGUI endScoreText;
+
+    [SerializeField] private AudioClip[] endGameSFXs;
 
     public StreamSO CurrentStream { get; private set; }
     public int currentDay { get; private set; } = 0;
-    public float streamTime {get; set;} = 30f;
+    public float streamTime {get; set;} = 10f;
     public bool isStreaming { get; set; } = false;
 
     private float nextScoreTime = 0f;
@@ -27,6 +35,8 @@ public class GameManager : MonoBehaviour
     private float maxInterval = 20f; // Maximum interval in seconds
 
     private float streamTimer = 0f;
+
+    private float targetIntegrityBarValue = 0f;
 
     public event Action OnDayEnd;
     public event Action OnDayStart;
@@ -46,6 +56,7 @@ public class GameManager : MonoBehaviour
     {
         streamVideoPlayer.prepareCompleted += OnPrepareCompleted;
         MemoryEntities.AddRange(FindObjectsByType<MemoryEntity>(FindObjectsSortMode.None));
+        StartCoroutine(MoveIntegrityBar());
         DayStart();
     }
 
@@ -99,27 +110,51 @@ public class GameManager : MonoBehaviour
 
     private void CheckCurrentRoom()
     {
-        float scrollbarValue = scrollbarController.GetValue();
-        int screenIndex = Mathf.RoundToInt(scrollbarValue * MemoryEntities.Count);
-        if(screenIndex == 0)
+        int currentIndex = TimelineManager.Instance.currentMemoryIndex;
+        if(currentIndex == 0)
         {
-            roomText.text = "Stream";
-            return;
+            roomText.text = "Livestream";
+            targetIntegrityBarValue = 1f;
+            streamVideoPlayer.SetDirectAudioVolume(0, 1);
         }
-        streamVideoPlayer.SetDirectAudioVolume(0, 1f-screenIndex*0.25f);
+        else streamVideoPlayer.SetDirectAudioVolume(0, 0);
 
         for(int i = 0; i < MemoryEntities.Count; i++)
         {
+
             MemoryEntity memoryEntity = MemoryEntities[i];
-            if (i == MemoryEntities.Count - screenIndex)
+            if (currentIndex != 0 && i == MemoryEntities.Count - currentIndex)
             {
-                memoryEntity.InFocus = true;
-                roomText.text = "Memory of " + memoryEntity.name + " stream";
+                targetIntegrityBarValue = MemoryEntities[i].Integrity/(float)MemoryEntities[i].MaxIntegrity;
+                memoryEntity.SetInFocus(true);
+                string roomName = "";
+                switch(memoryEntity.phase)
+                {
+                    case 0:
+                        roomName = "Memory of ";
+                        break;
+                    case 1:
+                        roomName = "Corrupted memory of ";
+                        break;
+                    case 2:
+                        roomName = "Remnants of ";
+                        break;
+                }
+                roomText.text = roomName + memoryEntity.name + " stream";
             }
             else
             {
-                memoryEntity.InFocus = false;
+                memoryEntity.SetInFocus(false);
             }
+        }
+    }
+
+    private IEnumerator MoveIntegrityBar()
+    {
+        while (true)
+        {
+            integrityBar.fillAmount = Mathf.MoveTowards(integrityBar.fillAmount, targetIntegrityBarValue, Time.deltaTime);
+            yield return null;
         }
     }
 
@@ -142,12 +177,20 @@ public class GameManager : MonoBehaviour
         streamTime += 10f;
         streamTimer = 0f;
         isStreaming = true;
-        scrollbarController.SetValue(0);
+        TimelineManager.Instance.currentMemoryIndex = 0;
     }
 
     public void DayEnd()
     {
-        MemoryEntities.ForEach(entity => entity.InFocus = false);
+        if(PlayerManager.Instance.Score >= 100000)
+        {
+           StartCoroutine(EndGame(2));
+        }
+        else if(PlayerManager.Instance.Score <= 0)
+        {
+            StartCoroutine(EndGame(1));
+        }
+        MemoryEntities.ForEach(entity => entity.SetInFocus(false));
         MemoryEntities.ForEach(entity => entity.ShutUp());
         isStreaming = false;
         streamVideoPlayer.Stop();
@@ -168,8 +211,40 @@ public class GameManager : MonoBehaviour
 
         PlayerManager.Instance.Buff = 0;
         PlayerManager.Instance.Debuff = 0;
-        PlayerManager.Instance.TakeDamage(-10);
+        PlayerManager.Instance.TakeDamage(-5);
 
         OnDayEnd?.Invoke();
+
     }
+
+    public IEnumerator EndGame(int endingIndex)
+    {
+        isStreaming = false;
+        streamVideoPlayer.Stop();
+        endGameDialogueManager.gameObject.SetActive(true);
+        if(endGameSFXs[endingIndex] != null)
+        {
+            SFXManager.Instance.PlaySoundFX(endGameSFXs[endingIndex], transform);
+            yield return new WaitForSeconds(endGameSFXs[endingIndex].length);
+        }
+        
+        endGameDialogueManager.PlayDialogue(endGameDialogues[endingIndex]);
+        endScoreText.text = "You've lasted " +  currentDay + " days and got " + PlayerManager.Instance.Score + " viewers!";
+        while(endGameDialogueManager.IsTyping)
+        {
+            yield return null;
+        }
+        while(true)
+        {
+            if(InputManager.Instance.Submit.triggered || InputManager.Instance.Cancel.triggered || InputManager.Instance.Click.triggered) 
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                yield break;
+            }
+            yield return null;
+        }
+    }
+
+
+    
 }

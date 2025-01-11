@@ -6,10 +6,13 @@ public class TimelineManager : MonoBehaviour
 {
     public static TimelineManager Instance;
     [SerializeField] private GameObject memoryLayout;
-    [SerializeField] private Scrollbar timelineScrollbar;
+
+    public int currentMemoryIndex {get; set; }= 0;
     private GameObject nextMemory;
     public int MemoriesCount { get; set; } = 0;
     private float layoutWidth;
+    private float cooldownBetweenNavigation = 0.5f;
+    private float cooldownTimer = 0f;
 
     void Awake()
     {
@@ -26,7 +29,6 @@ public class TimelineManager : MonoBehaviour
     void Start()
     {
         LayoutRebuilder.ForceRebuildLayoutImmediate(memoryLayout.GetComponent<RectTransform>());
-        timelineScrollbar.GetComponent<RectTransform>().sizeDelta = new Vector2(60*(MemoriesCount+1), 60);
         layoutWidth = memoryLayout.GetComponent<RectTransform>().rect.width;
 
         MemoryEntity[] memoryEntities = FindObjectsByType<MemoryEntity>( FindObjectsSortMode.None);
@@ -34,19 +36,53 @@ public class TimelineManager : MonoBehaviour
         {
             nextMemory = AddMemoryToTimeline(memoryEntity.gameObject);
         }
-        if(MemoriesCount == 0)
-        {
-            timelineScrollbar.gameObject.SetActive(false);
-        }
+        cooldownTimer = cooldownBetweenNavigation;
     }
 
     void Update()
     {
-        memoryLayout.GetComponent<RectTransform>().anchoredPosition 
-            = new Vector2(timelineScrollbar.value * (layoutWidth - 1920) , 0f);
+        CheckNavigationInput();
+        UpdateMemoryLayoutPosition();
     }
 
+    private void CheckNavigationInput()
+    {
+        float horizontalInput = InputManager.Instance.Navigate.ReadValue<Vector2>().x;
+        if(horizontalInput != 0)
+        {
+            cooldownTimer += Time.deltaTime;
+            if(cooldownTimer < cooldownBetweenNavigation)
+            {
+                return;
+            }
+            cooldownTimer = 0f;
+            if(horizontalInput > 0)
+            {
+                currentMemoryIndex--;
+            }
+            else if(horizontalInput < 0)
+            {
+                currentMemoryIndex++;
+            }
+            if(currentMemoryIndex < 0)
+            {
+                currentMemoryIndex = 0;
+            }
+            else if(currentMemoryIndex > MemoriesCount)
+            {
+                currentMemoryIndex = MemoriesCount;
+            }
+        }
+        else
+        {
+            cooldownTimer = cooldownBetweenNavigation;
+        }
+    }
 
+    private void UpdateMemoryLayoutPosition()
+    {
+        memoryLayout.GetComponent<RectTransform>().anchoredPosition = new Vector2(0 + currentMemoryIndex*1920, 0);
+    }
 
     public GameObject AddMemoryToTimeline(GameObject newMemory)
     {
@@ -54,10 +90,8 @@ public class TimelineManager : MonoBehaviour
         GameObject memory = Instantiate(newMemory, memoryLayout.transform);
         memory.transform.SetSiblingIndex(1);
 
-        timelineScrollbar.gameObject.SetActive(true);
         LayoutRebuilder.ForceRebuildLayoutImmediate(memoryLayout.GetComponent<RectTransform>());
         layoutWidth = memoryLayout.GetComponent<RectTransform>().rect.width;
-        timelineScrollbar.GetComponent<RectTransform>().sizeDelta = new Vector2(60*(MemoriesCount+1), 60);
         return memory;
     }
     

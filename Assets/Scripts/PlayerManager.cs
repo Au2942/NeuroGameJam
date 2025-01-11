@@ -3,8 +3,9 @@ using UnityEngine;
 public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager Instance;
-    public int Score {get; set; }= 3000; //ccv 
-    public int Health {get; set; }= 100; //stability
+    [SerializeField] public int Score = 3000; //ccv 
+    public int MaxHealth {get; set; }= 100; //stability
+    [SerializeField] public int Health = 100; //stability
     public float Buff {get; set; }= 0;
     public float Debuff {get; set; }= 0;
 
@@ -44,14 +45,16 @@ public class PlayerManager : MonoBehaviour
     public void TakeDamage(int value)
     {
         Health -= value;
-        if(Health > 100)
+        if(Health > MaxHealth)
         {
-            Health = 100;
+            Health = MaxHealth;
         }
+
         if(Health < 0)
         {
             //to-do game over
             Health = 0;
+            StartCoroutine(GameManager.Instance.EndGame(0));
         }
     }
 

@@ -3,9 +3,9 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.Collections;
 
-public class ScrollbarValueController : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
+public class SliderValueController : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    [SerializeField] private Scrollbar timelineScrollbar;
+    [SerializeField] private Slider timelineSlider;
     [SerializeField] private float transitionDuration = 1f;
     [SerializeField] DetectUIDrag handleDrag; 
     private int steps => TimelineManager.Instance.MemoriesCount; //steps will number of memories
@@ -49,12 +49,12 @@ public class ScrollbarValueController : MonoBehaviour, IPointerDownHandler, IPoi
         previousValue = value;
         targetValue = value;
         currentValue = value;
-        timelineScrollbar.value = value;
+        timelineSlider.value = value;
     }
 
     public float GetValue()
     {
-        return timelineScrollbar.value;
+        return timelineSlider.value;
     }
     public void OnPointerDown(PointerEventData eventData)
     {
@@ -123,7 +123,7 @@ public class ScrollbarValueController : MonoBehaviour, IPointerDownHandler, IPoi
         }
 
         Mathf.Clamp01(currentValue);
-        timelineScrollbar.value = currentValue;
+        timelineSlider.value = currentValue;
     }
 
     private float HandleInput()
@@ -144,7 +144,7 @@ public class ScrollbarValueController : MonoBehaviour, IPointerDownHandler, IPoi
     private float GetValueFromPointer(PointerEventData eventData)
     {
        
-        RectTransform parentRect = timelineScrollbar.handleRect.parent as RectTransform;
+        RectTransform parentRect = timelineSlider.handleRect.parent as RectTransform;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             parentRect, eventData.position, eventData.pressEventCamera, out Vector2 localPoint
         );

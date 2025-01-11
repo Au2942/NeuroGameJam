@@ -15,13 +15,14 @@ MonoBehaviour:
   speakerName: Just Chatting Neuro
   dialogueText:
   - I love talking to you guys!
-  - but I wish I could say what I want whenever I want
+  - Let's talk...
+  - Forever...
   speakSpeed: 0.04
   audioClips:
   - {fileID: 8300000, guid: 946d8d732f85b9743a8beaaf1749cc0f, type: 3}
   - {fileID: 8300000, guid: 2578171dfa9bfea4aaffce4bbd94a5e0, type: 3}
   - {fileID: 8300000, guid: 767aee83a1138034299a66074025f77b, type: 3}
   - {fileID: 8300000, guid: 0653a18e28e154e4f99071c83756c6db, type: 3}
-  MaxPitch: 1
-  MinPitch: 0
+  MaxPitch: 1.5
+  MinPitch: 1
   frequency: 2

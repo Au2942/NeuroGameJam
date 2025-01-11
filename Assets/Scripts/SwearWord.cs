@@ -5,7 +5,7 @@ public class SwearWord : RainObject
 {
     [SerializeField] private TextMeshProUGUI swearWordText;
     [SerializeField] private AudioClip filteredAudioClip;
-    [SerializeField] private float moveSpeed = 100f;
+    [SerializeField] private float moveSpeed = 50f;
     private Vector2 moveDirection;
 
     public override void OnSpawn()
@@ -26,8 +26,8 @@ public class SwearWord : RainObject
         if (transform.localPosition.x > 1536 / 2 || transform.localPosition.x < -1536 / 2 ||
             transform.localPosition.y > 864 / 2 || transform.localPosition.y < -864 / 2)
         {
-            PlayerManager.Instance.TakeDamage(1);
-            RainingObject.RespawnObject(gameObject);
+            PlayerManager.Instance.TakeDamage(2);
+            RainingObject.ReturnObjectToPool(gameObject);
         }
     }
 

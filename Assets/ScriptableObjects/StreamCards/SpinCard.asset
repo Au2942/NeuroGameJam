@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: SpinCard
   m_EditorClassIdentifier: 
   stream: {fileID: 11400000, guid: 5679ec5619582e8448ee9d824e5430ea, type: 2}
-  icon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  icon: {fileID: -8419908200904426196, guid: 71ea08dcc37fc9c46a4244f25344aa64, type: 3}
   streamDesc: Oh round and round we go...

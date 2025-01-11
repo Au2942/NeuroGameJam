@@ -11,18 +11,20 @@ public abstract class MemoryEntity : MonoBehaviour
     [SerializeField] public float decayTimer = 3f;
     [SerializeField] private float timeToShutup = 5f;
     [SerializeField] private float attemptTalkCD = 2f;
+    [SerializeField] private int talkPerDamage = 3;
+    [SerializeField] private float talkIntegrityRecoverCD = 20f;
     [SerializeField] protected GameObject[] appearancePhases;
-    [SerializeField] private int talkPerRecovery = 3; 
 
     public int phase {get; private set;} = 0;
     private float decayTimerElapsed = 0f;
-    private float elapsedTimeSinceInFocus = 0f;
+    private float elapsedTimeSinceLeftFocus = 0f;
     private float attemptTalkTimer = 0f;
-    private float talkCount = 0;
+    private int talkCounter = 0;
+    private float talkIntegrityRecoverTimer = 100f;
 
     // public int Influence {get; set;}
     // public int MaxInfluence {get; set;}
-    [SerializeField] public bool InFocus = false;
+    [SerializeField] private bool inFocus = false;
 
     protected abstract void PhaseOneBehaviour();
     protected abstract void PhaseTwoBehaviour();
@@ -36,6 +38,10 @@ public abstract class MemoryEntity : MonoBehaviour
     {
         GameManager.Instance.OnDayEnd += OnDayEnd;
         GameManager.Instance.OnDayStart += OnDayStart;
+
+    }
+    protected virtual void Start()
+    {
 
     }
 
@@ -52,10 +58,17 @@ public abstract class MemoryEntity : MonoBehaviour
         if(!GameManager.Instance.isStreaming) return;
         //Interactable = IsPlayerInRange();
 
-        if(InFocus)
+        talkIntegrityRecoverTimer += Time.deltaTime;   
+
+        if(inFocus)
         {
             if(InputManager.Instance.Submit.triggered)
             {
+                if(talkIntegrityRecoverTimer >= talkIntegrityRecoverCD)
+                {
+                    AddIntegrity(3);
+                    talkIntegrityRecoverTimer = 0f;
+                }
                 Interact();
             }
             //random chance to talk
@@ -67,7 +80,6 @@ public abstract class MemoryEntity : MonoBehaviour
                     if(Random.Range(0, 100) < 25)
                     {
                         Speak();
-                        AddIntegrity(1); //a lil bonus
                     }
                     attemptTalkTimer = 0f;
                 }
@@ -75,16 +87,27 @@ public abstract class MemoryEntity : MonoBehaviour
         }
         else if (dialogueManager.IsDialoguePlaying)
         {
-            elapsedTimeSinceInFocus += Time.deltaTime;
-            if (elapsedTimeSinceInFocus >= timeToShutup)
+            elapsedTimeSinceLeftFocus += Time.deltaTime;
+            if (elapsedTimeSinceLeftFocus >= timeToShutup)
             {
                 ShutUp();
-                elapsedTimeSinceInFocus = 0f;
+                elapsedTimeSinceLeftFocus = 0f;
             }
         }
         Behave();
         Decay();
         UpdatePhase();
+    }
+
+    public void SetInFocus(bool focus)
+    {
+        inFocus = focus;
+        dialogueManager.PlaySound = focus;
+        //Debug.Log(name + " is In Focus: " + inFocus);
+        if(inFocus)
+        {
+            elapsedTimeSinceLeftFocus = 0f;
+        }
     }
 
     public void AddIntegrity(int amount)
@@ -159,11 +182,11 @@ public abstract class MemoryEntity : MonoBehaviour
 
     protected virtual void Decay()
     {
-        if(InFocus) decayTimerElapsed += Time.deltaTime/2;
+        if(inFocus) decayTimerElapsed += Time.deltaTime/4;
         else decayTimerElapsed += Time.deltaTime;
         if(decayTimerElapsed >= decayTimer)
         {
-            Integrity--;
+            AddIntegrity(-1);
             decayTimerElapsed = 0f;
         }
 
@@ -204,12 +227,6 @@ public abstract class MemoryEntity : MonoBehaviour
     public void Converse()
     {
         Talk();
-        talkCount++;
-        if(talkCount >= talkPerRecovery)
-        {
-            talkCount = 0;
-            AddIntegrity(1);
-        }
     }
 
     public void Speak()
@@ -245,12 +262,20 @@ public abstract class MemoryEntity : MonoBehaviour
         }
         int randomIndex = Random.Range(0, dialogues.Length);
         dialogueManager.PlayDialogue(dialogues[randomIndex], playerInitiated);
+        
+
+
+        talkCounter++;
+        if(talkCounter >= talkPerDamage)
+        {
+            PlayerManager.Instance.TakeDamage(1);
+            talkCounter = 0;
+        }
     }
 
 
     public void ShutUp()
     {
-        talkCount = 0;
         dialogueManager.EndDialogue();
     }
 }

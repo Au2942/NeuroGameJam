@@ -54,9 +54,17 @@ public class DialogueManager : MonoBehaviour
 
     private void StartDialogue()
     {
+        if(PlaySound)
+        {
+            audioSource = SFXManager.Instance.GetAudioSource();
+            audioSource.gameObject.transform.position = transform.position;
+        }
         IsDialoguePlaying = true;
         dialoguePanel.SetActive(true);
-        speakerNameText.text = currentDialogueInfo.speakerName;
+        if(speakerNameText != null)
+        {
+            speakerNameText.text = currentDialogueInfo.speakerName;
+        }
         foreach(string dialogue in currentDialogueInfo.dialogueText)
         {
             dialogueTextQueue.Enqueue(dialogue);
@@ -97,10 +105,12 @@ public class DialogueManager : MonoBehaviour
 
     }
 
-
-
     public void EndDialogue()
     {
+        if(stayOnScreen)
+        {
+            return;
+        }
         if(typingCoroutine != null)
         {
             StopCoroutine(typingCoroutine);
@@ -109,8 +119,12 @@ public class DialogueManager : MonoBehaviour
         {
             StopCoroutine(waitAndPlayNextDialogueCoroutine);
         }
+        if(audioSource != null)
+        {
+            SFXManager.Instance.ReturnAudioSource(audioSource);
+        }
         IsDialoguePlaying = false;
-        speakerNameText.text = "";
+        if(speakerNameText != null) speakerNameText.text = "";
         dialogueText.text = "";
         dialoguePanel.SetActive(false);
     }
@@ -150,7 +164,6 @@ public class DialogueManager : MonoBehaviour
 
     private void PlayDialogueTypingSound(int currentCharacterIndex, char currentCharacter)
     {
-        AudioSource audioSource = SFXManager.Instance.SoundFXObjectPrefab;
         AudioClip[] audioClips = currentDialogueInfo.audioClips;
         float minPitch = currentDialogueInfo.MinPitch;
         float maxPitch = currentDialogueInfo.MaxPitch;
@@ -178,7 +191,7 @@ public class DialogueManager : MonoBehaviour
                 audioSource.pitch = minPitch;
             }
 
-            SFXManager.Instance.PlaySoundFX(currentDialogueInfo.audioClips[audioIndex], transform);
+            audioSource.PlayOneShot(audioClips[audioIndex]);
         }
     }
 }

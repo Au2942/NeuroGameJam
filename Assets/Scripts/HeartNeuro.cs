@@ -40,7 +40,7 @@ public class HeartNeuro : MemoryEntity
             }
             else
             {
-                PlayerManager.Instance.TakeDamage(1);
+                PlayerManager.Instance.TakeDamage(2);
                 damageTimer = 0f;
             }
         }
@@ -83,7 +83,7 @@ public class HeartNeuro : MemoryEntity
             }
             else
             {
-                PlayerManager.Instance.TakeDamage(1);
+                PlayerManager.Instance.TakeDamage(4);
                 damageTimer = 0f;
             }
         }

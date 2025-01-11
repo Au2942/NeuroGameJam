@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speakerName: Heart Neuro
   dialogueText:
-  - Heart
+  - Heart Heart
   speakSpeed: 0.04
   audioClips:
   - {fileID: 8300000, guid: 3a2533218763f464a987dfc50f0c025e, type: 3}
-  MaxPitch: 1
+  MaxPitch: 1.5
   MinPitch: 1
   frequency: 5

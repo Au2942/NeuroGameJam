@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20d20916443097142bc00e35de18b753, type: 3}
   m_Name: HeartStream
   m_EditorClassIdentifier: 
-  streamName: Heart Spam
+  streamName: HeartHeartHeart
   clip: {fileID: 32900000, guid: a963891a810e4f542a16ba37cfcd32a1, type: 3}
   memory: {fileID: 2442859898082900254, guid: 7a9c89a5e80049f4fa2c9a4194129a0e, type: 3}

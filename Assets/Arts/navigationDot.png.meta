@@ -1,10 +1,16 @@
 fileFormatVersion: 2
-guid: 1bfdee32f377dcd45b2e248fb8b699d5
+guid: 6266bcf47a3f14945a954796dadff127
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4699187057482006535
-    second: NeuroHeart2_0
+      213: -69269462253790755
+    second: navigationDot_0
+  - first:
+      213: -5577345610925457855
+    second: navigationDot_1
+  - first:
+      213: 5051642059730993792
+    second: navigationDot_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -40,18 +46,18 @@ TextureImporter:
     filterMode: 1
     aniso: 1
     mipBias: 0
-    wrapU: 1
-    wrapV: 1
-    wrapW: 1
+    wrapU: 0
+    wrapV: 0
+    wrapW: 0
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 512
+  spritePixelsToUnits: 128
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -100,23 +106,67 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: NeuroHeart2_0
+      name: navigationDot_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1024
-        height: 1024
+        width: 129
+        height: 128
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 700045e3bbdd63140800000000000000
-      internalID: 4699187057482006535
+      spriteID: dd994948ac7e90ff0800000000000000
+      internalID: -69269462253790755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: navigationDot_1
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 31
+        width: 66
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 14e343787b94992b0800000000000000
+      internalID: -5577345610925457855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: navigationDot_2
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 47
+        width: 34
+        height: 34
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 08240b640b90b1640800000000000000
+      internalID: 5051642059730993792
       vertices: []
       indices: 
       edges: []
@@ -125,7 +175,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: bb0cec0790b39cc44bc2abd85bbb408f
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +185,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      NeuroHeart2_0: 4699187057482006535
+      navigationDot_0: -69269462253790755
+      navigationDot_1: -5577345610925457855
+      navigationDot_2: 5051642059730993792
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

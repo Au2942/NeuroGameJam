@@ -30,5 +30,5 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 767aee83a1138034299a66074025f77b, type: 3}
   - {fileID: 8300000, guid: 0653a18e28e154e4f99071c83756c6db, type: 3}
   MaxPitch: 1
-  MinPitch: -1
+  MinPitch: 1
   frequency: 2

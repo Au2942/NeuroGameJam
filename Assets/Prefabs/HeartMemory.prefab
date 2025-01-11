@@ -11,7 +11,7 @@ PrefabInstance:
     - target: {fileID: 488920047198720586, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 4699187057482006535, guid: 1bfdee32f377dcd45b2e248fb8b699d5, type: 3}
+      objectReference: {fileID: -3213085578174235515, guid: a8e18cfdc538f2a48b6da81085cdd064, type: 3}
     - target: {fileID: 853163948173066129, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -119,7 +119,7 @@ PrefabInstance:
     - target: {fileID: 3463067011576850379, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -5412115807827340835, guid: e0d96a91cf21b1944af1b842aa2af1dc, type: 3}
+      objectReference: {fileID: -5472523482413305210, guid: c775f2151edaac748a78e2e6a6c70d70, type: 3}
     - target: {fileID: 5594260103637325787, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       propertyPath: m_Color.b
       value: 0.6750855
@@ -223,6 +223,8 @@ MonoBehaviour:
   decayTimer: 1
   timeToShutup: 5
   attemptTalkCD: 5
+  talkPerDamage: 3
+  talkIntegrityRecoverCD: 10
   appearancePhases:
   - {fileID: 9166580407804289941}
   - {fileID: 3074293216993141892}
@@ -249,7 +251,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab: {fileID: 6718416205080808026, guid: e4cc0818decd7a949bd71ca85be5dea8, type: 3}
   spawnTimer: 1
-  poolSize: 20
+  poolSize: 10
   reuseObjectsInUse: 1
 --- !u!114 &2927781136705775014
 MonoBehaviour:
@@ -265,7 +267,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   indicator: {fileID: 3967232144985073581}
   entity: {fileID: 4630224699381702892}
-  bar: {fileID: 8733832002419866990}
 --- !u!1 &3074293216993141892 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5766481181502412018, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
@@ -291,17 +292,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 584513c97eb7815409c5bf06e15191d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &8733832002419866990 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 259080810349808920, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
-  m_PrefabInstance: {fileID: 8839648463347642486}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &9166580407804289941 stripped

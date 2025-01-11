@@ -3,6 +3,7 @@ using UnityEngine;
 public class BadNote : RainObject
 {
     [SerializeField] private float moveSpeed = 300f;
+    [SerializeField] private float lifeTime = 15f;
     Vector2 moveDirection;
 
     public override void OnSpawn()
@@ -14,6 +15,12 @@ public class BadNote : RainObject
     void Update()
     {
         transform.localPosition += (Vector3)(moveDirection * Time.deltaTime * moveSpeed);
+        lifeTime -= Time.deltaTime;
+        if (lifeTime <= 0)
+        {
+            PlayerManager.Instance.TakeDamage(3);
+            RainingObject.ReturnObjectToPool(gameObject);
+        }
         ReachEdgeCheck();
     }
 

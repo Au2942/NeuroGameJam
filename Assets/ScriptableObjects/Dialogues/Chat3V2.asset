@@ -27,6 +27,6 @@ MonoBehaviour:
   speakSpeed: 0.04
   audioClips:
   - {fileID: 8300000, guid: b57639be9a6e9cf4aa9ef2e0eef369ad, type: 3}
-  MaxPitch: 1
+  MaxPitch: 1.5
   MinPitch: 1
   frequency: 8

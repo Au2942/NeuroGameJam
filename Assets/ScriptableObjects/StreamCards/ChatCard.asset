@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: ChatCard
   m_EditorClassIdentifier: 
   stream: {fileID: 11400000, guid: c3a646e50b6ae0f42bc3233e9fb75bee, type: 2}
-  icon: {fileID: 2747690628134850419, guid: 16037dbd798344f57a526d53d48f5ead, type: 3}
+  icon: {fileID: -8159272815874631287, guid: de47a88b4df04fa4cb31a8286dd30bef, type: 3}
   streamDesc: Chill with chats
