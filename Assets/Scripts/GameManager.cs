@@ -21,12 +21,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] private DialogueManager endGameDialogueManager;
     [SerializeField] private DialogueInfoSO[] endGameDialogues;
     [SerializeField] private TextMeshProUGUI endScoreText;
+    [SerializeField] public float streamTime = 10f;
+    [SerializeField] public float streamTimeIncrease = 10f;
 
     [SerializeField] private AudioClip[] endGameSFXs;
 
     public StreamSO CurrentStream { get; private set; }
     public int currentDay { get; private set; } = 0;
-    public float streamTime {get; set;} = 10f;
     public bool isStreaming { get; set; } = false;
 
     private float nextScoreTime = 0f;
@@ -55,6 +56,8 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         streamVideoPlayer.prepareCompleted += OnPrepareCompleted;
+        TimelineManager.Instance.OnChangeMemoryIndex += SetMemoryIndex;
+        TimelineManager.Instance.SetMemoryIndex(0);
         MemoryEntities.AddRange(FindObjectsByType<MemoryEntity>(FindObjectsSortMode.None));
         StartCoroutine(MoveIntegrityBar());
         DayStart();
@@ -73,6 +76,7 @@ public class GameManager : MonoBehaviour
                 PlayerManager.Instance.Buff += 0.1f;
             }
         }
+        TimelineManager.Instance.SetMemoryIndex(0);
         OnDayStart?.Invoke();
     }
 
@@ -80,9 +84,10 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        CheckCurrentRoom();
+        
         if (isStreaming)
         { 
+            UpdateIntegrityBar();
             streamTimer += Time.deltaTime;
             if (streamTimer >= streamTime)
             {
@@ -108,10 +113,9 @@ public class GameManager : MonoBehaviour
         CurrentStream = newStream;
     }
 
-    private void CheckCurrentRoom()
+    private void SetMemoryIndex(int index)
     {
-        int currentIndex = TimelineManager.Instance.currentMemoryIndex;
-        if(currentIndex == 0)
+        if(index == 0)
         {
             roomText.text = "Livestream";
             targetIntegrityBarValue = 1f;
@@ -123,9 +127,8 @@ public class GameManager : MonoBehaviour
         {
 
             MemoryEntity memoryEntity = MemoryEntities[i];
-            if (currentIndex != 0 && i == MemoryEntities.Count - currentIndex)
+            if (index != 0 && i == MemoryEntities.Count - index)
             {
-                targetIntegrityBarValue = MemoryEntities[i].Integrity/(float)MemoryEntities[i].MaxIntegrity;
                 memoryEntity.SetInFocus(true);
                 string roomName = "";
                 switch(memoryEntity.phase)
@@ -147,6 +150,13 @@ public class GameManager : MonoBehaviour
                 memoryEntity.SetInFocus(false);
             }
         }
+    }
+
+    private void UpdateIntegrityBar()
+    {
+        int index = TimelineManager.Instance.currentMemoryIndex;
+        if(index == 0) return;
+        targetIntegrityBarValue = MemoryEntities[MemoryEntities.Count-index].Integrity/(float)MemoryEntities[^index].MaxIntegrity;
     }
 
     private IEnumerator MoveIntegrityBar()
@@ -174,7 +184,7 @@ public class GameManager : MonoBehaviour
 
     public void StartStream()
     {
-        streamTime += 10f;
+        streamTime += streamTimeIncrease;
         streamTimer = 0f;
         isStreaming = true;
         TimelineManager.Instance.currentMemoryIndex = 0;

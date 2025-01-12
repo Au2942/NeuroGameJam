@@ -38,7 +38,6 @@ public abstract class MemoryEntity : MonoBehaviour
     {
         GameManager.Instance.OnDayEnd += OnDayEnd;
         GameManager.Instance.OnDayStart += OnDayStart;
-
     }
     protected virtual void Start()
     {

@@ -9,11 +9,12 @@ public class TimelineManager : MonoBehaviour
     public static TimelineManager Instance;
     [SerializeField] private GameObject memoryLayout;
 
-    public int currentMemoryIndex {get; set; }= 0;
+    public int currentMemoryIndex {get; set; } = 0;
     public int MemoriesCount { get; set; } = 0;
 
     public Dictionary<string, int> MemoryEntityTypesCount {get; set;} = new Dictionary<string, int>();
 
+    public event Action<int> OnChangeMemoryIndex;
     public event Action OnMemoryAdded;
 
     private float layoutWidth;
@@ -51,6 +52,7 @@ public class TimelineManager : MonoBehaviour
         if(horizontalInput != 0)
         {
             cooldownTimer += Time.deltaTime;
+            int tempIndex = currentMemoryIndex;
             if(cooldownTimer < cooldownBetweenNavigation)
             {
                 return;
@@ -58,25 +60,37 @@ public class TimelineManager : MonoBehaviour
             cooldownTimer = 0f;
             if(horizontalInput > 0)
             {
-                currentMemoryIndex++;
+                tempIndex++;
             }
             else if(horizontalInput < 0)
             {
-                currentMemoryIndex--;
+                tempIndex--;
             }
-            if(currentMemoryIndex < 0)
+
+            if(tempIndex < 0)
             {
                 currentMemoryIndex = 0;
             }
-            else if(currentMemoryIndex > MemoriesCount)
+            else if(tempIndex > MemoriesCount)
             {
                 currentMemoryIndex = MemoriesCount;
+            }
+            else 
+            {
+                currentMemoryIndex = tempIndex;
+                OnChangeMemoryIndex?.Invoke(currentMemoryIndex);
             }
         }
         else
         {
             cooldownTimer = cooldownBetweenNavigation;
         }
+    }
+
+    public void SetMemoryIndex(int index)
+    {
+        currentMemoryIndex = index;
+        OnChangeMemoryIndex?.Invoke(currentMemoryIndex);
     }
 
     private void UpdateMemoryLayoutPosition()
