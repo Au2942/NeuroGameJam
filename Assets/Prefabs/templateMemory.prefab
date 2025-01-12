@@ -1,80 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &403777095623447523
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5333794132335929492}
-  - component: {fileID: 2535575390336172012}
-  - component: {fileID: 5430569687115654444}
-  m_Layer: 7
-  m_Name: Appearance1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &5333794132335929492
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 403777095623447523}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1146215389744680876}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.1}
-  m_AnchorMax: {x: 0.5, y: 0.1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 187.5, y: 337.5}
-  m_Pivot: {x: 0.5, y: 0}
---- !u!222 &2535575390336172012
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 403777095623447523}
-  m_CullTransparentMesh: 1
---- !u!114 &5430569687115654444
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 403777095623447523}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 4195340440243941798, guid: b2d3f97cc8fd2c342bf5381086a81498, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 1
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &418961604991872138
 GameObject:
   m_ObjectHideFlags: 0
@@ -227,7 +152,7 @@ GameObject:
   - component: {fileID: 4108578008803954872}
   - component: {fileID: 3463067011576850379}
   m_Layer: 7
-  m_Name: Appearance2
+  m_Name: DefaultAppearance
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -459,7 +384,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5333794132335929492}
   - {fileID: 3965885866100376687}
   - {fileID: 397777610304189136}
   - {fileID: 5929771759949055298}
@@ -521,22 +445,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogueManager: {fileID: 3912631305385984544}
-  pOneDialogueTextSOs:
-  - {fileID: 11400000, guid: 496e24422e6605c4599c05eb9d785503, type: 2}
-  pTwoDialogueTextSOs: []
-  pThreeDialogueTextSOs: []
-  Integrity: 100
-  MaxIntegrity: 100
-  decayTimer: 1
-  timeToShutup: 5
-  attemptTalkCD: 2
-  talkPerDamage: 3
-  talkIntegrityRecoverCD: 20
-  appearancePhases:
-  - {fileID: 403777095623447523}
+  appearances:
   - {fileID: 5766481181502412018}
   - {fileID: 8422619965302074261}
+  Integrity: 100
+  MaxIntegrity: 100
+  recoverIntegrityLimit: 50
+  talkRollCD: 2
+  talkChance: 0.25
+  glitchRollCD: 1
+  minGlitchRoll: 0.3
+  maxGlitchRoll: 0.7
+  decayCD: 3
   inFocus: 0
+  timeToShutup: 5
 --- !u!114 &3912631305385984544
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -580,7 +502,7 @@ GameObject:
   - component: {fileID: 7243935695908426724}
   - component: {fileID: 488920047198720586}
   m_Layer: 7
-  m_Name: Appearance3
+  m_Name: GlitchedAppearance
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

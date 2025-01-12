@@ -183,12 +183,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 0
-    m_Right: 0
+    m_Left: 45
+    m_Right: 45
     m_Top: 0
     m_Bottom: 0
   m_ChildAlignment: 3
-  m_Spacing: 0
+  m_Spacing: 45
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
@@ -231,7 +231,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -25}
-  m_SizeDelta: {x: 1920, y: 50}
+  m_SizeDelta: {x: 1440, y: 50}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &125203627
 MonoBehaviour:
@@ -689,8 +689,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 287264334}
   - {fileID: 277287456}
+  - {fileID: 287264334}
   - {fileID: 224112048}
   - {fileID: 1050111674}
   - {fileID: 2079334404}
@@ -781,9 +781,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc2557a7e1f8c6e40b17546d0735f0c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scrollRect: {fileID: 277287457}
   livefeedCamera: {fileID: 702133906}
   contentUI: {fileID: 36319370}
   livefeedPrefab: {fileID: 922668819263488583, guid: 68083acbc3787e247a9e0248f14a4232, type: 3}
+  selectBorderPrefab: {fileID: 2074469463887134082, guid: cddb4599f08eaaa4d8a835bbf5ed3562, type: 3}
   refreshRate: 0.1
 --- !u!1 &287264333
 GameObject:
@@ -2314,8 +2316,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 240, y: -135}
-  m_SizeDelta: {x: 1920, y: 1080}
+  m_AnchoredPosition: {x: 240, y: 0}
+  m_SizeDelta: {x: 1920, y: 810}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1349392258
 MonoBehaviour:
@@ -3103,6 +3105,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: aa52eb4990fda674a93743206e904bb2, type: 2}
   - {fileID: 11400000, guid: 136eaa7eb3be69344b677f799ca74155, type: 2}
   endScoreText: {fileID: 1587223856}
+  streamTime: 10
+  streamTimeIncrease: 10
   endGameSFXs:
   - {fileID: 8300000, guid: ad6213ae84bf2ae42b2c4043584804a3, type: 3}
   - {fileID: 8300000, guid: b57639be9a6e9cf4aa9ef2e0eef369ad, type: 3}
@@ -3536,7 +3540,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: -50, y: 25}
-  m_SizeDelta: {x: 1980, y: 50}
+  m_SizeDelta: {x: 1390, y: 50}
   m_Pivot: {x: 1, y: 0}
 --- !u!114 &2139471173
 MonoBehaviour:
@@ -3643,7 +3647,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 619394802}
+  - {fileID: 1919729813}
   - {fileID: 272481058}
   - {fileID: 1282679099}
-  - {fileID: 1919729813}
   - {fileID: 759369918}

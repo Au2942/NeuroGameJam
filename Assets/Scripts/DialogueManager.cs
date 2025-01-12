@@ -122,6 +122,7 @@ public class DialogueManager : MonoBehaviour
         if(audioSource != null)
         {
             SFXManager.Instance.ReturnAudioSource(audioSource);
+            audioSource = null;
         }
         IsDialoguePlaying = false;
         if(speakerNameText != null) speakerNameText.text = "";
@@ -170,7 +171,7 @@ public class DialogueManager : MonoBehaviour
         int frequency = currentDialogueInfo.frequency;
 
 
-        if(currentCharacterIndex % frequency == 0)
+        if(audioSource != null && currentCharacterIndex % frequency == 0)
         {
             audioSource.Stop();
 

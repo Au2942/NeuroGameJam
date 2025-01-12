@@ -150,33 +150,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogueManager: {fileID: 5539647445395518038}
-  pOneDialogueTextSOs:
-  - {fileID: 11400000, guid: 5661f8ab815c049439f214aa5f35016c, type: 2}
-  - {fileID: 11400000, guid: e0fa14e85a292d84aa014f65a71b3fc6, type: 2}
-  - {fileID: 11400000, guid: 5c422bf63f938f94cb4632f5fc2f5672, type: 2}
-  pTwoDialogueTextSOs:
-  - {fileID: 11400000, guid: cdf56ef6358a43248b2fb16443945da2, type: 2}
-  pThreeDialogueTextSOs:
-  - {fileID: 11400000, guid: 544af4d1bb9aca444a8c350241c07e1f, type: 2}
-  Integrity: 100
-  MaxIntegrity: 100
-  decayTimer: 1
-  timeToShutup: 5
-  attemptTalkCD: 5
-  talkPerDamage: 3
-  talkIntegrityRecoverCD: 10
-  appearancePhases:
-  - {fileID: 9166580407804289941}
+  dialogueSets:
+  - dialogues:
+    - {fileID: 11400000, guid: 5661f8ab815c049439f214aa5f35016c, type: 2}
+    - {fileID: 11400000, guid: e0fa14e85a292d84aa014f65a71b3fc6, type: 2}
+    - {fileID: 11400000, guid: 5c422bf63f938f94cb4632f5fc2f5672, type: 2}
+  - dialogues:
+    - {fileID: 11400000, guid: cdf56ef6358a43248b2fb16443945da2, type: 2}
+    - {fileID: 11400000, guid: 544af4d1bb9aca444a8c350241c07e1f, type: 2}
+  appearances:
   - {fileID: 3074293216993141892}
   - {fileID: 1031206987449801699}
+  Integrity: 100
+  MaxIntegrity: 100
+  recoverIntegrityLimit: 50
+  talkRollCD: 2
+  talkChance: 0.25
+  glitchRollCD: 10
+  minGlitchRoll: 0.3
+  maxGlitchRoll: 0.7
+  decayCD: 3
   inFocus: 0
-  rainingObject: {fileID: 515110213736942597}
+  timeToShutup: 5
+  heartSpawner: {fileID: 515110213736942597}
   maxX: 600
   minX: -600
   maxY: 300
   minY: -300
-  maxCooldown: 60
-  minCooldown: 20
 --- !u!114 &515110213736942597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -234,8 +234,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 584513c97eb7815409c5bf06e15191d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &9166580407804289941 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 403777095623447523, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
-  m_PrefabInstance: {fileID: 8839648463347642486}
-  m_PrefabAsset: {fileID: 0}

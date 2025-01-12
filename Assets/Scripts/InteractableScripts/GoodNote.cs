@@ -1,11 +1,16 @@
 using UnityEngine;
 
-public class BadNote : RainObject
+public class GoodNote : Interactable
 {
     [SerializeField] private float moveSpeed = 300f;
     [SerializeField] private float lifeTime = 15f;
     Vector2 moveDirection;
 
+    public override void ReturnToPool()
+    {
+        base.ReturnToPool();
+        PlayerManager.Instance.TakeDamage(-3);
+    }
     public override void OnSpawn()
     {
         base.OnSpawn();
@@ -18,8 +23,7 @@ public class BadNote : RainObject
         lifeTime -= Time.deltaTime;
         if (lifeTime <= 0)
         {
-            PlayerManager.Instance.TakeDamage(3);
-            RainingObject.ReturnObjectToPool(gameObject);
+            InteractableSpawner.ReturnObjectToPool(gameObject);
         }
         ReachEdgeCheck();
     }

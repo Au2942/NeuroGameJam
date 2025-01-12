@@ -71,7 +71,7 @@ public class GameManager : MonoBehaviour
         streamSelector.OpenUI();
         foreach(MemoryEntity entity in MemoryEntities)
         {
-            if(entity.phase == 0)
+            if(entity.Integrity > 50)
             {
                 PlayerManager.Instance.Buff += 0.1f;
             }
@@ -131,17 +131,13 @@ public class GameManager : MonoBehaviour
             {
                 memoryEntity.SetInFocus(true);
                 string roomName = "";
-                switch(memoryEntity.phase)
+                if(!memoryEntity.glitched)
                 {
-                    case 0:
-                        roomName = "Memory of ";
-                        break;
-                    case 1:
-                        roomName = "Corrupted memory of ";
-                        break;
-                    case 2:
-                        roomName = "Remnants of ";
-                        break;
+                    roomName = "Memory of ";
+                }
+                else
+                {   
+                    roomName = "Corrupted Memory of ";
                 }
                 roomText.text = roomName + memoryEntity.name + " stream";
             }

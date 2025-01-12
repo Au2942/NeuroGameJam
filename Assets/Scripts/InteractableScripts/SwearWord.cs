@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-public class SwearWord : RainObject
+public class SwearWord : Interactable
 {
     [SerializeField] private TextMeshProUGUI swearWordText;
     [SerializeField] private AudioClip filteredAudioClip;
@@ -27,7 +27,7 @@ public class SwearWord : RainObject
             transform.localPosition.y > 864 / 2 || transform.localPosition.y < -864 / 2)
         {
             PlayerManager.Instance.TakeDamage(2);
-            RainingObject.ReturnObjectToPool(gameObject);
+            InteractableSpawner.ReturnObjectToPool(gameObject);
         }
     }
 

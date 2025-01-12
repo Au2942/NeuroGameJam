@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 
-public class RainingObject : MonoBehaviour
+public class InteractableSpawner : MonoBehaviour
 {
-    [SerializeField] private RainObject prefab;
+    [SerializeField] private Interactable prefab;
     [SerializeField] public float spawnTimer = 0.5f;
     [SerializeField] private int poolSize = 3;
     [SerializeField] private bool reuseObjectsInUse = false;
@@ -12,7 +12,7 @@ public class RainingObject : MonoBehaviour
     public bool isActive { get; private set; } = false;
 
     private List<GameObject> objectPool = new List<GameObject>();
-    private List<GameObject> objectInUse = new List<GameObject>();
+    public List<GameObject> objectInUse {get; private set;} = new List<GameObject>();
 
     private Coroutine spawnCoroutine;
 
@@ -27,7 +27,7 @@ public class RainingObject : MonoBehaviour
         for (int i = 0; i < newObj; i++)
         {
             GameObject obj = Instantiate(prefab.gameObject, transform);
-            obj.GetComponent<RainObject>().RainingObject = this;
+            obj.GetComponent<Interactable>().InteractableSpawner = this;
             obj.SetActive(false);
             objectPool.Add(obj);
         }
@@ -67,13 +67,13 @@ public class RainingObject : MonoBehaviour
         }
     }
 
-    public void StartRainingObjects(float minX = 0, float maxX = 0, float minY = 0, float maxY = 0)
+    public void StartSpawningInteractables(float minX = 0, float maxX = 0, float minY = 0, float maxY = 0)
     {
         isActive = true;
         spawnCoroutine = StartCoroutine(SpawnObjectsContinuously( minX, maxX, minY, maxY));
     }
 
-    public void StopRainingObjects()
+    public void StopSpawningInteractables()
     {
         if (spawnCoroutine != null)
         {
@@ -101,12 +101,11 @@ public class RainingObject : MonoBehaviour
     private IEnumerator SpawnObjectsContinuously(float minX = 0, float maxX = 0, float minY = 0, float maxY = 0)
     {
         SpawnObjectInArea(minX, maxX, minY, maxY);
-        while (objectInUse.Count > 0)
+        while (true)
         {
             SpawnObjectInArea(minX, maxX, minY, maxY);
             yield return new WaitForSeconds(spawnTimer);
         }
-        isActive = false;
     }
 
     public void RespawnObject(GameObject obj)
@@ -131,7 +130,7 @@ public class RainingObject : MonoBehaviour
         if (obj != null)
         {
             obj.transform.localPosition = GetRandomPosition(minX, maxX, minY, maxY);
-            obj.GetComponent<RainObject>().OnSpawn();
+            obj.GetComponent<Interactable>().OnSpawn();
         }
     }
 

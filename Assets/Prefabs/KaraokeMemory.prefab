@@ -62,7 +62,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2430576971821093944}
   m_Layer: 5
-  m_Name: RainingObject
+  m_Name: InteractableSpawners
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -279,36 +279,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogueManager: {fileID: 7599060434665752199}
-  pOneDialogueTextSOs:
-  - {fileID: 11400000, guid: 19cbcd9a007a6e34cb6d30edfcb2933f, type: 2}
-  - {fileID: 11400000, guid: 655af1ae0ea1e964c95c3e738302819e, type: 2}
-  - {fileID: 11400000, guid: 292c9e0c825c75f4694431e8fb662ec1, type: 2}
-  pTwoDialogueTextSOs:
-  - {fileID: 11400000, guid: c8fde475963e04243acdfab0aab91789, type: 2}
-  - {fileID: 11400000, guid: b4d1c3968aab7014dbd559d843f66d05, type: 2}
-  pThreeDialogueTextSOs:
-  - {fileID: 11400000, guid: 9ab756f10bb5a9d4c8a41972471eae6d, type: 2}
-  - {fileID: 11400000, guid: 9515956e59fd4344cacc6b71befe1a3c, type: 2}
-  Integrity: 100
-  MaxIntegrity: 100
-  decayTimer: 3
-  timeToShutup: 5
-  attemptTalkCD: 2
-  talkPerDamage: 3
-  talkIntegrityRecoverCD: 20
-  appearancePhases:
-  - {fileID: 6531272122037409604}
+  dialogueSets:
+  - dialogues:
+    - {fileID: 11400000, guid: 19cbcd9a007a6e34cb6d30edfcb2933f, type: 2}
+    - {fileID: 11400000, guid: 655af1ae0ea1e964c95c3e738302819e, type: 2}
+    - {fileID: 11400000, guid: 292c9e0c825c75f4694431e8fb662ec1, type: 2}
+  - dialogues:
+    - {fileID: 11400000, guid: c8fde475963e04243acdfab0aab91789, type: 2}
+    - {fileID: 11400000, guid: b4d1c3968aab7014dbd559d843f66d05, type: 2}
+    - {fileID: 11400000, guid: 9ab756f10bb5a9d4c8a41972471eae6d, type: 2}
+    - {fileID: 11400000, guid: 9515956e59fd4344cacc6b71befe1a3c, type: 2}
+  appearances:
   - {fileID: 1098759905538314325}
   - {fileID: 3159860623602478898}
+  Integrity: 100
+  MaxIntegrity: 100
+  recoverIntegrityLimit: 50
+  talkRollCD: 2
+  talkChance: 0.25
+  glitchRollCD: 10
+  minGlitchRoll: 0.3
+  maxGlitchRoll: 0.7
+  decayCD: 3
   inFocus: 0
-  rainingObjectGood: {fileID: 4662447988958042163}
-  rainingObjectBad: {fileID: 1678825872667966950}
+  timeToShutup: 5
+  GoodNoteSpawner: {fileID: 4662447988958042163}
+  BadNoteSpawner: {fileID: 1678825872667966950}
   maxX: 600
   minX: -600
   maxY: 300
   minY: -300
-  maxCooldown: 60
-  minCooldown: 20
   maxSpawnDuration: 30
   minSpawnDuration: 5
 --- !u!1 &1098759905538314325 stripped
@@ -324,11 +324,6 @@ GameObject:
 --- !u!224 &5823454037813611275 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1146215389744680876, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
-  m_PrefabInstance: {fileID: 6861581774802158759}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &6531272122037409604 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 403777095623447523, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
   m_PrefabInstance: {fileID: 6861581774802158759}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &7599060434665752199 stripped

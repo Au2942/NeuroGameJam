@@ -21,12 +21,8 @@ PrefabInstance:
       value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 397777610304189136, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 1080
-      objectReference: {fileID: 0}
-    - target: {fileID: 397777610304189136, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 270
+      value: 168.75
       objectReference: {fileID: 0}
     - target: {fileID: 488920047198720586, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       propertyPath: m_Sprite
@@ -85,16 +81,8 @@ PrefabInstance:
       value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3965885866100376687, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 256
-      objectReference: {fileID: 0}
-    - target: {fileID: 3965885866100376687, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 540
-      objectReference: {fileID: 0}
-    - target: {fileID: 3965885866100376687, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 270
+      value: 168.75
       objectReference: {fileID: 0}
     - target: {fileID: 4240248090791209233, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       propertyPath: m_fontAsset
@@ -180,9 +168,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6578199205212244328, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1984728692587858539}
-    - targetCorrespondingSourceObject: {fileID: 403777095623447523, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1650437386525451771}
     - targetCorrespondingSourceObject: {fileID: 5766481181502412018, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2054218996402966334}
@@ -225,26 +210,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogueManager: {fileID: 5453847031325940863}
-  pOneDialogueTextSOs:
-  - {fileID: 11400000, guid: 1771a09eaff34ed43beaa8a85cb2b021, type: 2}
-  - {fileID: 11400000, guid: 57d2e63533d45a343bf4ace2f3373f0b, type: 2}
-  pTwoDialogueTextSOs:
-  - {fileID: 11400000, guid: 9fe3efee6dca44a40b8b6546a6b409c2, type: 2}
-  - {fileID: 11400000, guid: 73a4c94543a15ce4a8e6528358ce7f42, type: 2}
-  pThreeDialogueTextSOs:
-  - {fileID: 11400000, guid: 49e5df4dc0cf4c84ea43e67127769118, type: 2}
-  Integrity: 100
-  MaxIntegrity: 100
-  decayTimer: 1
-  timeToShutup: 2
-  attemptTalkCD: 5
-  talkPerDamage: 3
-  talkIntegrityRecoverCD: 10
-  appearancePhases:
-  - {fileID: 8680970489394990524}
+  dialogueSets:
+  - dialogues:
+    - {fileID: 11400000, guid: 1771a09eaff34ed43beaa8a85cb2b021, type: 2}
+    - {fileID: 11400000, guid: 57d2e63533d45a343bf4ace2f3373f0b, type: 2}
+  - dialogues:
+    - {fileID: 11400000, guid: 9fe3efee6dca44a40b8b6546a6b409c2, type: 2}
+    - {fileID: 11400000, guid: 73a4c94543a15ce4a8e6528358ce7f42, type: 2}
+    - {fileID: 11400000, guid: 49e5df4dc0cf4c84ea43e67127769118, type: 2}
+  appearances:
   - {fileID: 3307095262580148909}
   - {fileID: 648704920843449802}
+  Integrity: 100
+  MaxIntegrity: 100
+  recoverIntegrityLimit: 50
+  talkRollCD: 2
+  talkChance: 0.25
+  glitchRollCD: 10
+  minGlitchRoll: 0.3
+  maxGlitchRoll: 0.7
+  decayCD: 3
   inFocus: 0
+  timeToShutup: 2
   currentSpeed: 1
   maxAccerelation: 20
   SpinSpeedIncrement: 0.5
@@ -252,7 +239,6 @@ MonoBehaviour:
   startDealingDamageSpeed: 200
   delayBetweenDamage: 4
   holdDetectors:
-  - {fileID: 1650437386525451771}
   - {fileID: 2054218996402966334}
   - {fileID: 3572117319064100167}
 --- !u!1 &3307095262580148909 stripped
@@ -281,22 +267,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 584513c97eb7815409c5bf06e15191d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &8680970489394990524 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 403777095623447523, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
-  m_PrefabInstance: {fileID: 9071236510721416799}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1650437386525451771
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8680970489394990524}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a97ff6f1776746d44994a3d39755e472, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

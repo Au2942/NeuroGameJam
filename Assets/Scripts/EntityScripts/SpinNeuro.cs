@@ -3,10 +3,10 @@ using UnityEngine.EventSystems;
 
 public class SpinNeuro : MemoryEntity
 {
-    [SerializeField] public float currentSpeed = 1f;
+    [SerializeField] public float currentSpeed = 0f;
     [SerializeField] public float maxAccerelation = 4f;
     [SerializeField] public float SpinSpeedIncrement = 0.1f;
-    [SerializeField] public float SpinSpeedDecrement = 0.5f;
+    [SerializeField] public float SpinSpeedDecrement = 1f;
     [SerializeField] public float startDealingDamageSpeed = 100f;
     [SerializeField] public float delayBetweenDamage = 4f;
     [SerializeField] public DetectUIHold[] holdDetectors;
@@ -26,10 +26,23 @@ public class SpinNeuro : MemoryEntity
 
     }
 
-    protected override void Update()
+
+
+    void UpdateSpinSpeed()
     {
-        base.Update();
-        if(!GameManager.Instance.isStreaming) return;
+        currentAcceleration = 1f + (1f - Integrity / (float)MaxIntegrity) * (maxAccerelation - 1f);
+    }
+
+    public override void EnterGlitchState()
+    {
+        base.EnterGlitchState();
+        currentSpeed = 100;
+    }
+
+    protected override void SharedBehavior()
+    {
+        base.SharedBehavior();
+
         UpdateSpinSpeed();
 
         if (isHolding)
@@ -45,58 +58,37 @@ public class SpinNeuro : MemoryEntity
         }
 
         // Rotate the object
-        foreach(GameObject appearance in appearancePhases)
+        foreach(GameObject appearance in appearances)
         {
             appearance.transform.Rotate(Vector3.forward, currentSpeed * Time.deltaTime);
         }
     }
 
 
-    void UpdateSpinSpeed()
+    protected override void GlitchBehavior()
     {
-        currentAcceleration = 1f + (1f - Integrity / (float)MaxIntegrity) * (maxAccerelation - 1f);
-    }
+        base.GlitchBehavior();
 
-
-    protected override void PhaseOneBehaviour()
-    {
-
-    }
-
-    protected override void PhaseTwoBehaviour()
-    {
-        
-        if (currentSpeed >= startDealingDamageSpeed)
+        if (damageTimer >= delayBetweenDamage)
         {
-            damageTimer += Time.deltaTime;
-            if (damageTimer >= delayBetweenDamage)
-            {
-                PlayerManager.Instance.TakeDamage(1);
-                damageTimer = 0f;
-            }
-        }
-        else
-        {
+            PlayerManager.Instance.TakeDamage(1);
             damageTimer = 0f;
         }
+        damageTimer += Time.deltaTime;
+
+        if(currentSpeed <= 50)
+        {
+            ExitGlitchState();
+        }
+
     }
 
-    protected override void PhaseThreeBehaviour()
+    public override void ExitGlitchState()
     {
-        if (currentSpeed >= startDealingDamageSpeed)
-        {
-            damageTimer += Time.deltaTime;
-            if (damageTimer >= delayBetweenDamage/2f)
-            {
-                PlayerManager.Instance.TakeDamage(1);
-                damageTimer = 0f;
-            }
-        }
-        else
-        {
-            damageTimer = 0f;
-        }
+        base.ExitGlitchState();
+        currentSpeed = 0f;
     }
+
 
 
 }

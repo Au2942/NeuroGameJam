@@ -180,31 +180,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogueManager: {fileID: 4881109412136145500}
-  pOneDialogueTextSOs:
-  - {fileID: 11400000, guid: 9fbaedf57d1e6994980708b815e79ab4, type: 2}
-  - {fileID: 11400000, guid: 0e1597600f6d1da43aec464204db6eaa, type: 2}
-  - {fileID: 11400000, guid: a53d1bcbf248fb14e8d75aad69406772, type: 2}
-  pTwoDialogueTextSOs:
-  - {fileID: 11400000, guid: ba2282223e74cc2448c86f5535245871, type: 2}
-  - {fileID: 11400000, guid: 471c45559122a684496f17bca2ab2fe0, type: 2}
-  pThreeDialogueTextSOs:
-  - {fileID: 11400000, guid: 6575d0f845bb494489787671c1e0dd53, type: 2}
-  - {fileID: 11400000, guid: d4ffbbaafc1964742a8dfe5b14f404c4, type: 2}
-  Integrity: 100
-  MaxIntegrity: 100
-  decayTimer: 1
-  timeToShutup: 5
-  attemptTalkCD: 2
-  talkPerDamage: 3
-  talkIntegrityRecoverCD: 10
-  appearancePhases:
-  - {fileID: 8100809654805267359}
+  dialogueSets:
+  - dialogues:
+    - {fileID: 11400000, guid: 9fbaedf57d1e6994980708b815e79ab4, type: 2}
+    - {fileID: 11400000, guid: 0e1597600f6d1da43aec464204db6eaa, type: 2}
+    - {fileID: 11400000, guid: a53d1bcbf248fb14e8d75aad69406772, type: 2}
+  - dialogues:
+    - {fileID: 11400000, guid: ba2282223e74cc2448c86f5535245871, type: 2}
+    - {fileID: 11400000, guid: 471c45559122a684496f17bca2ab2fe0, type: 2}
+    - {fileID: 11400000, guid: 6575d0f845bb494489787671c1e0dd53, type: 2}
+    - {fileID: 11400000, guid: d4ffbbaafc1964742a8dfe5b14f404c4, type: 2}
+  appearances:
   - {fileID: 2735921663962449038}
   - {fileID: 77249955548068841}
+  Integrity: 100
+  MaxIntegrity: 100
+  recoverIntegrityLimit: 50
+  talkRollCD: 2
+  talkChance: 0.25
+  glitchRollCD: 10
+  minGlitchRoll: 0.3
+  maxGlitchRoll: 0.7
+  decayCD: 3
   inFocus: 0
-  rainingObject: {fileID: 4160547654429734169}
-  maxCooldown: 60
-  minCooldown: 20
+  timeToShutup: 5
+  wordSpawner: {fileID: 4160547654429734169}
   maxSpawnDuration: 30
   minSpawnDuration: 5
 --- !u!114 &4160547654429734169
@@ -234,8 +234,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 584513c97eb7815409c5bf06e15191d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &8100809654805267359 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 403777095623447523, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
-  m_PrefabInstance: {fileID: 8498673301980844156}
-  m_PrefabAsset: {fileID: 0}
