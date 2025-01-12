@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
@@ -8,8 +10,12 @@ public class TimelineManager : MonoBehaviour
     [SerializeField] private GameObject memoryLayout;
 
     public int currentMemoryIndex {get; set; }= 0;
-    private GameObject nextMemory;
     public int MemoriesCount { get; set; } = 0;
+
+    public Dictionary<string, int> MemoryEntityTypesCount {get; set;} = new Dictionary<string, int>();
+
+    public event Action OnMemoryAdded;
+
     private float layoutWidth;
     private float cooldownBetweenNavigation = 0.5f;
     private float cooldownTimer = 0f;
@@ -30,12 +36,6 @@ public class TimelineManager : MonoBehaviour
     {
         LayoutRebuilder.ForceRebuildLayoutImmediate(memoryLayout.GetComponent<RectTransform>());
         layoutWidth = memoryLayout.GetComponent<RectTransform>().rect.width;
-
-        MemoryEntity[] memoryEntities = FindObjectsByType<MemoryEntity>( FindObjectsSortMode.None);
-        foreach(MemoryEntity memoryEntity in memoryEntities)
-        {
-            nextMemory = AddMemoryToTimeline(memoryEntity.gameObject);
-        }
         cooldownTimer = cooldownBetweenNavigation;
     }
 
@@ -58,11 +58,11 @@ public class TimelineManager : MonoBehaviour
             cooldownTimer = 0f;
             if(horizontalInput > 0)
             {
-                currentMemoryIndex--;
+                currentMemoryIndex++;
             }
             else if(horizontalInput < 0)
             {
-                currentMemoryIndex++;
+                currentMemoryIndex--;
             }
             if(currentMemoryIndex < 0)
             {
@@ -81,17 +81,26 @@ public class TimelineManager : MonoBehaviour
 
     private void UpdateMemoryLayoutPosition()
     {
-        memoryLayout.GetComponent<RectTransform>().anchoredPosition = new Vector2(0 + currentMemoryIndex*1920, 0);
+        memoryLayout.GetComponent<RectTransform>().anchoredPosition = new Vector2(0 - currentMemoryIndex*1440, 0);
     }
 
-    public GameObject AddMemoryToTimeline(GameObject newMemory)
+    public GameObject AddStreamToMemory(StreamSO stream)
     {
+        if(!MemoryEntityTypesCount.TryAdd(stream.name, 1))
+        {
+            MemoryEntityTypesCount[stream.name]++;
+        }
         MemoriesCount++;
-        GameObject memory = Instantiate(newMemory, memoryLayout.transform);
+
+        GameObject memory = Instantiate(stream.memory, memoryLayout.transform);
+        memory.name = stream.streamName;
         memory.transform.SetSiblingIndex(1);
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(memoryLayout.GetComponent<RectTransform>());
         layoutWidth = memoryLayout.GetComponent<RectTransform>().rect.width;
+
+        OnMemoryAdded?.Invoke();
+        
         return memory;
     }
     

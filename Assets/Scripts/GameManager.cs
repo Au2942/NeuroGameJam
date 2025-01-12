@@ -194,20 +194,9 @@ public class GameManager : MonoBehaviour
         MemoryEntities.ForEach(entity => entity.ShutUp());
         isStreaming = false;
         streamVideoPlayer.Stop();
-        
-        MemoryEntity memoryEntity = CurrentStream.memory.GetComponent<MemoryEntity>();
-        MemoryEntity existingEntity = MemoryEntities.Find(entity => entity.GetType() == memoryEntity.GetType());
-        if (existingEntity == null)
-        {
-            GameObject memory = TimelineManager.Instance.AddMemoryToTimeline(CurrentStream.memory);
-            memory.name = CurrentStream.streamName;
-            MemoryEntities.Add(memory.GetComponent<MemoryEntity>());
-        }
-        else
-        {
-            Debug.Log("MemoryEntity of this type already exists.");
-            existingEntity.AddIntegrity(25); // Increase integrity of the existing memory entity by 10
-        }
+
+        GameObject memory = TimelineManager.Instance.AddStreamToMemory(CurrentStream);
+        MemoryEntities.Add(memory.GetComponent<MemoryEntity>());
 
         PlayerManager.Instance.Buff = 0;
         PlayerManager.Instance.Debuff = 0;
