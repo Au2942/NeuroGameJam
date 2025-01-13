@@ -120,6 +120,10 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0.6839622
       objectReference: {fileID: 0}
+    - target: {fileID: 5766481181502412018, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: m_Name
+      value: ShadowSpin
+      objectReference: {fileID: 0}
     - target: {fileID: 5929771759949055298, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       propertyPath: m_SizeDelta.x
       value: 0
@@ -154,7 +158,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6578199205212244328, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       propertyPath: m_Name
-      value: SpinMemory
+      value: MemorySpin
       objectReference: {fileID: 0}
     - target: {fileID: 9037480018170944228, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       propertyPath: entity
@@ -162,7 +166,8 @@ PrefabInstance:
       objectReference: {fileID: 1984728692587858539}
     m_RemovedComponents:
     - {fileID: 3133413388662785481, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 8422619965302074261, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 6578199205212244328, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
@@ -171,27 +176,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5766481181502412018, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2054218996402966334}
-    - targetCorrespondingSourceObject: {fileID: 8422619965302074261, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+    - targetCorrespondingSourceObject: {fileID: 5766481181502412018, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3572117319064100167}
+      addedObject: {fileID: 2794483609510162486}
   m_SourcePrefab: {fileID: 100100000, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
---- !u!1 &648704920843449802 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8422619965302074261, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
-  m_PrefabInstance: {fileID: 9071236510721416799}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &3572117319064100167
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 648704920843449802}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a97ff6f1776746d44994a3d39755e472, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2786027055462242103 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6578199205212244328, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
@@ -209,6 +197,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84acc0e008e902542963f8c6d7dfd7ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Body: {fileID: 3307095262580148909}
   dialogueManager: {fileID: 5453847031325940863}
   dialogueSets:
   - dialogues:
@@ -218,19 +207,28 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 9fe3efee6dca44a40b8b6546a6b409c2, type: 2}
     - {fileID: 11400000, guid: 73a4c94543a15ce4a8e6528358ce7f42, type: 2}
     - {fileID: 11400000, guid: 49e5df4dc0cf4c84ea43e67127769118, type: 2}
-  appearances:
-  - {fileID: 3307095262580148909}
-  - {fileID: 648704920843449802}
+  normalAnimatorClips:
+  - animator: {fileID: 2794483609510162486}
+    clipByLayer:
+    - {fileID: 7400000, guid: 91b5f5c4178606643b3eeeb62d5277cf, type: 2}
+  corruptAnimatorClips:
+  - animator: {fileID: 2794483609510162486}
+    clipByLayer:
+    - {fileID: 7400000, guid: fec654fd4fd91274c9526dfb571cb432, type: 2}
+  animatorClipsPairs:
+  - animator: {fileID: 2794483609510162486}
   Integrity: 100
   MaxIntegrity: 100
+  decayCD: 3
+  InFocusDecayMultiplier: 0.5
+  IntegrityDecay: 1
+  inFocus: 0
   recoverIntegrityLimit: 50
   talkRollCD: 2
   talkChance: 0.25
-  glitchRollCD: 10
-  minGlitchRoll: 0.3
-  maxGlitchRoll: 0.7
-  decayCD: 3
-  inFocus: 0
+  corruptRollCD: 10
+  minCorruptRoll: 0.3
+  maxCorruptRoll: 0.7
   timeToShutup: 2
   currentSpeed: 1
   maxAccerelation: 20
@@ -240,7 +238,6 @@ MonoBehaviour:
   delayBetweenDamage: 4
   holdDetectors:
   - {fileID: 2054218996402966334}
-  - {fileID: 3572117319064100167}
 --- !u!1 &3307095262580148909 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5766481181502412018, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
@@ -258,6 +255,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a97ff6f1776746d44994a3d39755e472, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!95 &2794483609510162486
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3307095262580148909}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 4ab150960ef265947a5ddc35c270a404, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &5453847031325940863 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3912631305385984544, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}

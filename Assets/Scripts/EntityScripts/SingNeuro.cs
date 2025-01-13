@@ -16,9 +16,9 @@ public class SingNeuro : MemoryEntity
     private float spawnDuration = 10f;
     private float spawnTimer = 0f;
 
-    protected override void GlitchBehavior()
+    protected override void CorruptBehavior()
     {
-        base.GlitchBehavior();
+        base.CorruptBehavior();
 
         if (!GoodNoteSpawner.isActive)
         {
@@ -30,15 +30,15 @@ public class SingNeuro : MemoryEntity
             if (spawnTimer >= spawnDuration || GoodNoteSpawner.objectInUse.Count == 0)
             {
                 spawnTimer = 0f;
-                ExitGlitchState();
+                ExitCorruptState();
             }
             else spawnTimer += Time.deltaTime;
         }
     }
 
-    public override void ExitGlitchState()
+    public override void ExitCorruptState()
     {
-        base.ExitGlitchState();
+        base.ExitCorruptState();
         ClearSpawner();
     }
 

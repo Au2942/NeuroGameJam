@@ -24,7 +24,7 @@ public class RenderLiveFeed : MonoBehaviour
         initialPosition = livefeedCamera.transform.localPosition;
         AddLivefeed(); //add stream livefeed
         TimelineManager.Instance.OnMemoryAdded += AddLivefeed;
-        TimelineManager.Instance.OnChangeMemoryIndex += SetSelectedFeed;
+        TimelineManager.Instance.OnChangeMemoryIndex += t => SetSelectedFeed(t, true); //reverse order
 
         selectBorderInstance = Instantiate(selectBorderPrefab, contentUI);
         SetSelectedFeed(0);
@@ -47,14 +47,20 @@ public class RenderLiveFeed : MonoBehaviour
         }
     }
 
-    public void SetSelectedFeed(int index)
+    public void SetSelectedFeed(int index, bool reverseOrder = false)
     {
         if(smoothScrollCoroutine != null) StopCoroutine(smoothScrollCoroutine);
+        
+        Transform renderImage;
+        if(!reverseOrder)
+            renderImage = renderImages[index].transform;
+        else
+            renderImage = renderImages[^(index+1)].transform;
 
-        selectBorderInstance.transform.SetParent(renderImages[^(1+index)].transform.parent, false);
+        selectBorderInstance.transform.SetParent(renderImage.parent, false);
         selectBorderInstance.transform.SetAsFirstSibling();
 
-        RectTransform rectTransform = renderImages[^(1+index)].transform.parent.GetComponent<RectTransform>();
+        RectTransform rectTransform = renderImage.parent.GetComponent<RectTransform>();
         smoothScrollCoroutine = StartCoroutine(SmoothScrollTo(rectTransform.localPosition.x));
     }
 

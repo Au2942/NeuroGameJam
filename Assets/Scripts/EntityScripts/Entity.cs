@@ -3,14 +3,13 @@ using System.Collections.Generic;
 
 public abstract class Entity : MonoBehaviour
 {
-    [System.Serializable]
-    public struct DialogueSet
-    {
-        public List<DialogueInfoSO> dialogues;
-    }
+
+    [SerializeField] protected GameObject Body;
     [SerializeField] protected DialogueManager dialogueManager;
     [SerializeField] protected DialogueSet[] dialogueSets;
-    [SerializeField] protected GameObject[] appearances;
+    [SerializeField] protected AnimatorClipPair[] normalAnimatorClips;
+    [SerializeField] protected AnimatorClipPair[] corruptAnimatorClips;
+    [SerializeField] protected AnimatorClipsPair[] animatorClipsPairs;
     [SerializeField] public int Integrity = 100;
     [SerializeField] public int MaxIntegrity = 100;
     [SerializeField] public float decayCD = 3f;
@@ -19,19 +18,15 @@ public abstract class Entity : MonoBehaviour
     [SerializeField] protected bool inFocus = false;
     [SerializeField] public int recoverIntegrityLimit = 50;
     [SerializeField] protected float talkRollCD = 2f;
-
-    [SerializeField] protected float talkChance = 0.25f; 
-    [SerializeField] protected float glitchRollCD = 10f;
-
-    [SerializeField] protected float minGlitchRoll = 0.3f; //minroll
-    [SerializeField] protected float maxGlitchRoll = 0.7f; //start rolling at this integrity
-
-
+    [SerializeField] protected float talkChance = 0.25f;
+    [SerializeField] protected float corruptRollCD = 10f;
+    [SerializeField] protected float minCorruptRoll = 0.3f; //minroll
+    [SerializeField] protected float maxCorruptRoll = 0.7f; //start rolling at this integrity
 
     protected float rollTalkTimer = 0f;
-    protected float rollGlitchTimer = 0f;
+    protected float rollCorruptTimer = 0f;
     protected float decayTimer = 0f;
-    public bool glitched {get; set;} = false;
+    public bool corrupted {get; set;} = false;
     protected int dialogueSetIndex = 0;
 
     protected int talkCounter = 0;
@@ -49,7 +44,7 @@ public abstract class Entity : MonoBehaviour
     }
     protected virtual void Start()
     {
-        SetAppearance(0);
+        SetNormalAppearance();
     }
     protected virtual void OnStartStream()
     {
@@ -74,15 +69,14 @@ public abstract class Entity : MonoBehaviour
             OutOfFocusBehavior();
         }
 
-        RollChanceToGlitch();
-
-        if(glitched)
+        if(corrupted)
         {
-            GlitchBehavior();
+            CorruptBehavior();
         }
         else
         {
             NormalBehavior();
+            RollChanceToCorrupt();
         }
         
         Decay();
@@ -138,18 +132,68 @@ public abstract class Entity : MonoBehaviour
     }
     protected virtual void SetAppearance(int index)
     {
-        for (int i = 0; i < appearances.Length; i++)
+        for (int i = 0; i < animatorClipsPairs.Length; i++)
         {
-            if (appearances[i] != null)
-            {
-                appearances[i].SetActive(i == index);
+            if (animatorClipsPairs[i].animator != null )
+            { 
+                for(int j = 0; j < animatorClipsPairs[i].clipsByLayer.Length; j++)
+                {
+                    if(animatorClipsPairs[i].clipsByLayer[j].clips[index] != null)
+                    {
+                        animatorClipsPairs[i].animator.CrossFade(animatorClipsPairs[i].clipsByLayer[j].clips[index].name, 0.2f, j);
+                    }
+                }
             }
         }
-        if(appearances.Length-1 < index)
+    }
+
+    protected virtual void SetNormalAppearance()
+    {
+        foreach(AnimatorClipPair clipPair in normalAnimatorClips)
         {
-            appearances[0].SetActive(true);
+            if(clipPair.animator != null) 
+            {
+                for(int i = 0; i < clipPair.clipByLayer.Length; i++)
+                {
+                    if(clipPair.clipByLayer[i] != null)
+                    {
+                        clipPair.animator.CrossFade(clipPair.clipByLayer[i].name, 0.2f, i);
+                    }
+                }
+            }
         }
-        
+    }
+
+    protected virtual void SetCorruptAppearance()
+    {
+        foreach(AnimatorClipPair clipPair in corruptAnimatorClips)
+        {
+            if(clipPair.animator != null)
+            {
+                for(int i = 0; i < clipPair.clipByLayer.Length; i++)
+                {
+                    if(clipPair.clipByLayer[i] != null)
+                    {
+                        clipPair.animator.CrossFade(clipPair.clipByLayer[i].name, 0.2f, i);
+                    }
+                }
+            }
+        }
+    }
+
+    protected void PlayAnimation(int animatorIndex, int layer, int clipIndex)
+    {
+        if (animatorIndex < 0 || animatorIndex >= animatorClipsPairs.Length) return;
+        if (layer < 0 || layer >= animatorClipsPairs[animatorIndex].clipsByLayer.Length) return;
+        if (clipIndex < 0 || clipIndex >= animatorClipsPairs[animatorIndex].clipsByLayer[layer].clips.Length) return;
+        if (animatorClipsPairs[animatorIndex].animator != null)
+        {
+            AnimationClip clip = animatorClipsPairs[animatorIndex].clipsByLayer[layer].clips[clipIndex];
+            if (clip != null)
+            {
+                animatorClipsPairs[animatorIndex].animator.CrossFade(clip.name, 0.2f, layer);
+            }
+        }
     }
 
     protected virtual void RollChanceToTalk()
@@ -173,7 +217,7 @@ public abstract class Entity : MonoBehaviour
         SharedBehavior();
     }
 
-    protected virtual void GlitchBehavior()
+    protected virtual void CorruptBehavior()
     {
         SharedBehavior();
     }
@@ -183,45 +227,46 @@ public abstract class Entity : MonoBehaviour
 
     }
 
-    public virtual void EnterGlitchState()
+    public virtual void EnterCorruptState()
     {
-        glitched = true;
+        corrupted = true;
         dialogueSetIndex = 1;
         ShutUp();
-        SetAppearance(1);
+        SetCorruptAppearance();
+        
     }
 
 
-    public virtual void ExitGlitchState()
+    public virtual void ExitCorruptState()
     {
-        glitched = false;
+        corrupted = false;
         dialogueSetIndex = 0;
-        rollGlitchTimer = 0f;
-        SetAppearance(0);
+        rollCorruptTimer = 0f;
+        SetNormalAppearance();
         Integrity = Mathf.Max(Integrity, recoverIntegrityLimit);
     }
 
-    protected virtual void RollChanceToGlitch()
+    protected virtual void RollChanceToCorrupt()
     {
-        if(rollGlitchTimer >= glitchRollCD)
+        if(rollCorruptTimer >= corruptRollCD)
         {
             float integrityRatio = (float)Integrity / MaxIntegrity;
-            if (integrityRatio <= minGlitchRoll)
+            if (integrityRatio <= minCorruptRoll)
             {
-                EnterGlitchState();
+                EnterCorruptState();
             }
-            else if (integrityRatio < maxGlitchRoll)
+            else if (integrityRatio < maxCorruptRoll)
             {
-                float t = (integrityRatio - maxGlitchRoll) / (minGlitchRoll-maxGlitchRoll);
+                float t = (integrityRatio - maxCorruptRoll) / (minCorruptRoll-maxCorruptRoll);
                 float probability = Mathf.Pow(t, 3); //cubic curve
                 if (Random.Range(0f, 1f) < probability)
                 {
-                    EnterGlitchState();
+                    EnterCorruptState();
                 }
             }
-            rollGlitchTimer = 0f;
+            rollCorruptTimer = 0f;
         }
-        else rollGlitchTimer += Time.deltaTime;        
+        else rollCorruptTimer += Time.deltaTime;        
 
     }
 

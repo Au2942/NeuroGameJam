@@ -7,4 +7,10 @@ public class StreamEntity : Entity
         base.Interact();
         StreamSelector.Instance.OpenUI();
     }
+
+    protected override void NormalBehavior()
+    {
+        base.NormalBehavior();
+        RollChanceToTalk();
+    }
 }

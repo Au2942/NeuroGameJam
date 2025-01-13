@@ -35,7 +35,7 @@ public abstract class MemoryEntity : Entity
     protected override void OnEndStream()
     {
         base.OnEndStream();
-        if(glitched) ExitGlitchState();
+        if(corrupted) ExitCorruptState();
     }
 
 }

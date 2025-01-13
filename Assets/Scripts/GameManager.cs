@@ -79,19 +79,19 @@ public class GameManager : MonoBehaviour
             if (i == index)
             {
                 entity.SetInFocus(true);
-                string roomName = "";
-                if(index == Entities.Count-1)
-                {   
+                if (index == Entities.Count - 1)
+                {
                     roomText.text = "Livestream";
                 }
-                else 
+                else
                 {
-                    if(!entity.glitched)
+                    string roomName;
+                    if (!entity.corrupted)
                     {
                         roomName = "Memory of ";
                     }
                     else
-                    {   
+                    {
                         roomName = "Corrupted Memory of ";
                     }
                     roomText.text = roomName + entity.name + " stream";
@@ -107,7 +107,7 @@ public class GameManager : MonoBehaviour
     private void UpdateIntegrityBar()
     {
         int index = TimelineManager.Instance.currentEntityIndex;
-        targetIntegrityBarValue = Entities[^(index+1)].Integrity/(float)Entities[^(index+1)].MaxIntegrity;
+        targetIntegrityBarValue = Entities[index].Integrity/(float)Entities[index].MaxIntegrity;
     }
 
     private IEnumerator MoveIntegrityBar()

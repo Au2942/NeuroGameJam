@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
+using System.Linq;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -9,25 +10,33 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI speakerNameText;
     [SerializeField] private TextMeshProUGUI dialogueText;
     [SerializeField] private DialogueInfoSO defaultDialogueInfo;
+    [SerializeField] private AnimatorClipsPair[] playingAnimation; //plays while dialogue is playing
+    [SerializeField] private AnimatorClipsPair[] typingAnimation; //plays when playing a typing sound
     [SerializeField] private bool stayOnScreen = false;
+    [SerializeField] public bool PlayAnimation = true;
+    [SerializeField] public bool PlaySound = true;
+
     private AudioSource audioSource;
     private DialogueInfoSO currentDialogueInfo;
     private Queue<string> dialogueTextQueue = new Queue<string>();
     private Coroutine typingCoroutine;
     private Coroutine waitAndPlayNextDialogueCoroutine;
+    private Coroutine typingAnimationCoroutine;
+    private List<AnimatorStateInfosPair> storedPlayingAnimationAnimatorStateInfosPairs = new List<AnimatorStateInfosPair>();
+    private List<AnimatorStateInfosPair> storedTypingAnimationAnimatorStateInfosPairs = new List<AnimatorStateInfosPair>();
     public bool IsTyping {get; private set;} = false;
-    public bool PlaySound {get; set;} = true;
-
     public bool IsDialoguePlaying {get; private set;} = false;
 
     void Start()
     {
+        currentDialogueInfo = defaultDialogueInfo;
         dialoguePanel.SetActive(false);
     }
 
 
     public void PlayDialogue(DialogueInfoSO dialogueTextSO, bool playerInitiated = true)
     {
+
         if(playerInitiated && waitAndPlayNextDialogueCoroutine != null)
         {
             StopCoroutine(waitAndPlayNextDialogueCoroutine);
@@ -53,7 +62,11 @@ public class DialogueManager : MonoBehaviour
 
 
     private void StartDialogue()
-    {
+    {   
+        if(PlayAnimation)
+        {
+            StoreInitialAnimationInfosAndPlay();
+        }
         if(PlaySound)
         {
             audioSource = SFXManager.Instance.GetAudioSource();
@@ -71,6 +84,49 @@ public class DialogueManager : MonoBehaviour
         }
         NextDialogue();
     }
+
+    private void StoreInitialAnimationInfosAndPlay()
+    {
+        storedPlayingAnimationAnimatorStateInfosPairs.Clear();
+        foreach(AnimatorClipsPair animation in playingAnimation)
+        {
+            if(animation.animator != null)
+            {
+                List<AnimatorStateInfo> animatorStateInfos = new List<AnimatorStateInfo>();
+                for (int i = 0; i < animation.animator.layerCount; i++)
+                {
+                    animatorStateInfos.Add(animation.animator.GetCurrentAnimatorStateInfo(i));
+                }
+                storedPlayingAnimationAnimatorStateInfosPairs.Add(new AnimatorStateInfosPair(animation.animator, animatorStateInfos));
+                
+                for(int i = 0; i < animation.clipsByLayer.Length; i++)
+                {
+                    foreach(AnimationClip clip in animation.clipsByLayer[i].clips)
+                    {
+                        if(clip != null)
+                        {
+                            animation.animator.CrossFade(clip.name, 0.2f, i);
+                        }
+                    }
+                }
+            }
+        }
+        storedTypingAnimationAnimatorStateInfosPairs.Clear();
+        foreach(AnimatorClipsPair animation in typingAnimation)
+        {
+            if(animation.animator != null)
+            {
+                List<AnimatorStateInfo> animatorStateInfos = new List<AnimatorStateInfo>();
+                for (int i = 0; i < animation.animator.layerCount; i++)
+                {
+                    animatorStateInfos.Add(animation.animator.GetCurrentAnimatorStateInfo(i));
+                }
+                storedTypingAnimationAnimatorStateInfosPairs.Add(new AnimatorStateInfosPair(animation.animator, animatorStateInfos));
+            }
+        }
+    }
+
+
     public bool FinishedDialogue()
     {
         return dialogueTextQueue.Count == 0;
@@ -107,6 +163,19 @@ public class DialogueManager : MonoBehaviour
 
     public void EndDialogue()
     {
+        if(PlayAnimation)
+        {
+            foreach(AnimatorStateInfosPair pair in storedPlayingAnimationAnimatorStateInfosPairs)
+            {
+                if(pair.animator != null)
+                {
+                    for(int i = 0; i < pair.animator.layerCount; i++)
+                    {
+                        pair.animator.Play(pair.stateInfos[i].fullPathHash, i, pair.stateInfos[i].normalizedTime);
+                    }
+                }
+            }
+        }
         if(stayOnScreen)
         {
             return;
@@ -125,8 +194,12 @@ public class DialogueManager : MonoBehaviour
             audioSource = null;
         }
         IsDialoguePlaying = false;
-        if(speakerNameText != null) speakerNameText.text = "";
+        if(speakerNameText != null) speakerNameText.text = string.Empty;
+        {
+            speakerNameText.text = "";
+        }
         dialogueText.text = "";
+        currentDialogueInfo = defaultDialogueInfo;
         dialoguePanel.SetActive(false);
     }
 
@@ -140,9 +213,16 @@ public class DialogueManager : MonoBehaviour
         {
             if(!char.IsWhiteSpace(letter) && !char.IsSymbol(letter) && !char.IsPunctuation(letter))
             {
-                if(PlaySound && currentDialogueInfo.audioClips.Length > 0)
+                if(currentDialogueInfo.audioClips.Length > 0)
                 {
-                    PlayDialogueTypingSound(validCharCount, dialogueText.text[charCount]);
+                    if(PlaySound)
+                    {
+                        PlayDialogueTypingSound(validCharCount, dialogueText.text[charCount]);
+                    }
+                    else if(PlayAnimation)
+                    {
+                        PlayDialogueTypingAnimation(validCharCount);
+                    }
                 }
                 charCount++;
                 validCharCount++;
@@ -161,6 +241,58 @@ public class DialogueManager : MonoBehaviour
         }
         IsTyping = false;
         waitAndPlayNextDialogueCoroutine = StartCoroutine(WaitAndPlayNextDialogue());
+    }
+
+    private void PlayDialogueTypingAnimation(int currentCharacterIndex, float duration = -1)
+    {
+        if(duration < 0)
+        {
+            duration = currentDialogueInfo.speakSpeed;
+        }
+
+        int frequency = currentDialogueInfo.frequency;
+        if(currentCharacterIndex % frequency == 0)
+        {
+            if(typingAnimationCoroutine != null)
+            {
+                StopCoroutine(typingAnimationCoroutine);
+            }
+            typingAnimationCoroutine = StartCoroutine(AnimateDialogueTypingAnimation(duration));
+        }
+    }
+
+    private IEnumerator AnimateDialogueTypingAnimation(float duration = -1)
+    {
+
+        foreach(AnimatorClipsPair animation in typingAnimation)
+        {
+            if(animation.animator != null)
+            {
+                for(int i = 0; i < animation.clipsByLayer.Length; i++)
+                {
+                    foreach(AnimationClip clip in animation.clipsByLayer[i].clips)
+                    {
+                        if(clip != null)
+                        {
+                            animation.animator.CrossFade(clip.name, 0.2f, i);
+                        }
+                    }
+                }
+            }
+        }
+        yield return new WaitForSeconds(duration);
+
+        foreach (AnimatorStateInfosPair pair in storedTypingAnimationAnimatorStateInfosPairs)
+        {
+            if (pair.animator != null)
+            {
+                for (int i = 0; i < pair.animator.layerCount; i++)
+                {
+                    pair.animator.CrossFade(pair.stateInfos[i].fullPathHash,0.2f, i, pair.stateInfos[i].normalizedTime);
+                }
+            }
+        }
+
     }
 
     private void PlayDialogueTypingSound(int currentCharacterIndex, char currentCharacter)
@@ -193,6 +325,11 @@ public class DialogueManager : MonoBehaviour
             }
 
             audioSource.PlayOneShot(audioClips[audioIndex]);
+
+            if(PlayAnimation)
+            {
+                PlayDialogueTypingAnimation(currentCharacterIndex, audioClips[audioIndex].length);
+            }
         }
     }
 }

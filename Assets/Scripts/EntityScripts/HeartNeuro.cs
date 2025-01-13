@@ -13,9 +13,9 @@ public class HeartNeuro : MemoryEntity
     private float damageTimer = 0f;
 
     
-    public override void ExitGlitchState()
+    public override void ExitCorruptState()
     {
-        base.ExitGlitchState();
+        base.ExitCorruptState();
         ClearSpawner();
     }
 
@@ -25,9 +25,9 @@ public class HeartNeuro : MemoryEntity
         heartSpawner.ClearFallenObjects();    
     }
 
-    protected override void GlitchBehavior()
+    protected override void CorruptBehavior()
     {
-        base.GlitchBehavior();
+        base.CorruptBehavior();
         if(heartSpawner.isActive)
         {
             if(damageTimer >= damageCooldown)
@@ -38,7 +38,7 @@ public class HeartNeuro : MemoryEntity
             damageTimer += Time.deltaTime;
             if(heartSpawner.objectInUse.Count == 0)
             {
-                ExitGlitchState();
+                ExitCorruptState();
             }
         }
         else heartSpawner.StartSpawningInteractables(minX, maxX, minY, maxY);

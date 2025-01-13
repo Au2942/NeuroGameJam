@@ -34,9 +34,9 @@ public class SpinNeuro : MemoryEntity
         currentAcceleration = 1f + (1f - Integrity / (float)MaxIntegrity) * (maxAccerelation - 1f);
     }
 
-    public override void EnterGlitchState()
+    public override void EnterCorruptState()
     {
-        base.EnterGlitchState();
+        base.EnterCorruptState();
         currentSpeed = 100;
     }
 
@@ -58,17 +58,14 @@ public class SpinNeuro : MemoryEntity
             currentSpeed += currentAcceleration * SpinSpeedIncrement * Time.deltaTime;
         }
 
-        // Rotate the object
-        foreach(GameObject appearance in appearances)
-        {
-            appearance.transform.Rotate(Vector3.forward, currentSpeed * Time.deltaTime);
-        }
+            Body.transform.Rotate(Vector3.forward, currentSpeed * Time.deltaTime);
+
     }
 
 
-    protected override void GlitchBehavior()
+    protected override void CorruptBehavior()
     {
-        base.GlitchBehavior();
+        base.CorruptBehavior();
 
         if (damageTimer >= delayBetweenDamage)
         {
@@ -79,14 +76,14 @@ public class SpinNeuro : MemoryEntity
 
         if(currentSpeed <= 50)
         {
-            ExitGlitchState();
+            ExitCorruptState();
         }
 
     }
 
-    public override void ExitGlitchState()
+    public override void ExitCorruptState()
     {
-        base.ExitGlitchState();
+        base.ExitCorruptState();
         currentSpeed = 0f;
     }
 

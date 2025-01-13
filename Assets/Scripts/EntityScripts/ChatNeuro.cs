@@ -10,9 +10,9 @@ public class ChatNeuro : MemoryEntity
     private float spawnTimer = 0f;
 
 
-    protected override void GlitchBehavior()
+    protected override void CorruptBehavior()
     {
-        base.GlitchBehavior();
+        base.CorruptBehavior();
 
         if (!wordSpawner.isActive)
         {
@@ -26,15 +26,15 @@ public class ChatNeuro : MemoryEntity
             {
                 wordSpawner.StopSpawningInteractables();
                 spawnTimer = 0f;
-                ExitGlitchState();
+                ExitCorruptState();
             }
             else spawnTimer += Time.deltaTime;
         }
     }
 
-    public override void ExitGlitchState()
+    public override void ExitCorruptState()
     {
-        base.ExitGlitchState();
+        base.ExitCorruptState();
         ClearSpawner();
     }
     private void ClearSpawner()

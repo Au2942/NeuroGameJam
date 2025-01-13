@@ -209,6 +209,10 @@ PrefabInstance:
       propertyPath: m_Color.g
       value: 0.50980395
       objectReference: {fileID: 0}
+    - target: {fileID: 5766481181502412018, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: m_Name
+      value: ShadowSing
+      objectReference: {fileID: 0}
     - target: {fileID: 5929771759949055298, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       propertyPath: m_SizeDelta.x
       value: 0
@@ -243,7 +247,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6578199205212244328, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       propertyPath: m_Name
-      value: KaraokeMemory
+      value: MemorySing
       objectReference: {fileID: 0}
     - target: {fileID: 9037480018170944228, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       propertyPath: entity
@@ -251,7 +255,8 @@ PrefabInstance:
       objectReference: {fileID: 2979023405036902778}
     m_RemovedComponents:
     - {fileID: 3133413388662785481, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 8422619965302074261, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 1146215389744680876, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       insertIndex: -1
@@ -260,6 +265,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6578199205212244328, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2979023405036902778}
+    - targetCorrespondingSourceObject: {fileID: 5766481181502412018, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5922514649845043432}
   m_SourcePrefab: {fileID: 100100000, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
 --- !u!1 &320680357648027087 stripped
 GameObject:
@@ -278,6 +286,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7533f4a2c825cd4f8249facd97f7e8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Body: {fileID: 0}
   dialogueManager: {fileID: 7599060434665752199}
   dialogueSets:
   - dialogues:
@@ -289,19 +298,28 @@ MonoBehaviour:
     - {fileID: 11400000, guid: b4d1c3968aab7014dbd559d843f66d05, type: 2}
     - {fileID: 11400000, guid: 9ab756f10bb5a9d4c8a41972471eae6d, type: 2}
     - {fileID: 11400000, guid: 9515956e59fd4344cacc6b71befe1a3c, type: 2}
-  appearances:
-  - {fileID: 1098759905538314325}
-  - {fileID: 3159860623602478898}
+  normalAnimatorClips:
+  - animator: {fileID: 5922514649845043432}
+    clipByLayer:
+    - {fileID: 7400000, guid: 104733bb3b75bdc44a9aac784bbb282d, type: 2}
+  corruptAnimatorClips:
+  - animator: {fileID: 5922514649845043432}
+    clipByLayer:
+    - {fileID: 7400000, guid: 104733bb3b75bdc44a9aac784bbb282d, type: 2}
+  animatorClipsPairs:
+  - animator: {fileID: 5922514649845043432}
   Integrity: 100
   MaxIntegrity: 100
+  decayCD: 3
+  InFocusDecayMultiplier: 0.5
+  IntegrityDecay: 1
+  inFocus: 0
   recoverIntegrityLimit: 50
   talkRollCD: 2
   talkChance: 0.25
-  glitchRollCD: 10
-  minGlitchRoll: 0.3
-  maxGlitchRoll: 0.7
-  decayCD: 3
-  inFocus: 0
+  corruptRollCD: 10
+  minCorruptRoll: 0.3
+  maxCorruptRoll: 0.7
   timeToShutup: 5
   GoodNoteSpawner: {fileID: 4662447988958042163}
   BadNoteSpawner: {fileID: 1678825872667966950}
@@ -316,11 +334,28 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5766481181502412018, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
   m_PrefabInstance: {fileID: 6861581774802158759}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &3159860623602478898 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8422619965302074261, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
-  m_PrefabInstance: {fileID: 6861581774802158759}
+--- !u!95 &5922514649845043432
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1098759905538314325}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 8ae447869e0f5f541836393a139ca464, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!224 &5823454037813611275 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1146215389744680876, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
