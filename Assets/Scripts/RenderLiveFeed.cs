@@ -51,10 +51,10 @@ public class RenderLiveFeed : MonoBehaviour
     {
         if(smoothScrollCoroutine != null) StopCoroutine(smoothScrollCoroutine);
 
-        selectBorderInstance.transform.SetParent(renderImages[index].transform.parent, false);
+        selectBorderInstance.transform.SetParent(renderImages[^(1+index)].transform.parent, false);
         selectBorderInstance.transform.SetAsFirstSibling();
 
-        RectTransform rectTransform = renderImages[index].transform.parent.GetComponent<RectTransform>();
+        RectTransform rectTransform = renderImages[^(1+index)].transform.parent.GetComponent<RectTransform>();
         smoothScrollCoroutine = StartCoroutine(SmoothScrollTo(rectTransform.localPosition.x));
     }
 
@@ -68,7 +68,7 @@ public class RenderLiveFeed : MonoBehaviour
                 livefeedCamera.targetTexture = renderTextures[i];
                 livefeedCamera.Render();
                 livefeedCamera.targetTexture = null;
-                livefeedCamera.transform.localPosition += new Vector3(1440, 0, 0);
+                livefeedCamera.transform.localPosition += new Vector3(1152, 0, 0);
             }
             yield return new WaitForSeconds(refreshRate);
         }

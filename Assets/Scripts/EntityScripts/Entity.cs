@@ -13,6 +13,10 @@ public abstract class Entity : MonoBehaviour
     [SerializeField] protected GameObject[] appearances;
     [SerializeField] public int Integrity = 100;
     [SerializeField] public int MaxIntegrity = 100;
+    [SerializeField] public float decayCD = 3f;
+    [SerializeField] public float InFocusDecayMultiplier = 0.5f;
+    [SerializeField] public bool IntegrityDecay = true;
+    [SerializeField] protected bool inFocus = false;
     [SerializeField] public int recoverIntegrityLimit = 50;
     [SerializeField] protected float talkRollCD = 2f;
 
@@ -22,8 +26,7 @@ public abstract class Entity : MonoBehaviour
     [SerializeField] protected float minGlitchRoll = 0.3f; //minroll
     [SerializeField] protected float maxGlitchRoll = 0.7f; //start rolling at this integrity
 
-    [SerializeField] public float decayCD = 3f;
-    [SerializeField] protected bool inFocus = false;
+
 
     protected float rollTalkTimer = 0f;
     protected float rollGlitchTimer = 0f;
@@ -41,26 +44,36 @@ public abstract class Entity : MonoBehaviour
 
     protected virtual void Awake()
     {
-        GameManager.Instance.OnDayEnd += OnDayEnd;
-        GameManager.Instance.OnDayStart += OnDayStart;
+        GameManager.Instance.OnStartStream += OnStartStream;
+        GameManager.Instance.OnEndStream += OnEndStream;
     }
     protected virtual void Start()
     {
         SetAppearance(0);
     }
-
-    protected virtual void OnDayEnd()
-    {
-        dialogueManager.EndDialogue();
-    }
-    protected virtual void OnDayStart()
+    protected virtual void OnStartStream()
     {
 
     }
+    protected virtual void OnEndStream()
+    {
+        
+    }
+
     protected virtual void Update()
     {
         if(!GameManager.Instance.isStreaming) return;
         //Interactable = IsPlayerInRange();
+
+        if(inFocus)
+        {
+            InFocusBehavior();
+        }
+        else
+        {
+            OutOfFocusBehavior();
+        }
+
         RollChanceToGlitch();
 
         if(glitched)
@@ -73,6 +86,19 @@ public abstract class Entity : MonoBehaviour
         }
         
         Decay();
+
+    }
+
+    protected virtual void InFocusBehavior()
+    {
+        if(InputManager.Instance.Submit.triggered)
+        {
+            Interact();
+        }
+    }
+
+    protected virtual void OutOfFocusBehavior()
+    {
 
     }
 
@@ -97,13 +123,18 @@ public abstract class Entity : MonoBehaviour
 
     protected virtual void Decay()
     {
-        if(inFocus) decayTimer += 0f;
-        else if(decayTimer >= decayCD)
+        if(!IntegrityDecay) return;
+
+        float elapsedTime = Time.deltaTime;
+        if(inFocus) elapsedTime *= InFocusDecayMultiplier;
+        
+        if(decayTimer >= decayCD)
         {
             AddIntegrity(-1);
             decayTimer = 0f;
         }
-        else decayTimer += Time.deltaTime;
+        else decayTimer += elapsedTime;
+        
     }
     protected virtual void SetAppearance(int index)
     {
@@ -133,7 +164,7 @@ public abstract class Entity : MonoBehaviour
                 }
                 rollTalkTimer = 0f;
             }
-            rollTalkTimer += Time.deltaTime;
+            else rollTalkTimer += Time.deltaTime;
         }
     }
 
@@ -188,10 +219,9 @@ public abstract class Entity : MonoBehaviour
                     EnterGlitchState();
                 }
             }
-
             rollGlitchTimer = 0f;
         }
-        rollGlitchTimer += Time.deltaTime;        
+        else rollGlitchTimer += Time.deltaTime;        
 
     }
 

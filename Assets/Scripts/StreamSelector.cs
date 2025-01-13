@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public class StreamSelector : MonoBehaviour
 {
+    public static StreamSelector Instance;
     [SerializeField] private StreamCardSO[] streamCards;
     [SerializeField] private GameObject streamSelectionLayout;
     [SerializeField] private GameObject streamCardLayout;
@@ -12,7 +13,23 @@ public class StreamSelector : MonoBehaviour
     private List<StreamCardSO> selectedStreams = new List<StreamCardSO>(); 
     private List<StreamCardSO> availableStreams = new List<StreamCardSO>();
 
+    public bool isOpen {get; private set;} = false;
+
+    private bool isCardSet = false;
+
     private StreamSO previousStream;
+
+    void Awake()
+    {
+        if(Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     void Start()
     {
@@ -21,18 +38,24 @@ public class StreamSelector : MonoBehaviour
 
     public void OpenUI()
     {
+        GameManager.Instance.StopStream();
+        Time.timeScale = 0;
+        isOpen = true;
         streamSelectionLayout.SetActive(true);
-        Setup();
+        if(!isCardSet)
+        {
+            Setup();
+        }
     }
 
-    private void Setup()
+    public void Setup()
     {
         List<StreamCardSO> selectableStreams = new List<StreamCardSO>(streamCards);
         selectedStreams.Clear();
         for(int i = streamCardList.Count; i < cardCount; i++)
         {
             GameObject newStreamCard = Instantiate(streamCard, streamCardLayout.transform);
-            newStreamCard.GetComponent<StreamCard>().OnSelect += (stream) => AddStream(stream);
+            newStreamCard.GetComponent<StreamCard>().OnSelect += (stream) => SetNewStream(stream);
             streamCardList.Add(newStreamCard);
         }
         foreach(GameObject streamCard in streamCardList)
@@ -42,31 +65,28 @@ public class StreamSelector : MonoBehaviour
             selectedStreams.Add(selectableStreams[randomIndex]);
             selectableStreams.RemoveAt(randomIndex);
         }
+        isCardSet = true;
     }
 
-    private void AddStream(StreamSO stream)
+    private void SetNewStream(StreamSO stream)
     {
+        GameManager.Instance.EndStream();
         if(previousStream != null)
         {
-            if(previousStream.streamName == stream.streamName)
-            {
-                PlayerManager.Instance.Debuff += 0.1f;
-            }
-            else
-            {
-                PlayerManager.Instance.Buff += 0.1f;
-            }
+            
         }
 
-
         previousStream = stream;
-        GameManager.Instance.SetStream(stream);
-        GameManager.Instance.PrepareStream();
+        GameManager.Instance.StartNewStream(stream);
+        isCardSet = false;
         CloseUI();
     }
 
     public void CloseUI()
     {
+        GameManager.Instance.ContinueStream();
+        Time.timeScale = 1;
+        isOpen = false;
         streamSelectionLayout.SetActive(false);
     }
 

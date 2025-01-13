@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: SingStream
   m_EditorClassIdentifier: 
   streamName: Karaoke
-  clip: {fileID: 32900000, guid: 2c098dac1fb746d43a2ca5bed7e6da65, type: 3}
-  memory: {fileID: 320680357648027087, guid: ae73ac14d6c38aa4ca4d0fef3aa2c23c, type: 3}
+  stream: {fileID: 420034609954183050, guid: 3db0c33fb41ab9b41a9e5ccb7288c5d9, type: 3}
+  memory: {fileID: 2979023405036902778, guid: ae73ac14d6c38aa4ca4d0fef3aa2c23c, type: 3}

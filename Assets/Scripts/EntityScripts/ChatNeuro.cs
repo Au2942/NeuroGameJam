@@ -28,7 +28,7 @@ public class ChatNeuro : MemoryEntity
                 spawnTimer = 0f;
                 ExitGlitchState();
             }
-            spawnTimer += Time.deltaTime;
+            else spawnTimer += Time.deltaTime;
         }
     }
 

@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: ChatStream
   m_EditorClassIdentifier: 
   streamName: Just Chatting
-  clip: {fileID: 32900000, guid: 7fc07a831359fcf4786eb3b15e0c636a, type: 3}
-  memory: {fileID: 3367336840930842900, guid: 2f2bd6c212ff13544890676d7095cceb, type: 3}
+  stream: {fileID: 420034609954183050, guid: 3db0c33fb41ab9b41a9e5ccb7288c5d9, type: 3}
+  memory: {fileID: 7842991713011423903, guid: 2f2bd6c212ff13544890676d7095cceb, type: 3}

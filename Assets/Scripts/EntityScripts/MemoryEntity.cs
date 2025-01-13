@@ -6,30 +6,24 @@ public abstract class MemoryEntity : Entity
     [SerializeField] protected float timeToShutup = 5f;
     protected float shutupTimer = 0f;
 
-
-    protected override void Update()
+    protected override void InFocusBehavior()
     {
-        base.Update();
+        base.InFocusBehavior();
+        RollChanceToTalk();
+    }
 
-        if(inFocus)
-        {
-            if(InputManager.Instance.Submit.triggered)
-            {
-                Interact();
-            }
-            //random chance to talk
-            RollChanceToTalk();
-        }
-        else if (dialogueManager.IsDialoguePlaying)
+    protected override void OutOfFocusBehavior()
+    {
+        base.OutOfFocusBehavior();
+        if (dialogueManager.IsDialoguePlaying)
         {
             if (shutupTimer >= timeToShutup)
             {
                 ShutUp();
                 shutupTimer = 0f;
             }
-            shutupTimer += Time.deltaTime;
+            else shutupTimer += Time.deltaTime;
         }
-
     }
 
     protected override void Interact()
@@ -38,9 +32,9 @@ public abstract class MemoryEntity : Entity
         Converse();
     }
 
-    protected override void OnDayEnd()
+    protected override void OnEndStream()
     {
-        base.OnDayEnd();
+        base.OnEndStream();
         if(glitched) ExitGlitchState();
     }
 

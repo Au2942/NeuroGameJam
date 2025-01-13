@@ -9,7 +9,7 @@ public class SpinNeuro : MemoryEntity
     [SerializeField] public float SpinSpeedDecrement = 1f;
     [SerializeField] public float startDealingDamageSpeed = 100f;
     [SerializeField] public float delayBetweenDamage = 4f;
-    [SerializeField] public DetectUIHold[] holdDetectors;
+    [SerializeField] public UIEventHandler[] holdDetectors;
     private float currentAcceleration = 0f;
     private float currentDeceleration = 0f; 
     private float damageTimer = 0f;
@@ -18,10 +18,11 @@ public class SpinNeuro : MemoryEntity
     protected override void Start()
     {
         base.Start();
-        foreach(DetectUIHold holdDetector in holdDetectors)
+        foreach(UIEventHandler holdDetector in holdDetectors)
         {
-            holdDetector.OnBeginHoldEvent += (eventData) => isHolding = true;
-            holdDetector.OnEndHoldEvent += (eventData) => isHolding = false;
+            holdDetector.OnPointerDownEvent += (eventData) => isHolding = true;
+            holdDetector.OnPointerUpEvent += (eventData) => isHolding = false;
+            holdDetector.OnPointerExitEvent += (eventData) => isHolding = false;
         }
 
     }
@@ -74,7 +75,7 @@ public class SpinNeuro : MemoryEntity
             PlayerManager.Instance.TakeDamage(1);
             damageTimer = 0f;
         }
-        damageTimer += Time.deltaTime;
+        else damageTimer += Time.deltaTime;
 
         if(currentSpeed <= 50)
         {

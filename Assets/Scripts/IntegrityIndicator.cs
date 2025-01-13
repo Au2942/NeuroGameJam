@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class IntegrityIndicator : MonoBehaviour
 {
     [SerializeField] private Image indicator;
-    [SerializeField] private MemoryEntity entity; 
+    [SerializeField] private Entity entity; 
     private Color originalColor;
 
     void Start()

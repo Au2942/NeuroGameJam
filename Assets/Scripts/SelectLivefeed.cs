@@ -6,7 +6,7 @@ public class SelectLivefeed : MonoBehaviour, IPointerClickHandler
     private int index {get; set;} = -1;
     public void OnPointerClick(PointerEventData eventData)
     {
-        TimelineManager.Instance.SetMemoryIndex(index);
+        TimelineManager.Instance.SetEntityIndex(index);
     }
     
     public void SetIndex(int newIndex)

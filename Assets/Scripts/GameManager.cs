@@ -11,36 +11,23 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-    [SerializeField] private VideoPlayer streamVideoPlayer;
-    [SerializeField] private StreamSelector streamSelector;
-    [SerializeField] private TextMeshProUGUI dayText;
     [SerializeField] private TextMeshProUGUI roomText;
-    [SerializeField] public List<MemoryEntity> MemoryEntities;
+    [SerializeField] public List<Entity> Entities;
     [SerializeField] private Image integrityBar;
-    [SerializeField] private float addScorePercentage = 1;
-    [SerializeField] private DialogueManager endGameDialogueManager;
-    [SerializeField] private DialogueInfoSO[] endGameDialogues;
-    [SerializeField] private TextMeshProUGUI endScoreText;
-    [SerializeField] public float streamTime = 10f;
-    [SerializeField] public float streamTimeIncrease = 10f;
 
-    [SerializeField] private AudioClip[] endGameSFXs;
+    [SerializeField] private StreamSO defaultStream;
+
+
 
     public StreamSO CurrentStream { get; private set; }
-    public int currentDay { get; private set; } = 0;
     public bool isStreaming { get; set; } = false;
 
-    private float nextScoreTime = 0f;
-    private float nextScoreTimer = 0f;
-    private float minInterval = 5f; // Minimum interval in seconds
-    private float maxInterval = 20f; // Maximum interval in seconds
 
-    private float streamTimer = 0f;
 
     private float targetIntegrityBarValue = 0f;
 
-    public event Action OnDayEnd;
-    public event Action OnDayStart;
+    public event Action OnStartStream;
+    public event Action OnEndStream;
 
     void Awake()
     {
@@ -55,104 +42,72 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
-        streamVideoPlayer.prepareCompleted += OnPrepareCompleted;
         TimelineManager.Instance.OnChangeMemoryIndex += SetMemoryIndex;
-        TimelineManager.Instance.SetMemoryIndex(0);
-        MemoryEntities.AddRange(FindObjectsByType<MemoryEntity>(FindObjectsSortMode.None));
+
+        Entities.AddRange(FindObjectsByType<Entity>(FindObjectsSortMode.None));
+
         StartCoroutine(MoveIntegrityBar());
-        DayStart();
-    }
+        
+        InitialiseStream(defaultStream);
 
-    public void DayStart()
-    {
-        //memoryEntities.ForEach(entity => entity.Integrity = entity.MaxIntegrity);
-        currentDay++;
-        dayText.text = "Day " + currentDay;
-        streamSelector.OpenUI();
-        foreach(MemoryEntity entity in MemoryEntities)
-        {
-            if(entity.Integrity > 50)
-            {
-                PlayerManager.Instance.Buff += 0.1f;
-            }
-        }
-        TimelineManager.Instance.SetMemoryIndex(0);
-        OnDayStart?.Invoke();
     }
-
 
 
     void Update()
     {
-        
         if (isStreaming)
         { 
             UpdateIntegrityBar();
-            streamTimer += Time.deltaTime;
-            if (streamTimer >= streamTime)
+            PlayerManager.Instance.ProgressStream();
+        }
+        if(StreamSelector.Instance.isOpen)
+        {
+            if(InputManager.Instance.Cancel.triggered || InputManager.Instance.RightClick.triggered)
             {
-                isStreaming = false;
-                DayEnd();
-                DayStart();
-            }
-            else
-            {
-                nextScoreTimer += Time.deltaTime;
-                if (nextScoreTimer >= nextScoreTime)
-                {
-                    nextScoreTimer = 0f;
-                    PlayerManager.Instance.AddScoreByPercentage(addScorePercentage, 10);
-                    nextScoreTime = UnityEngine.Random.Range(minInterval, maxInterval);
-                }
+                StreamSelector.Instance.CloseUI();
             }
         }
-    }
-
-    public void SetStream(StreamSO newStream)
-    {
-        CurrentStream = newStream;
     }
 
     private void SetMemoryIndex(int index)
     {
-        if(index == 0)
-        {
-            roomText.text = "Livestream";
-            targetIntegrityBarValue = 1f;
-            streamVideoPlayer.SetDirectAudioVolume(0, 1);
-        }
-        else streamVideoPlayer.SetDirectAudioVolume(0, 0);
 
-        for(int i = 0; i < MemoryEntities.Count; i++)
+        for(int i = 0; i < Entities.Count; i++)
         {
 
-            MemoryEntity memoryEntity = MemoryEntities[i];
-            if (index != 0 && i == MemoryEntities.Count - index)
+            Entity entity = Entities[i];
+            if (i == index)
             {
-                memoryEntity.SetInFocus(true);
+                entity.SetInFocus(true);
                 string roomName = "";
-                if(!memoryEntity.glitched)
-                {
-                    roomName = "Memory of ";
-                }
-                else
+                if(index == Entities.Count-1)
                 {   
-                    roomName = "Corrupted Memory of ";
+                    roomText.text = "Livestream";
                 }
-                roomText.text = roomName + memoryEntity.name + " stream";
+                else 
+                {
+                    if(!entity.glitched)
+                    {
+                        roomName = "Memory of ";
+                    }
+                    else
+                    {   
+                        roomName = "Corrupted Memory of ";
+                    }
+                    roomText.text = roomName + entity.name + " stream";
+                }
             }
             else
             {
-                memoryEntity.SetInFocus(false);
+                entity.SetInFocus(false);
             }
         }
     }
 
     private void UpdateIntegrityBar()
     {
-        int index = TimelineManager.Instance.currentMemoryIndex;
-        if(index == 0) return;
-        targetIntegrityBarValue = MemoryEntities[MemoryEntities.Count-index].Integrity/(float)MemoryEntities[^index].MaxIntegrity;
+        int index = TimelineManager.Instance.currentEntityIndex;
+        targetIntegrityBarValue = Entities[^(index+1)].Integrity/(float)Entities[^(index+1)].MaxIntegrity;
     }
 
     private IEnumerator MoveIntegrityBar()
@@ -163,82 +118,59 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
     }
-
-    public void PrepareStream()
+    public void InitialiseStream(StreamSO newStream)
     {
-        
-        streamVideoPlayer.clip = CurrentStream.clip;
-        streamVideoPlayer.Prepare();
-
-    }
-
-    void OnPrepareCompleted(VideoPlayer videoPlayer)
-    {
-        StartStream();
-        videoPlayer.Play();
-    }
-
-    public void StartStream()
-    {
-        streamTime += streamTimeIncrease;
-        streamTimer = 0f;
+        CurrentStream = newStream;
+        GameObject stream = TimelineManager.Instance.SetUpStream(CurrentStream);
+        Entities.Add(stream.GetComponent<StreamEntity>());
         isStreaming = true;
-        TimelineManager.Instance.currentMemoryIndex = 0;
+        TimelineManager.Instance.SetEntityIndex(0);
+        OnStartStream?.Invoke();
     }
 
-    public void DayEnd()
+    public void StartNewStream(StreamSO newStream)
     {
-        if(PlayerManager.Instance.Score >= 100000)
+        CurrentStream = newStream;
+        GameObject stream = TimelineManager.Instance.ChangeStream(CurrentStream);
+        Entities.Add(stream.GetComponent<StreamEntity>());
+        TimelineManager.Instance.SetEntityIndex(Entities.Count-1);
+        foreach(Entity entity in Entities)
         {
-           StartCoroutine(EndGame(2));
+            if(entity.Integrity > 50)
+            {
+                PlayerManager.Instance.Hype += 0.1f;
+            }
         }
-        else if(PlayerManager.Instance.Score <= 0)
-        {
-            StartCoroutine(EndGame(1));
-        }
-        MemoryEntities.ForEach(entity => entity.SetInFocus(false));
-        MemoryEntities.ForEach(entity => entity.ShutUp());
+        isStreaming = true;
+        OnStartStream?.Invoke();
+    }
+
+    public void ContinueStream()
+    {
+        Entities[TimelineManager.Instance.currentEntityIndex].SetInFocus(true);
+        isStreaming = true;
+    }
+
+    public void StopStream()
+    {
+        Entities.ForEach(entity => entity.SetInFocus(false));
+        Entities.ForEach(entity => entity.ShutUp());
         isStreaming = false;
-        streamVideoPlayer.Stop();
+    }
+
+    public void EndStream()
+    {
+
+        StopStream();
 
         GameObject memory = TimelineManager.Instance.AddStreamToMemory(CurrentStream);
-        MemoryEntities.Add(memory.GetComponent<MemoryEntity>());
-
-        PlayerManager.Instance.Buff = 0;
-        PlayerManager.Instance.Debuff = 0;
+        Entities[^1] = memory.GetComponent<MemoryEntity>();
         PlayerManager.Instance.TakeDamage(-5);
 
-        OnDayEnd?.Invoke();
-
+        OnEndStream?.Invoke();
     }
 
-    public IEnumerator EndGame(int endingIndex)
-    {
-        isStreaming = false;
-        streamVideoPlayer.Stop();
-        endGameDialogueManager.gameObject.SetActive(true);
-        if(endGameSFXs[endingIndex] != null)
-        {
-            SFXManager.Instance.PlaySoundFX(endGameSFXs[endingIndex], transform);
-            yield return new WaitForSeconds(endGameSFXs[endingIndex].length);
-        }
-        
-        endGameDialogueManager.PlayDialogue(endGameDialogues[endingIndex]);
-        endScoreText.text = "You've lasted " +  currentDay + " days and got " + PlayerManager.Instance.Score + " viewers!";
-        while(endGameDialogueManager.IsTyping)
-        {
-            yield return null;
-        }
-        while(true)
-        {
-            if(InputManager.Instance.Submit.triggered || InputManager.Instance.Cancel.triggered || InputManager.Instance.Click.triggered) 
-            {
-                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-                yield break;
-            }
-            yield return null;
-        }
-    }
+
 
 
     

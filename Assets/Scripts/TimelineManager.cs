@@ -7,10 +7,11 @@ using UnityEngine.Video;
 public class TimelineManager : MonoBehaviour 
 {
     public static TimelineManager Instance;
-    [SerializeField] private GameObject memoryLayout;
+    [SerializeField] private GameObject entityContainer;
+    [SerializeField] private GameObject entityLayout;
 
-    public int currentMemoryIndex {get; set; } = 0;
-    public int MemoriesCount { get; set; } = 0;
+    public int currentEntityIndex {get; set; } = 0;
+    public int entitiesCount { get; set; } = 0;
 
     public Dictionary<string, int> MemoryEntityTypesCount {get; set;} = new Dictionary<string, int>();
 
@@ -35,15 +36,17 @@ public class TimelineManager : MonoBehaviour
 
     void Start()
     {
-        LayoutRebuilder.ForceRebuildLayoutImmediate(memoryLayout.GetComponent<RectTransform>());
-        layoutWidth = memoryLayout.GetComponent<RectTransform>().rect.width;
+        LayoutRebuilder.ForceRebuildLayoutImmediate(entityContainer.GetComponent<RectTransform>());
+        layoutWidth = entityContainer.GetComponent<RectTransform>().rect.width;
         cooldownTimer = cooldownBetweenNavigation;
     }
 
     void Update()
     {
-        CheckNavigationInput();
-        UpdateMemoryLayoutPosition();
+        if(GameManager.Instance.isStreaming)
+        {
+            CheckNavigationInput();
+        }    
     }
 
     private void CheckNavigationInput()
@@ -52,7 +55,7 @@ public class TimelineManager : MonoBehaviour
         if(horizontalInput != 0)
         {
             cooldownTimer += Time.deltaTime;
-            int tempIndex = currentMemoryIndex;
+            int tempIndex = currentEntityIndex;
             if(cooldownTimer < cooldownBetweenNavigation)
             {
                 return;
@@ -60,25 +63,24 @@ public class TimelineManager : MonoBehaviour
             cooldownTimer = 0f;
             if(horizontalInput > 0)
             {
-                tempIndex++;
+                tempIndex--;
             }
             else if(horizontalInput < 0)
             {
-                tempIndex--;
+                tempIndex++;
             }
 
             if(tempIndex < 0)
             {
-                currentMemoryIndex = 0;
+                currentEntityIndex = 0;
             }
-            else if(tempIndex > MemoriesCount)
+            else if(tempIndex > entitiesCount-1)
             {
-                currentMemoryIndex = MemoriesCount;
+                currentEntityIndex = entitiesCount-1;
             }
             else 
             {
-                currentMemoryIndex = tempIndex;
-                OnChangeMemoryIndex?.Invoke(currentMemoryIndex);
+                SetEntityIndex(tempIndex);
             }
         }
         else
@@ -87,15 +89,42 @@ public class TimelineManager : MonoBehaviour
         }
     }
 
-    public void SetMemoryIndex(int index)
+    public void SetEntityIndex(int index)
     {
-        currentMemoryIndex = index;
-        OnChangeMemoryIndex?.Invoke(currentMemoryIndex);
+        currentEntityIndex = index;
+        UpdateMemoryLayoutPosition();
+        Debug.Log("Current Entity Index: " + currentEntityIndex);
+        OnChangeMemoryIndex?.Invoke(currentEntityIndex);
     }
 
     private void UpdateMemoryLayoutPosition()
     {
-        memoryLayout.GetComponent<RectTransform>().anchoredPosition = new Vector2(0 - currentMemoryIndex*1440, 0);
+        entityContainer.GetComponent<RectTransform>().anchoredPosition = new Vector2(-1152*(entitiesCount-1-currentEntityIndex), 0);
+    }
+
+    public GameObject SetUpStream(StreamSO newStream)
+    {
+        GameObject stream = Instantiate(newStream.stream.gameObject, entityLayout.transform);
+        entitiesCount++;
+        stream.name = newStream.streamName;
+        stream.transform.SetAsFirstSibling();
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(entityContainer.GetComponent<RectTransform>());
+        layoutWidth = entityContainer.GetComponent<RectTransform>().rect.width;
+        return stream;
+    }
+
+    public GameObject ChangeStream(StreamSO newStream)
+    {
+        Destroy(entityLayout.transform.GetChild(0).gameObject);
+        GameObject stream = Instantiate(newStream.stream.gameObject, entityLayout.transform);
+        stream.name = newStream.streamName;
+        stream.transform.SetAsFirstSibling();
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(entityContainer.GetComponent<RectTransform>());
+        layoutWidth = entityContainer.GetComponent<RectTransform>().rect.width;
+        
+        return stream;
     }
 
     public GameObject AddStreamToMemory(StreamSO stream)
@@ -104,14 +133,14 @@ public class TimelineManager : MonoBehaviour
         {
             MemoryEntityTypesCount[stream.name]++;
         }
-        MemoriesCount++;
+        entitiesCount++;
 
-        GameObject memory = Instantiate(stream.memory, memoryLayout.transform);
+        GameObject memory = Instantiate(stream.memory.gameObject, entityLayout.transform);
         memory.name = stream.streamName;
         memory.transform.SetSiblingIndex(1);
 
-        LayoutRebuilder.ForceRebuildLayoutImmediate(memoryLayout.GetComponent<RectTransform>());
-        layoutWidth = memoryLayout.GetComponent<RectTransform>().rect.width;
+        LayoutRebuilder.ForceRebuildLayoutImmediate(entityContainer.GetComponent<RectTransform>());
+        layoutWidth = entityContainer.GetComponent<RectTransform>().rect.width;
 
         OnMemoryAdded?.Invoke();
         

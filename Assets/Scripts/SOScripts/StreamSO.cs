@@ -5,7 +5,7 @@ using UnityEngine.Video;
 public class StreamSO : ScriptableObject
 {
     public string streamName;
-    public VideoClip clip;
-    public GameObject memory;
+    public StreamEntity stream;
+    public MemoryEntity memory;
     
 }

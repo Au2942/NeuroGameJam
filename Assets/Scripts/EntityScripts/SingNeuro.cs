@@ -32,7 +32,7 @@ public class SingNeuro : MemoryEntity
                 spawnTimer = 0f;
                 ExitGlitchState();
             }
-            spawnTimer += Time.deltaTime;
+            else spawnTimer += Time.deltaTime;
         }
     }
 
@@ -50,9 +50,5 @@ public class SingNeuro : MemoryEntity
         BadNoteSpawner.ClearFallenObjects();
     }
 
-    protected override void OnDayEnd()
-    {
-        base.OnDayEnd();
-    }
 
 }
