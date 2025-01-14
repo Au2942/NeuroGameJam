@@ -39,4 +39,11 @@ public class StreamCard : MonoBehaviour
     {
         OnSelect?.Invoke(stream);
     }
+
+    void OnDestroy()
+    {
+        cardEventHandler.OnPointerDownEvent -= (t) => Select();
+        cardEventHandler.OnPointerEnterEvent -= (t) => outline.color = originalColor;
+        cardEventHandler.OnPointerExitEvent -= (t) => outline.color = transparentColor;
+    }
 }

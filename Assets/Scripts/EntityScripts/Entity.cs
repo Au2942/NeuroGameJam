@@ -6,26 +6,38 @@ public abstract class Entity : MonoBehaviour
 
     [SerializeField] protected GameObject Body;
     [SerializeField] protected DialogueManager dialogueManager;
-    [SerializeField] protected DialogueSet[] dialogueSets;
-    [SerializeField] protected AnimatorClipPair[] normalAnimatorClips;
-    [SerializeField] protected AnimatorClipPair[] corruptAnimatorClips;
-    [SerializeField] protected AnimatorClipsPair[] animatorClipsPairs;
-    [SerializeField] public int Integrity = 100;
-    [SerializeField] public int MaxIntegrity = 100;
-    [SerializeField] public float decayCD = 3f;
+    [SerializeField] protected List<DialogueSet> dialogueSets;
+    [SerializeField] public float Integrity = 100;
+    [SerializeField] public float MaxIntegrity = 100;
+    [SerializeField] public float decayInterval = 3f;
     [SerializeField] public float InFocusDecayMultiplier = 0.5f;
     [SerializeField] public bool IntegrityDecay = true;
     [SerializeField] protected bool inFocus = false;
     [SerializeField] public int recoverIntegrityLimit = 50;
+    [SerializeField] protected bool talkInOrder = true;
+    [SerializeField] protected bool talkRepeatable = true;
     [SerializeField] protected float talkRollCD = 2f;
     [SerializeField] protected float talkChance = 0.25f;
     [SerializeField] protected float corruptRollCD = 10f;
     [SerializeField] protected float minCorruptRoll = 0.3f; //minroll
     [SerializeField] protected float maxCorruptRoll = 0.7f; //start rolling at this integrity
+    [SerializeField] public List<AnimatorClipsPair> defaultAnimatorClips;
+    [SerializeField] public List<AnimatorClipsPair> idleAnimatorClips;
+    [SerializeField] public List<AnimatorClipsPair> dialoguePlayingAnimation; //plays while dialogue is playing
+    [SerializeField] public List<AnimatorClipsPair> dialogueTypingAnimation; //plays when playing a typing sound
+    [SerializeField] public List<AnimatorClipPair> normalAnimatorClips;
+    [SerializeField] public List<AnimatorClipPair> corruptAnimatorClips;
+    [SerializeField] public List<AnimatorClipsPair> extraAnimatorClipsPairs;
+
+    public enum AnimationState
+    {
+        Default,
+        Idle,
+    }
+    [SerializeField] public AnimationState CurrentAnimationState = AnimationState.Default;
 
     protected float rollTalkTimer = 0f;
     protected float rollCorruptTimer = 0f;
-    protected float decayTimer = 0f;
     public bool corrupted {get; set;} = false;
     protected int dialogueSetIndex = 0;
 
@@ -44,7 +56,9 @@ public abstract class Entity : MonoBehaviour
     }
     protected virtual void Start()
     {
+        PlayDefaultAnimation();
         SetNormalAppearance();
+        PlayIdleAnimation();
     }
     protected virtual void OnStartStream()
     {
@@ -83,6 +97,26 @@ public abstract class Entity : MonoBehaviour
 
     }
 
+    public virtual void SetAnimationState(AnimationState state, bool force = false)
+    {
+        if (force || CurrentAnimationState != state)
+        {
+            CurrentAnimationState = state;
+            PlayCurrentAnimation();
+        }
+    }
+    public virtual void PlayCurrentAnimation()
+    {
+        switch(CurrentAnimationState)
+        {
+            case AnimationState.Default:
+                PlayDefaultAnimation();
+                break;
+            case AnimationState.Idle:
+                PlayIdleAnimation();
+                break;
+        }
+    }
     protected virtual void InFocusBehavior()
     {
         if(InputManager.Instance.Submit.triggered)
@@ -102,7 +136,7 @@ public abstract class Entity : MonoBehaviour
         dialogueManager.PlaySound = focus;
     }
 
-    public void AddIntegrity(int amount)
+    public void AddIntegrity(float amount)
     {
         Integrity += amount;
         if (Integrity > MaxIntegrity)
@@ -117,31 +151,50 @@ public abstract class Entity : MonoBehaviour
 
     protected virtual void Decay()
     {
-        if(!IntegrityDecay) return;
-
-        float elapsedTime = Time.deltaTime;
-        if(inFocus) elapsedTime *= InFocusDecayMultiplier;
-        
-        if(decayTimer >= decayCD)
-        {
-            AddIntegrity(-1);
-            decayTimer = 0f;
-        }
-        else decayTimer += elapsedTime;
+        if(!IntegrityDecay || decayInterval == 0) return;
+        float decayMultiplier = inFocus ? InFocusDecayMultiplier : 1f;
+        AddIntegrity(-1/decayInterval * Time.deltaTime * decayMultiplier);
         
     }
+
+    protected virtual void PlayDefaultAnimation()
+    {
+        for(int i = 0; i < defaultAnimatorClips.Count; i++)
+        {
+            foreach(ClipLayerPair clipLayerPair in defaultAnimatorClips[i].clipLayerPairs)
+            {
+                if(clipLayerPair.clip != null)
+                    defaultAnimatorClips[i].animator.CrossFade(clipLayerPair.clip.name, 0.2f, clipLayerPair.layer);
+            }
+        }
+        CurrentAnimationState = AnimationState.Default;
+    }
+
+    protected virtual void PlayIdleAnimation()
+    {
+        for(int i = 0; i < idleAnimatorClips.Count; i++)
+        {
+            if(idleAnimatorClips[i].animator != null)
+            {
+                foreach(ClipLayerPair clipLayerPair in idleAnimatorClips[i].clipLayerPairs)
+                {
+                    if(clipLayerPair.clip != null)
+                        idleAnimatorClips[i].animator.CrossFade(clipLayerPair.clip.name,0.2f, clipLayerPair.layer);
+                }
+            }
+        }
+        CurrentAnimationState = AnimationState.Idle;
+    }
+
     protected virtual void SetAppearance(int index)
     {
-        for (int i = 0; i < animatorClipsPairs.Length; i++)
+        for (int i = 0; i < extraAnimatorClipsPairs.Count; i++)
         {
-            if (animatorClipsPairs[i].animator != null )
+            if (extraAnimatorClipsPairs[i].animator != null )
             { 
-                for(int j = 0; j < animatorClipsPairs[i].clipsByLayer.Length; j++)
+                if(extraAnimatorClipsPairs[i].clipLayerPairs[index].clip != null)
                 {
-                    if(animatorClipsPairs[i].clipsByLayer[j].clips[index] != null)
-                    {
-                        animatorClipsPairs[i].animator.CrossFade(animatorClipsPairs[i].clipsByLayer[j].clips[index].name, 0.2f, j);
-                    }
+                    extraAnimatorClipsPairs[i].animator.CrossFade(extraAnimatorClipsPairs[i].clipLayerPairs[index].clip.name,0.2f, extraAnimatorClipsPairs[i].clipLayerPairs[index].layer);
                 }
             }
         }
@@ -153,13 +206,12 @@ public abstract class Entity : MonoBehaviour
         {
             if(clipPair.animator != null) 
             {
-                for(int i = 0; i < clipPair.clipByLayer.Length; i++)
+
+                if(clipPair.clipLayerPair.clip != null)
                 {
-                    if(clipPair.clipByLayer[i] != null)
-                    {
-                        clipPair.animator.CrossFade(clipPair.clipByLayer[i].name, 0.2f, i);
-                    }
+                    clipPair.animator.CrossFade(clipPair.clipLayerPair.clip.name, 0.2f, clipPair.clipLayerPair.layer);
                 }
+
             }
         }
     }
@@ -170,29 +222,20 @@ public abstract class Entity : MonoBehaviour
         {
             if(clipPair.animator != null)
             {
-                for(int i = 0; i < clipPair.clipByLayer.Length; i++)
+                if(clipPair.clipLayerPair.clip != null)
                 {
-                    if(clipPair.clipByLayer[i] != null)
-                    {
-                        clipPair.animator.CrossFade(clipPair.clipByLayer[i].name, 0.2f, i);
-                    }
+                    clipPair.animator.CrossFade(clipPair.clipLayerPair.clip.name, 0.2f, clipPair.clipLayerPair.layer);
                 }
             }
         }
     }
 
-    protected void PlayAnimation(int animatorIndex, int layer, int clipIndex)
+    protected void PlayAnimation(int animatorIndex = 0, int clipIndex = 0)
     {
-        if (animatorIndex < 0 || animatorIndex >= animatorClipsPairs.Length) return;
-        if (layer < 0 || layer >= animatorClipsPairs[animatorIndex].clipsByLayer.Length) return;
-        if (clipIndex < 0 || clipIndex >= animatorClipsPairs[animatorIndex].clipsByLayer[layer].clips.Length) return;
-        if (animatorClipsPairs[animatorIndex].animator != null)
+        if (animatorIndex < 0 || animatorIndex >= extraAnimatorClipsPairs.Count) return;
+        if (extraAnimatorClipsPairs[animatorIndex].clipLayerPairs[clipIndex].clip != null)
         {
-            AnimationClip clip = animatorClipsPairs[animatorIndex].clipsByLayer[layer].clips[clipIndex];
-            if (clip != null)
-            {
-                animatorClipsPairs[animatorIndex].animator.CrossFade(clip.name, 0.2f, layer);
-            }
+            extraAnimatorClipsPairs[animatorIndex].animator.CrossFade(extraAnimatorClipsPairs[animatorIndex].clipLayerPairs[clipIndex].clip.name, 0.2f, extraAnimatorClipsPairs[animatorIndex].clipLayerPairs[clipIndex].layer);
         }
     }
 
@@ -250,7 +293,7 @@ public abstract class Entity : MonoBehaviour
     {
         if(rollCorruptTimer >= corruptRollCD)
         {
-            float integrityRatio = (float)Integrity / MaxIntegrity;
+            float integrityRatio = Integrity / MaxIntegrity;
             if (integrityRatio <= minCorruptRoll)
             {
                 EnterCorruptState();
@@ -294,8 +337,28 @@ public abstract class Entity : MonoBehaviour
         {
             return;
         }
-        int randomIndex = Random.Range(0, dialogues.Count);
-        dialogueManager.PlayDialogue(dialogues[randomIndex], playerInitiated);
+
+        if(talkInOrder)
+        {
+            if(talkCounter >= dialogues.Count)
+            {
+                if(talkRepeatable)
+                {
+                    talkCounter = 0;
+                }
+                else
+                {
+                    return;
+                }
+            }
+            dialogueManager.PlayDialogue(dialogues[talkCounter], playerInitiated);
+            talkCounter++;
+        }
+        else
+        {
+            int randomIndex = Random.Range(0, dialogues.Count);
+            dialogueManager.PlayDialogue(dialogues[randomIndex], playerInitiated);
+        }
     }
 
     protected virtual void Talk(int dialogueSet, int dialogueIndex, bool playerInitiated = true)
@@ -318,5 +381,11 @@ public abstract class Entity : MonoBehaviour
     public void ShutUp()
     {
         dialogueManager.EndDialogue();
+    }
+
+    protected virtual void OnDestroy()
+    {
+        GameManager.Instance.OnStartStream -= OnStartStream;
+        GameManager.Instance.OnEndStream -= OnEndStream;
     }
 }

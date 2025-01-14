@@ -9,6 +9,7 @@ public class StreamSelector : MonoBehaviour
     [SerializeField] private GameObject streamCardLayout;
     [SerializeField] private GameObject streamCard;
     [SerializeField] private int cardCount = 2;
+    [SerializeField] public float hypeIncrease = 0.5f;
     private List<GameObject> streamCardList = new List<GameObject>();
     private List<StreamCardSO> selectedStreams = new List<StreamCardSO>(); 
     private List<StreamCardSO> availableStreams = new List<StreamCardSO>();
@@ -52,6 +53,11 @@ public class StreamSelector : MonoBehaviour
     {
         List<StreamCardSO> selectableStreams = new List<StreamCardSO>(streamCards);
         selectedStreams.Clear();
+        if (previousStream != null)
+        {
+            selectableStreams.RemoveAll(stream => stream.stream == previousStream);
+        }
+
         for(int i = streamCardList.Count; i < cardCount; i++)
         {
             GameObject newStreamCard = Instantiate(streamCard, streamCardLayout.transform);
@@ -71,13 +77,9 @@ public class StreamSelector : MonoBehaviour
     private void SetNewStream(StreamSO stream)
     {
         GameManager.Instance.EndStream();
-        if(previousStream != null)
-        {
-            
-        }
-
         previousStream = stream;
         GameManager.Instance.StartNewStream(stream);
+        PlayerManager.Instance.TargetHype = PlayerManager.Instance.CurrentHype + hypeIncrease;
         isCardSet = false;
         CloseUI();
     }
@@ -90,4 +92,15 @@ public class StreamSelector : MonoBehaviour
         streamSelectionLayout.SetActive(false);
     }
 
+    void OnDestroy()
+    {
+        foreach(GameObject streamCardObject in streamCardList)
+        {
+            StreamCard streamCard = streamCardObject.GetComponent<StreamCard>();
+            if (streamCard != null)
+            {
+                streamCard.OnSelect -= (stream) => SetNewStream(stream);
+            }
+        }
+    }
 }

@@ -16,7 +16,7 @@ public class IntegrityIndicator : MonoBehaviour
 
         //bar.fillAmount = entity.Integrity / (float)entity.MaxIntegrity;
 
-        float integrityPercentage = entity.Integrity / (float)entity.MaxIntegrity;
+        float integrityPercentage = entity.Integrity / entity.MaxIntegrity;
         Color.RGBToHSV(originalColor, out float h, out float s, out float v);
         integrityPercentage = Mathf.Clamp(integrityPercentage, 0, v);
         Color updatedColor = Color.HSVToRGB(h, s, integrityPercentage);

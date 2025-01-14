@@ -1,22 +1,33 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager Instance;
-    [SerializeField] public int Score = 3000; //ccv 
-    [SerializeField] public int MaxHealth = 100; //stability
-    [SerializeField] public int Health = 100; //stability
-    [SerializeField] public float StreamTime = 60f;
-    [SerializeField] public float StreamTimeScale = 1f;
-    [SerializeField] public float StreamTimeIncrease = 10f;
-    [SerializeField] private float addScorePercentage = 1;
-    [SerializeField] private float minAddScoreInterval = 5f; 
-    [SerializeField] private float maxAddScoreInterval = 20f; 
-    [SerializeField] public float Hype = 0;
 
-    private float nextScoreTime = 0f;
-    private float nextScoreTimer = 0f;
-    private float currentStreamElapsedTime = 0f;
+    [SerializeField] public float Integrity = 100; //integrity of self
+    [SerializeField] public float MaxIntegrity = 100;
+    [SerializeField] public float MemoriesIntegrity = 100; //average of all memory entities integrity
+    [SerializeField] public float MaxMemoriesIntegrity = 100;
+    [SerializeField] public float RemainingStreamTime = 60f;
+    [SerializeField] public float StreamTimeIncrease = 0.03f; //3 seconds per subscription
+    [SerializeField] public int CurrentViewers = 0; //ccv 
+    [SerializeField] public int PeakViewers = 0;
+    [SerializeField] public int Subscriptions = 0;
+    [SerializeField] public float CurrentHype = 2;
+    [SerializeField] public float TargetHype = -999;
+    [SerializeField] public float HypeChangeAmount = 0.1f;
+    [SerializeField] public float HypeUpdateInterval = 10f; 
+
+    [SerializeField] public PlayerViewersHandler viewersHandler;  
+
+    [SerializeField] public PlayerSubscriptionsHandler subscriptionsHandler;
+    public event System.Action<float> OnHypeChanged;
+
+    public float bonus = 0f;
+
+    public float ElapsedStreamTime {get; set;} = 0f;
 
     void Awake()
     {
@@ -29,73 +40,103 @@ public class PlayerManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    void Start()
+    {
+        StartCoroutine(UpdateHype());
+        StartCoroutine(viewersHandler.SimulateViewers());
+        StartCoroutine(viewersHandler.SimulateViewersMovement());
+        StartCoroutine(viewersHandler.SimulateViewersNoise());
+        StartCoroutine(subscriptionsHandler.SimulateSingleSubscription());
+        StartCoroutine(subscriptionsHandler.SimulateMassSubscription());
+    }
 
     public void ProgressStream()
     {
+        ElapsedStreamTime += Time.deltaTime;
+        RemainingStreamTime -= Time.deltaTime;
+        PeakViewers = Mathf.Max(PeakViewers, CurrentViewers);
+        UpdateMemoryIntegrity();
+    }
 
-        currentStreamElapsedTime += Time.deltaTime;
-        if (currentStreamElapsedTime >= StreamTime)
+    private void UpdateMemoryIntegrity()
+    {
+        if(GameManager.Instance.Entities.Count <= 1)
         {
-            // if(Score >= 100000)
-            // {
-            //     StartCoroutine(EndingManager.Instance.EndGame(2));
-            // }
-            // else if(Score <= 0)
-            // {
-            //     StartCoroutine(EndingManager.Instance.EndGame(1));
-            // }
-            currentStreamElapsedTime = 0f;
+            MemoriesIntegrity = MaxMemoriesIntegrity;
+            return;
         }
-        else
+        float totalIntegrity = 0;
+        float totalMaxIntegrity = 0;
+        for(int i = 1; i < GameManager.Instance.Entities.Count; i++)
         {
-            nextScoreTimer += Time.deltaTime;
-            if (nextScoreTimer >= nextScoreTime)
-            {
-                nextScoreTimer = 0f;
-                AddScoreByPercentage(addScorePercentage, 10);
-                nextScoreTime = Random.Range(minAddScoreInterval, maxAddScoreInterval);
-            }
+            totalIntegrity += GameManager.Instance.Entities[i].Integrity;
+            totalMaxIntegrity += GameManager.Instance.Entities[i].MaxIntegrity;
         }
+        MemoriesIntegrity = totalIntegrity / totalMaxIntegrity * MaxMemoriesIntegrity;
+    }
+
+    public void UpdateBonus()
+    {
+        bonus = GetPerformance() + CurrentHype;
+    }
+
+    public float GetPerformance()
+    {
+        return (MemoriesIntegrity + Integrity) / (MaxMemoriesIntegrity + MaxIntegrity) - 1; // -1 to make it 0 when everything is at max 
     }
 
     public void IncreaseStreamTime()
     {
-        StreamTime += StreamTimeIncrease;
-        currentStreamElapsedTime = 0f;
+        RemainingStreamTime += StreamTimeIncrease;
     }
 
-    public void AddScore(int value)
+    public void AddViewers(int value)
     {
-        Score += value;
+        CurrentViewers += value;
     }
 
-    public void AddScoreByPercentage(float percentage, float errorPercentage)
-    {   
-        float valueOfPercentage = Score * percentage / 100;
-
-        float errorMargin = valueOfPercentage * errorPercentage / 100;
-        float randomValue = Random.Range(valueOfPercentage - errorMargin, valueOfPercentage + errorMargin);
-        Score += Mathf.RoundToInt(randomValue);
-        if(Score < 0)
-        {
-            //to-do game over
-            Score = 0;
-        }   
-    }
 
     public void TakeDamage(int value)
     {
-        Health -= value;
-        if(Health > MaxHealth)
+        Integrity -= value;
+        if(Integrity > MaxIntegrity)
         {
-            Health = MaxHealth;
+            Integrity = MaxIntegrity;
         }
 
-        if(Health < 0)
+        if(Integrity < 0)
         {
             //to-do game over
-            Health = 0;
+            Integrity = 0;
             StartCoroutine(EndingManager.Instance.EndGame(0));
+        }
+    }
+
+    public IEnumerator UpdateHype()
+    {
+        while (true)
+        {
+            if(!GameManager.Instance.isStreaming)
+            {
+                yield return null;
+            }
+            if(CurrentHype < TargetHype)
+            {
+                CurrentHype += HypeChangeAmount;
+                
+                if(CurrentHype >= TargetHype)
+                {
+                    CurrentHype = TargetHype;
+                    TargetHype = -999;
+                }
+            }
+            else
+            {
+                CurrentHype -= HypeChangeAmount;
+            }
+            UpdateBonus();
+
+            yield return new WaitForSeconds(HypeUpdateInterval);
         }
     }
 

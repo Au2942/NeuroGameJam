@@ -111,7 +111,7 @@ GameObject:
   - component: {fileID: 4924479745669067214}
   - component: {fileID: 7852988537800795249}
   m_Layer: 7
-  m_Name: Neuro
+  m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -133,8 +133,8 @@ RectTransform:
   - {fileID: 8733756438165464206}
   m_Father: {fileID: 5884414372755848606}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1022.00006, y: 2839.0002}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -223,8 +223,8 @@ RectTransform:
   m_GameObject: {fileID: 2743750784351297783}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4850839741777269354}
   m_Father: {fileID: 0}

@@ -35,7 +35,7 @@ public class EndingManager : MonoBehaviour
         }
         
         endGameDialogueManager.PlayDialogue(endGameDialogues[endingIndex]);
-        endScoreText.text = "You've got " + PlayerManager.Instance.Score + " viewers!";
+        endScoreText.text = "You've got " + PlayerManager.Instance.CurrentViewers + " viewers!";
         while(endGameDialogueManager.IsTyping)
         {
             yield return null;

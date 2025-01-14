@@ -93,7 +93,7 @@ public class TimelineManager : MonoBehaviour
     {
         currentEntityIndex = index;
         UpdateMemoryLayoutPosition();
-        Debug.Log("Current Entity Index: " + currentEntityIndex);
+        //Debug.Log("Current Entity Index: " + currentEntityIndex);
         OnChangeMemoryIndex?.Invoke(currentEntityIndex);
     }
 

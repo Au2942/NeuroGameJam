@@ -11,40 +11,42 @@ public struct DialogueSet
         this.dialogues = dialogues;
     }
 }
-[System.Serializable]
-public struct Clips
-{
-    public AnimationClip[] clips;
-
-    public Clips(AnimationClip[] clips)
-    {
-        this.clips = clips;
-    }
-}
 
 [System.Serializable]
 public struct AnimatorClipsPair
 {
     public Animator animator;
 
-    public Clips[] clipsByLayer;
+    public List<ClipLayerPair> clipLayerPairs;
 
-    public AnimatorClipsPair(Animator animator, Clips[] clipsByLayer)
+    public AnimatorClipsPair(Animator animator, List<ClipLayerPair> clipLayerPairs)
     {
         this.animator = animator;
-        this.clipsByLayer = clipsByLayer;
+        this.clipLayerPairs = clipLayerPairs;
+    }
+}
+[System.Serializable]
+public struct ClipLayerPair
+{
+    public AnimationClip clip;
+    public int layer;
+
+    public ClipLayerPair(AnimationClip clip, int layer)
+    {
+        this.clip = clip;
+        this.layer = layer;
     }
 }
 [System.Serializable]
 public struct AnimatorClipPair
 {
     public Animator animator;
-    public AnimationClip[] clipByLayer;
+    public ClipLayerPair clipLayerPair;
 
-    public AnimatorClipPair(Animator animator, AnimationClip[] clipByLayer)
+    public AnimatorClipPair(Animator animator, ClipLayerPair clipLayerPair)
     {
         this.animator = animator;
-        this.clipByLayer = clipByLayer;
+        this.clipLayerPair = clipLayerPair;
     }
 }
 [System.Serializable]

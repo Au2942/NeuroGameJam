@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: SpinStream
   m_EditorClassIdentifier: 
   streamName: Spin
-  stream: {fileID: 420034609954183050, guid: 3db0c33fb41ab9b41a9e5ccb7288c5d9, type: 3}
+  stream: {fileID: 5054380889592944416, guid: 3db0c33fb41ab9b41a9e5ccb7288c5d9, type: 3}
   memory: {fileID: 1984728692587858539, guid: 6828fb178711fcc41bb240e36bcccca8, type: 3}

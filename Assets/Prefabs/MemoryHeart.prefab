@@ -59,7 +59,7 @@ PrefabInstance:
     - target: {fileID: 3463067011576850379, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -5472523482413305210, guid: c775f2151edaac748a78e2e6a6c70d70, type: 3}
+      objectReference: {fileID: 21300000, guid: c775f2151edaac748a78e2e6a6c70d70, type: 3}
     - target: {fileID: 5594260103637325787, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       propertyPath: m_Color.b
       value: 0.6750855
@@ -162,19 +162,9 @@ MonoBehaviour:
   - dialogues:
     - {fileID: 11400000, guid: cdf56ef6358a43248b2fb16443945da2, type: 2}
     - {fileID: 11400000, guid: 544af4d1bb9aca444a8c350241c07e1f, type: 2}
-  normalAnimatorClips:
-  - animator: {fileID: 2989844170749626017}
-    clipByLayer:
-    - {fileID: 7400000, guid: ccc37cdbbc015de43963662f1a641770, type: 2}
-  corruptAnimatorClips:
-  - animator: {fileID: 2989844170749626017}
-    clipByLayer:
-    - {fileID: 7400000, guid: ab8d71d9bca1a944f899ea65f4172593, type: 2}
-  animatorClipsPairs:
-  - animator: {fileID: 2989844170749626017}
   Integrity: 100
   MaxIntegrity: 100
-  decayCD: 3
+  decayInterval: 3
   InFocusDecayMultiplier: 0.5
   IntegrityDecay: 1
   inFocus: 0
@@ -184,6 +174,22 @@ MonoBehaviour:
   corruptRollCD: 10
   minCorruptRoll: 0.3
   maxCorruptRoll: 0.7
+  defaultAnimatorClips: []
+  idleAnimatorClips: []
+  dialoguePlayingAnimation: []
+  dialogueTypingAnimation: []
+  normalAnimatorClips:
+  - animator: {fileID: 2989844170749626017}
+    clipLayerPair:
+      clip: {fileID: 0}
+      layer: 0
+  corruptAnimatorClips:
+  - animator: {fileID: 2989844170749626017}
+    clipLayerPair:
+      clip: {fileID: 0}
+      layer: 0
+  extraAnimatorClipsPairs: []
+  CurrentAnimationState: 0
   timeToShutup: 5
   heartSpawner: {fileID: 515110213736942597}
   maxX: 600

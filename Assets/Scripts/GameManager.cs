@@ -13,7 +13,6 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
     [SerializeField] private TextMeshProUGUI roomText;
     [SerializeField] public List<Entity> Entities;
-    [SerializeField] private Image integrityBar;
 
     [SerializeField] private StreamSO defaultStream;
 
@@ -24,7 +23,6 @@ public class GameManager : MonoBehaviour
 
 
 
-    private float targetIntegrityBarValue = 0f;
 
     public event Action OnStartStream;
     public event Action OnEndStream;
@@ -46,7 +44,6 @@ public class GameManager : MonoBehaviour
 
         Entities.AddRange(FindObjectsByType<Entity>(FindObjectsSortMode.None));
 
-        StartCoroutine(MoveIntegrityBar());
         
         InitialiseStream(defaultStream);
 
@@ -57,7 +54,6 @@ public class GameManager : MonoBehaviour
     {
         if (isStreaming)
         { 
-            UpdateIntegrityBar();
             PlayerManager.Instance.ProgressStream();
         }
         if(StreamSelector.Instance.isOpen)
@@ -104,20 +100,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void UpdateIntegrityBar()
-    {
-        int index = TimelineManager.Instance.currentEntityIndex;
-        targetIntegrityBarValue = Entities[index].Integrity/(float)Entities[index].MaxIntegrity;
-    }
 
-    private IEnumerator MoveIntegrityBar()
-    {
-        while (true)
-        {
-            integrityBar.fillAmount = Mathf.MoveTowards(integrityBar.fillAmount, targetIntegrityBarValue, Time.deltaTime);
-            yield return null;
-        }
-    }
     public void InitialiseStream(StreamSO newStream)
     {
         CurrentStream = newStream;
@@ -134,13 +117,6 @@ public class GameManager : MonoBehaviour
         GameObject stream = TimelineManager.Instance.ChangeStream(CurrentStream);
         Entities.Add(stream.GetComponent<StreamEntity>());
         TimelineManager.Instance.SetEntityIndex(Entities.Count-1);
-        foreach(Entity entity in Entities)
-        {
-            if(entity.Integrity > 50)
-            {
-                PlayerManager.Instance.Hype += 0.1f;
-            }
-        }
         isStreaming = true;
         OnStartStream?.Invoke();
     }
@@ -170,8 +146,4 @@ public class GameManager : MonoBehaviour
         OnEndStream?.Invoke();
     }
 
-
-
-
-    
 }

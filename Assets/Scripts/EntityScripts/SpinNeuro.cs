@@ -31,7 +31,7 @@ public class SpinNeuro : MemoryEntity
 
     void UpdateSpinSpeed()
     {
-        currentAcceleration = 1f + (1f - Integrity / (float)MaxIntegrity) * (maxAccerelation - 1f);
+        currentAcceleration = 1f + (1f - Integrity / MaxIntegrity) * (maxAccerelation - 1f);
     }
 
     public override void EnterCorruptState()
@@ -87,6 +87,16 @@ public class SpinNeuro : MemoryEntity
         currentSpeed = 0f;
     }
 
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        foreach(UIEventHandler holdDetector in holdDetectors)
+        {
+            holdDetector.OnPointerDownEvent -= (eventData) => isHolding = true;
+            holdDetector.OnPointerUpEvent -= (eventData) => isHolding = false;
+            holdDetector.OnPointerExitEvent -= (eventData) => isHolding = false;
+        }
+    }
 
 
 }

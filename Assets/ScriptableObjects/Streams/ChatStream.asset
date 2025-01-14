@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20d20916443097142bc00e35de18b753, type: 3}
   m_Name: ChatStream
   m_EditorClassIdentifier: 
-  streamName: Just Chatting
-  stream: {fileID: 420034609954183050, guid: 3db0c33fb41ab9b41a9e5ccb7288c5d9, type: 3}
+  streamName: Chill
+  stream: {fileID: 5054380889592944416, guid: 3db0c33fb41ab9b41a9e5ccb7288c5d9, type: 3}
   memory: {fileID: 7842991713011423903, guid: 2f2bd6c212ff13544890676d7095cceb, type: 3}

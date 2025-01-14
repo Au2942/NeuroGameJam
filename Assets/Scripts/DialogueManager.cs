@@ -10,8 +10,8 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI speakerNameText;
     [SerializeField] private TextMeshProUGUI dialogueText;
     [SerializeField] private DialogueInfoSO defaultDialogueInfo;
-    [SerializeField] private AnimatorClipsPair[] playingAnimation; //plays while dialogue is playing
-    [SerializeField] private AnimatorClipsPair[] typingAnimation; //plays when playing a typing sound
+    [SerializeField] private Entity speaker;
+
     [SerializeField] private bool stayOnScreen = false;
     [SerializeField] public bool PlayAnimation = true;
     [SerializeField] public bool PlaySound = true;
@@ -63,7 +63,7 @@ public class DialogueManager : MonoBehaviour
 
     private void StartDialogue()
     {   
-        if(PlayAnimation)
+        if(PlayAnimation) 
         {
             StoreInitialAnimationInfosAndPlay();
         }
@@ -88,42 +88,47 @@ public class DialogueManager : MonoBehaviour
     private void StoreInitialAnimationInfosAndPlay()
     {
         storedPlayingAnimationAnimatorStateInfosPairs.Clear();
-        foreach(AnimatorClipsPair animation in playingAnimation)
+        if(speaker != null)
         {
-            if(animation.animator != null)
+            foreach(AnimatorClipsPair animation in speaker.dialoguePlayingAnimation)
             {
-                List<AnimatorStateInfo> animatorStateInfos = new List<AnimatorStateInfo>();
-                for (int i = 0; i < animation.animator.layerCount; i++)
+                if(animation.animator != null)
                 {
-                    animatorStateInfos.Add(animation.animator.GetCurrentAnimatorStateInfo(i));
-                }
-                storedPlayingAnimationAnimatorStateInfosPairs.Add(new AnimatorStateInfosPair(animation.animator, animatorStateInfos));
-                
-                for(int i = 0; i < animation.clipsByLayer.Length; i++)
-                {
-                    foreach(AnimationClip clip in animation.clipsByLayer[i].clips)
+                    List<AnimatorStateInfo> animatorStateInfos = new List<AnimatorStateInfo>();
+                    for (int i = 0; i < animation.animator.layerCount; i++)
                     {
-                        if(clip != null)
+                        animatorStateInfos.Add(animation.animator.GetCurrentAnimatorStateInfo(i));
+                    }
+                    storedPlayingAnimationAnimatorStateInfosPairs.Add(new AnimatorStateInfosPair(animation.animator, animatorStateInfos));
+                    
+                    for(int i = 0; i < animation.clipLayerPairs.Count; i++)
+                    {
+                        if(animation.clipLayerPairs[i].clip != null)
                         {
-                            animation.animator.CrossFade(clip.name, 0.2f, i);
+                            animation.animator.CrossFade(animation.clipLayerPairs[i].clip.name, 0.2f, animation.clipLayerPairs[i].layer);
                         }
                     }
                 }
             }
         }
+
         storedTypingAnimationAnimatorStateInfosPairs.Clear();
-        foreach(AnimatorClipsPair animation in typingAnimation)
+        if(speaker != null && speaker.dialogueTypingAnimation.Count != 0)
         {
-            if(animation.animator != null)
+            foreach(AnimatorClipsPair animation in speaker.dialogueTypingAnimation)
             {
-                List<AnimatorStateInfo> animatorStateInfos = new List<AnimatorStateInfo>();
-                for (int i = 0; i < animation.animator.layerCount; i++)
+                if(animation.animator != null)
                 {
-                    animatorStateInfos.Add(animation.animator.GetCurrentAnimatorStateInfo(i));
+                    List<AnimatorStateInfo> animatorStateInfos = new List<AnimatorStateInfo>();
+                    for (int i = 0; i < animation.animator.layerCount; i++)
+                    {
+                        animatorStateInfos.Add(animation.animator.GetCurrentAnimatorStateInfo(i));
+                    }
+                    storedTypingAnimationAnimatorStateInfosPairs.Add(new AnimatorStateInfosPair(animation.animator, animatorStateInfos));
                 }
-                storedTypingAnimationAnimatorStateInfosPairs.Add(new AnimatorStateInfosPair(animation.animator, animatorStateInfos));
             }
         }
+        
     }
 
 
@@ -171,7 +176,7 @@ public class DialogueManager : MonoBehaviour
                 {
                     for(int i = 0; i < pair.animator.layerCount; i++)
                     {
-                        pair.animator.Play(pair.stateInfos[i].fullPathHash, i, pair.stateInfos[i].normalizedTime);
+                        pair.animator.CrossFade(pair.stateInfos[i].fullPathHash,0.2f, i, pair.stateInfos[i].normalizedTime);
                     }
                 }
             }
@@ -245,6 +250,11 @@ public class DialogueManager : MonoBehaviour
 
     private void PlayDialogueTypingAnimation(int currentCharacterIndex, float duration = -1)
     {
+        if(speaker == null)
+        {
+            return;
+        }
+
         if(duration < 0)
         {
             duration = currentDialogueInfo.speakSpeed;
@@ -264,18 +274,15 @@ public class DialogueManager : MonoBehaviour
     private IEnumerator AnimateDialogueTypingAnimation(float duration = -1)
     {
 
-        foreach(AnimatorClipsPair animation in typingAnimation)
+        foreach(AnimatorClipsPair animation in speaker.dialogueTypingAnimation)
         {
             if(animation.animator != null)
             {
-                for(int i = 0; i < animation.clipsByLayer.Length; i++)
+                for(int i = 0; i < animation.clipLayerPairs.Count; i++)
                 {
-                    foreach(AnimationClip clip in animation.clipsByLayer[i].clips)
+                    if(animation.clipLayerPairs[i].clip != null)
                     {
-                        if(clip != null)
-                        {
-                            animation.animator.CrossFade(clip.name, 0.2f, i);
-                        }
+                        animation.animator.CrossFade(animation.clipLayerPairs[i].clip.name, 0.2f, animation.clipLayerPairs[i].layer);
                     }
                 }
             }
