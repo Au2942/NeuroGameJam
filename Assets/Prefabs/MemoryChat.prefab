@@ -213,6 +213,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Body: {fileID: 2735921663962449038}
+  clickInteractHandlers:
+  - {fileID: 3383182523515034019}
   dialogueManager: {fileID: 4881109412136145500}
   dialogueSets:
   - dialogues:
@@ -229,8 +231,12 @@ MonoBehaviour:
   decayInterval: 3
   InFocusDecayMultiplier: 0.5
   IntegrityDecay: 1
-  inFocus: 0
   recoverIntegrityLimit: 50
+  InFocus: 0
+  Interactable: 1
+  IsBeingRepaired: 0
+  talkInOrder: 1
+  talkRepeatable: 1
   talkRollCD: 2
   talkChance: 0.25
   corruptRollCD: 10
@@ -280,6 +286,17 @@ MonoBehaviour:
   spawnTimer: 2
   poolSize: 20
   reuseObjectsInUse: 0
+--- !u!114 &3383182523515034019 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6557840031825152479, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+  m_PrefabInstance: {fileID: 8498673301980844156}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3367336840930842900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a97ff6f1776746d44994a3d39755e472, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &4881109412136145500 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3912631305385984544, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}

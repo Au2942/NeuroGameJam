@@ -26,9 +26,9 @@ public abstract class MemoryEntity : Entity
         }
     }
 
-    protected override void Interact()
+    protected override void SubmitInteract()
     {
-        base.Interact();
+        base.SubmitInteract();
         Converse();
     }
 

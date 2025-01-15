@@ -1,10 +1,12 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 public abstract class Entity : MonoBehaviour
 {
 
     [SerializeField] protected GameObject Body;
+    [SerializeField] protected UIEventHandler[] clickInteractHandlers;
     [SerializeField] protected DialogueManager dialogueManager;
     [SerializeField] protected List<DialogueSet> dialogueSets;
     [SerializeField] public float Integrity = 100;
@@ -12,8 +14,10 @@ public abstract class Entity : MonoBehaviour
     [SerializeField] public float decayInterval = 3f;
     [SerializeField] public float InFocusDecayMultiplier = 0.5f;
     [SerializeField] public bool IntegrityDecay = true;
-    [SerializeField] protected bool inFocus = false;
     [SerializeField] public int recoverIntegrityLimit = 50;
+    [SerializeField] public bool InFocus = false;
+    [SerializeField] public bool Interactable = true;
+    [SerializeField] public bool IsBeingRepaired = false;
     [SerializeField] protected bool talkInOrder = true;
     [SerializeField] protected bool talkRepeatable = true;
     [SerializeField] protected float talkRollCD = 2f;
@@ -44,15 +48,17 @@ public abstract class Entity : MonoBehaviour
     protected int talkCounter = 0;
 
 
-    protected virtual void Interact()
-    {
-        
-    }
+
 
     protected virtual void Awake()
     {
         GameManager.Instance.OnStartStream += OnStartStream;
         GameManager.Instance.OnEndStream += OnEndStream;
+
+        foreach(UIEventHandler clickInteract in clickInteractHandlers)
+        {
+            clickInteract.OnLeftClickEvent += (t) => ClickInteract(clickInteract.gameObject);
+        }
     }
     protected virtual void Start()
     {
@@ -68,13 +74,62 @@ public abstract class Entity : MonoBehaviour
     {
         
     }
+    protected virtual void ClickInteract(GameObject clickedObject)
+    {
+        if(PlayerManager.Instance.state == PlayerManager.PlayerState.repair && !IsBeingRepaired)
+        {
+            PlayerManager.Instance.SetState(PlayerManager.PlayerState.normal);
+            StartRepairing();
+        }
+    }
+    protected virtual void SubmitInteract()
+    {
+        if(PlayerManager.Instance.state == PlayerManager.PlayerState.repair)
+        {
+            return;
+        }
+        if(!Interactable) 
+        {
+            return;
+        }
+    }
+
+    public virtual void StartRepairing()
+    {
+        IsBeingRepaired = true;
+        Interactable = false;
+        IntegrityDecay = false;
+        StartCoroutine(Repairing());
+    }
+
+    protected virtual IEnumerator Repairing()
+    {
+        float repairTime = 3f;
+        float elapsedTime = 0f;
+        int repairAmount = 30;
+        while(elapsedTime < repairTime)
+        {
+            elapsedTime += Time.deltaTime;
+            AddIntegrity(repairAmount * Time.deltaTime / repairTime);
+            yield return null;
+        }
+        FinishRepairing();
+    }
+
+    public virtual void FinishRepairing()
+    {
+        IsBeingRepaired = false;
+        Interactable = true;
+        IntegrityDecay = true;
+    }
 
     protected virtual void Update()
     {
         if(!GameManager.Instance.isStreaming) return;
-        //Interactable = IsPlayerInRange();
 
-        if(inFocus)
+        if(IsBeingRepaired) return;
+
+        if(InFocus)
         {
             InFocusBehavior();
         }
@@ -121,7 +176,7 @@ public abstract class Entity : MonoBehaviour
     {
         if(InputManager.Instance.Submit.triggered)
         {
-            Interact();
+            SubmitInteract();
         }
     }
 
@@ -132,7 +187,7 @@ public abstract class Entity : MonoBehaviour
 
     public void SetInFocus(bool focus)
     {
-        inFocus = focus;
+        InFocus = focus;
         dialogueManager.PlaySound = focus;
     }
 
@@ -151,8 +206,8 @@ public abstract class Entity : MonoBehaviour
 
     protected virtual void Decay()
     {
-        if(!IntegrityDecay || decayInterval == 0) return;
-        float decayMultiplier = inFocus ? InFocusDecayMultiplier : 1f;
+        if(!IntegrityDecay || decayInterval <= 0) return;
+        float decayMultiplier = InFocus ? InFocusDecayMultiplier : 1f;
         AddIntegrity(-1/decayInterval * Time.deltaTime * decayMultiplier);
         
     }
@@ -387,5 +442,9 @@ public abstract class Entity : MonoBehaviour
     {
         GameManager.Instance.OnStartStream -= OnStartStream;
         GameManager.Instance.OnEndStream -= OnEndStream;
+        foreach(UIEventHandler clickInteract in clickInteractHandlers)
+        {
+            clickInteract.OnLeftClickEvent -= (t) => ClickInteract(clickInteract.gameObject);
+        }
     }
 }

@@ -87,7 +87,7 @@ public class PlayerViewersHandler : MonoBehaviour
 
             // Calculate expected viewers
 
-            expectedViewers = Mathf.FloorToInt(BaselineViewers * (1 + PlayerManager.Instance.bonus));
+            expectedViewers = Mathf.FloorToInt(BaselineViewers * (1 + PlayerManager.Instance.CurrentHype));
              
 
 

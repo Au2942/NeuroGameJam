@@ -96,10 +96,13 @@ public class StreamSelector : MonoBehaviour
     {
         foreach(GameObject streamCardObject in streamCardList)
         {
-            StreamCard streamCard = streamCardObject.GetComponent<StreamCard>();
-            if (streamCard != null)
+            if(streamCardObject != null)
             {
-                streamCard.OnSelect -= (stream) => SetNewStream(stream);
+                StreamCard streamCard = streamCardObject.GetComponent<StreamCard>();
+                if (streamCard != null)
+                {
+                    streamCard.OnSelect -= (stream) => SetNewStream(stream);
+                }
             }
         }
     }

@@ -17,6 +17,7 @@ public class TimelineManager : MonoBehaviour
 
     public event Action<int> OnChangeMemoryIndex;
     public event Action OnMemoryAdded;
+    private Vector2 originalAnchorPosition;
 
     private float layoutWidth;
     private float cooldownBetweenNavigation = 0.5f;
@@ -36,6 +37,7 @@ public class TimelineManager : MonoBehaviour
 
     void Start()
     {
+        originalAnchorPosition = entityContainer.GetComponent<RectTransform>().anchoredPosition;
         LayoutRebuilder.ForceRebuildLayoutImmediate(entityContainer.GetComponent<RectTransform>());
         layoutWidth = entityContainer.GetComponent<RectTransform>().rect.width;
         cooldownTimer = cooldownBetweenNavigation;
@@ -99,7 +101,7 @@ public class TimelineManager : MonoBehaviour
 
     private void UpdateMemoryLayoutPosition()
     {
-        entityContainer.GetComponent<RectTransform>().anchoredPosition = new Vector2(-1152*(entitiesCount-1-currentEntityIndex), 0);
+        entityContainer.GetComponent<RectTransform>().anchoredPosition = originalAnchorPosition + new Vector2(-1152*(entitiesCount-1-currentEntityIndex), 0);
     }
 
     public GameObject SetUpStream(StreamSO newStream)

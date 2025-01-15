@@ -290,6 +290,7 @@ GameObject:
   - component: {fileID: 3912631305385984544}
   - component: {fileID: 9037480018170944228}
   - component: {fileID: 5054380889592944416}
+  - component: {fileID: 2617476193060667712}
   m_Layer: 5
   m_Name: templateStream
   m_TagString: Untagged
@@ -403,6 +404,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Body: {fileID: 8103139294843887501}
+  clickInteractHandlers:
+  - {fileID: 2617476193060667712}
   dialogueManager: {fileID: 3912631305385984544}
   dialogueSets:
   - dialogues:
@@ -414,8 +417,12 @@ MonoBehaviour:
   decayInterval: 100
   InFocusDecayMultiplier: 0
   IntegrityDecay: 0
-  inFocus: 0
   recoverIntegrityLimit: 50
+  InFocus: 0
+  Interactable: 1
+  IsBeingRepaired: 0
+  talkInOrder: 1
+  talkRepeatable: 1
   talkRollCD: 0.2
   talkChance: 0.8
   corruptRollCD: 10
@@ -461,6 +468,18 @@ MonoBehaviour:
       layer: 1
   extraAnimatorClipsPairs: []
   CurrentAnimationState: 0
+--- !u!114 &2617476193060667712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6578199205212244328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a97ff6f1776746d44994a3d39755e472, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9208837270324004955
 GameObject:
   m_ObjectHideFlags: 0

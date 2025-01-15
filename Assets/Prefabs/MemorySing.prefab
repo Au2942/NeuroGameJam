@@ -269,6 +269,17 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 5922514649845043432}
   m_SourcePrefab: {fileID: 100100000, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+--- !u!114 &304868763955023224 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6557840031825152479, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+  m_PrefabInstance: {fileID: 6861581774802158759}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 320680357648027087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a97ff6f1776746d44994a3d39755e472, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &320680357648027087 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6578199205212244328, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
@@ -287,6 +298,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Body: {fileID: 0}
+  clickInteractHandlers:
+  - {fileID: 304868763955023224}
   dialogueManager: {fileID: 7599060434665752199}
   dialogueSets:
   - dialogues:
@@ -303,8 +316,12 @@ MonoBehaviour:
   decayInterval: 3
   InFocusDecayMultiplier: 0.5
   IntegrityDecay: 1
-  inFocus: 0
   recoverIntegrityLimit: 50
+  InFocus: 0
+  Interactable: 1
+  IsBeingRepaired: 0
+  talkInOrder: 1
+  talkRepeatable: 1
   talkRollCD: 2
   talkChance: 0.25
   corruptRollCD: 10

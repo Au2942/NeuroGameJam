@@ -364,6 +364,7 @@ GameObject:
   - component: {fileID: 5594260103637325787}
   - component: {fileID: 3912631305385984544}
   - component: {fileID: 9037480018170944228}
+  - component: {fileID: 6557840031825152479}
   m_Layer: 5
   m_Name: templateMemory
   m_TagString: Untagged
@@ -447,7 +448,10 @@ MonoBehaviour:
   speakerNameText: {fileID: 4730979413221157478}
   dialogueText: {fileID: 4240248090791209233}
   defaultDialogueInfo: {fileID: 0}
+  speaker: {fileID: 0}
   stayOnScreen: 0
+  PlayAnimation: 1
+  PlaySound: 1
 --- !u!114 &9037480018170944228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -462,6 +466,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   indicator: {fileID: 5594260103637325787}
   entity: {fileID: 0}
+--- !u!114 &6557840031825152479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6578199205212244328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a97ff6f1776746d44994a3d39755e472, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8422619965302074261
 GameObject:
   m_ObjectHideFlags: 0

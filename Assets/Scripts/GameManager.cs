@@ -55,6 +55,7 @@ public class GameManager : MonoBehaviour
         if (isStreaming)
         { 
             PlayerManager.Instance.ProgressStream();
+            PlayerManager.Instance.CheckPlayerInput();
         }
         if(StreamSelector.Instance.isOpen)
         {

@@ -8,7 +8,7 @@ public class PlayerSubscriptionsHandler : MonoBehaviour
     [SerializeField] public float massSubAmount = 0.01f; 
     [SerializeField] public float massSubAmountNoise = 0.1f; //10%
     [SerializeField] public float singleSubChance = 0.1f; //10%
-    [SerializeField] public float bonusFactor = 5f; 
+    [SerializeField] public float hypeFactor = 5f; 
     [SerializeField] float minMassSubInterval = 5f;
     [SerializeField] float maxMassSubInterval = 10f;
     [SerializeField] float minSingleSubInterval = 1f;
@@ -63,15 +63,15 @@ public class PlayerSubscriptionsHandler : MonoBehaviour
             }
 
 
-            float bonus = PlayerManager.Instance.bonus;
+            float hype = PlayerManager.Instance.CurrentHype;
             float interval = Random.Range(minSingleSubInterval, maxSingleSubInterval);
-            if(bonus > 0)
+            if(hype > 0)
             {
-                interval /= bonus * bonusFactor;
+                interval /= hype * hypeFactor;
             }
-            else if(bonus < 0)
+            else if(hype < 0)
             {
-                interval *= -bonus * bonusFactor;
+                interval *= -hype * hypeFactor;
             }
 
             yield return new WaitForSeconds(interval);
@@ -95,15 +95,15 @@ public class PlayerSubscriptionsHandler : MonoBehaviour
             AddSubscriptions(expectedSubs);
             
             
-            float bonus = PlayerManager.Instance.bonus;
+            float hype = PlayerManager.Instance.CurrentHype;
             float interval = Random.Range(minMassSubInterval, maxMassSubInterval);
-            if(bonus > 0)
+            if(hype > 0)
             {
-                interval /= bonus * bonusFactor;
+                interval /= hype * hypeFactor;
             }
-            else if(bonus < 0)
+            else if(hype < 0)
             {
-                interval *= -bonus * bonusFactor;
+                interval *= -hype * hypeFactor;
             }
 
             yield return new WaitForSeconds(interval);

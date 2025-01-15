@@ -23,10 +23,17 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] public PlayerViewersHandler viewersHandler;  
 
     [SerializeField] public PlayerSubscriptionsHandler subscriptionsHandler;
+
+    [SerializeField] public PlayerState state = PlayerState.normal;
+    [SerializeField] public CustomCursor repairCursor;
     public event System.Action<float> OnHypeChanged;
 
-    public float bonus = 0f;
 
+    public enum PlayerState
+    {
+        normal,
+        repair,
+    }
     public float ElapsedStreamTime {get; set;} = 0f;
 
     void Awake()
@@ -58,6 +65,34 @@ public class PlayerManager : MonoBehaviour
         UpdateMemoryIntegrity();
     }
 
+    public void CheckPlayerInput()
+    {
+        if(state == PlayerState.repair)
+        {
+            if(InputManager.Instance.Cancel.triggered || InputManager.Instance.RightClick.triggered)
+            {
+                SetState(PlayerState.normal);
+            }
+        }
+    }
+
+    public void SetState(PlayerState newState, bool force = false)
+    {
+        if(!force && state == newState)
+        {
+            return;
+        }
+        state = newState;
+        if(state == PlayerState.repair)
+        {
+            CursorManager.Instance.SetCustomCursor(repairCursor);
+        }
+        else if(state == PlayerState.normal)
+        {
+            CursorManager.Instance.SetDefaultCursor();
+        }
+    }
+
     private void UpdateMemoryIntegrity()
     {
         if(GameManager.Instance.Entities.Count <= 1)
@@ -75,14 +110,14 @@ public class PlayerManager : MonoBehaviour
         MemoriesIntegrity = totalIntegrity / totalMaxIntegrity * MaxMemoriesIntegrity;
     }
 
-    public void UpdateBonus()
-    {
-        bonus = GetPerformance() + CurrentHype;
-    }
-
     public float GetPerformance()
     {
-        return (MemoriesIntegrity + Integrity) / (MaxMemoriesIntegrity + MaxIntegrity) - 1; // -1 to make it 0 when everything is at max 
+        return MemoriesIntegrity + Integrity; // -1 to make it 0 when everything is at max 
+    }
+
+    public float GetPerformancePercentage()
+    {
+        return GetPerformance() / (MaxIntegrity + MaxMemoriesIntegrity);
     }
 
     public void IncreaseStreamTime()
@@ -134,7 +169,6 @@ public class PlayerManager : MonoBehaviour
             {
                 CurrentHype -= HypeChangeAmount;
             }
-            UpdateBonus();
 
             yield return new WaitForSeconds(HypeUpdateInterval);
         }
