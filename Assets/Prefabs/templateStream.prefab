@@ -628,6 +628,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Neuro
       objectReference: {fileID: 0}
+    - target: {fileID: 4924479745669067214, guid: 02d15b3868947634b904acc9e78c3734, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 5884414372755848606, guid: 02d15b3868947634b904acc9e78c3734, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
