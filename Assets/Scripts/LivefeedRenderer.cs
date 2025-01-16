@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public class RenderLiveFeed : MonoBehaviour
+public class LivefeedRenderer : MonoBehaviour
 {
     [SerializeField] private ScrollRect scrollRect;
     [SerializeField] private Camera livefeedCamera;
@@ -22,12 +22,10 @@ public class RenderLiveFeed : MonoBehaviour
     void Start()
     {
         initialPosition = livefeedCamera.transform.localPosition;
-        AddLivefeed(); //add stream livefeed
-        TimelineManager.Instance.OnMemoryAdded += AddLivefeed;
-        TimelineManager.Instance.OnChangeMemoryIndex += t => SetSelectedFeed(t, true); //reverse order
+        ChannelNavigationManager.Instance.OnNewStream += AddLivefeed;
+        ChannelNavigationManager.Instance.OnChangeChannelIndex += t => SetSelectedFeed(t); 
 
         selectBorderInstance = Instantiate(selectBorderPrefab, contentUI);
-        SetSelectedFeed(0);
 
         StartCoroutine(RenderLiveFeedRoutine());
     }
@@ -35,28 +33,42 @@ public class RenderLiveFeed : MonoBehaviour
     public void AddLivefeed()
     {
         GameObject livefeed = Instantiate(livefeedPrefab, contentUI);
-        SelectLivefeed selectLivefeed = livefeed.GetComponent<SelectLivefeed>();
+        Livefeed selectLivefeed = livefeed.GetComponent<Livefeed>();
+        LivefeedManager.Instance.AddLivefeed(selectLivefeed);
         RawImage rawImage = livefeed.GetComponentInChildren<RawImage>();
         if(rawImage != null)
         {
+            int livefeedIndex = renderImages.Count;
             renderImages.Add(rawImage);
             RenderTexture renderTexture = new RenderTexture(320, 180, 16);
             renderTextures.Add(renderTexture);
             rawImage.texture = renderTexture;
-            selectLivefeed.SetIndex(renderImages.Count-1);
+            selectLivefeed.SetLivefeed(GameManager.Instance.ChannelData.GetChannelName(livefeedIndex) ,livefeedIndex); 
+        }
+    }
+    public void AddLivefeed(string name)
+    {
+        GameObject livefeed = Instantiate(livefeedPrefab, contentUI);
+        Livefeed selectLivefeed = livefeed.GetComponent<Livefeed>();
+        LivefeedManager.Instance.AddLivefeed(selectLivefeed);
+        RawImage rawImage = livefeed.GetComponentInChildren<RawImage>();
+        if(rawImage != null)
+        {
+            int livefeedIndex = renderImages.Count;
+            renderImages.Add(rawImage);
+            RenderTexture renderTexture = new RenderTexture(320, 180, 16);
+            renderTextures.Add(renderTexture);
+            rawImage.texture = renderTexture;
+            selectLivefeed.SetLivefeed(name ,livefeedIndex); 
         }
     }
 
-    public void SetSelectedFeed(int index, bool reverseOrder = false)
+    public void SetSelectedFeed(int index)
     {
         if(smoothScrollCoroutine != null) StopCoroutine(smoothScrollCoroutine);
         
-        Transform renderImage;
-        if(!reverseOrder)
-            renderImage = renderImages[index].transform;
-        else
-            renderImage = renderImages[^(index+1)].transform;
-
+        Transform renderImage = renderImages[index].transform;
+        
         selectBorderInstance.transform.SetParent(renderImage.parent, false);
         selectBorderInstance.transform.SetAsFirstSibling();
 
@@ -74,7 +86,7 @@ public class RenderLiveFeed : MonoBehaviour
                 livefeedCamera.targetTexture = renderTextures[i];
                 livefeedCamera.Render();
                 livefeedCamera.targetTexture = null;
-                livefeedCamera.transform.localPosition += new Vector3(1152, 0, 0);
+                livefeedCamera.transform.localPosition += new Vector3(ChannelNavigationManager.Instance.spacing, 0, 0);
             }
             yield return new WaitForSeconds(refreshRate);
         }

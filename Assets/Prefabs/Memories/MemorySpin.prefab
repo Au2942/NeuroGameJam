@@ -211,7 +211,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 49e5df4dc0cf4c84ea43e67127769118, type: 2}
   Integrity: 100
   MaxIntegrity: 100
-  decayInterval: 3
+  decayInterval: 2
   InFocusDecayMultiplier: 0.5
   IntegrityDecay: 1
   recoverIntegrityLimit: 50
@@ -220,25 +220,30 @@ MonoBehaviour:
   IsBeingRepaired: 0
   talkInOrder: 1
   talkRepeatable: 1
-  talkRollCD: 2
+  talkRollInterval: 2
   talkChance: 0.25
-  corruptRollCD: 10
+  corruptRollInterval: 1
   minCorruptRoll: 0.3
   maxCorruptRoll: 0.7
+  corruptCD: 30
   defaultAnimatorClips: []
-  idleAnimatorClips: []
+  idleAnimatorClips:
+  - animator: {fileID: 2794483609510162486}
+    clipLayerPairs:
+    - clip: {fileID: 7400000, guid: 53f425be407b0e040bf8f1e14efd766b, type: 2}
+      layer: 0
   dialoguePlayingAnimation: []
   dialogueTypingAnimation: []
   normalAnimatorClips:
   - animator: {fileID: 2794483609510162486}
     clipLayerPair:
-      clip: {fileID: 0}
-      layer: 0
+      clip: {fileID: 7400000, guid: 91b5f5c4178606643b3eeeb62d5277cf, type: 2}
+      layer: 1
   corruptAnimatorClips:
   - animator: {fileID: 2794483609510162486}
     clipLayerPair:
-      clip: {fileID: 0}
-      layer: 0
+      clip: {fileID: 7400000, guid: fec654fd4fd91274c9526dfb571cb432, type: 2}
+      layer: 1
   extraAnimatorClipsPairs: []
   CurrentAnimationState: 0
   timeToShutup: 2

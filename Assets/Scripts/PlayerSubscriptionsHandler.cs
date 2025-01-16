@@ -14,10 +14,12 @@ public class PlayerSubscriptionsHandler : MonoBehaviour
     [SerializeField] float minSingleSubInterval = 1f;
     [SerializeField] float maxSingleSubInterval = 5f;
 
+
     public void AddSubscriptions(int value)
     {
         PlayerManager.Instance.Subscriptions += value;
         PlayerManager.Instance.RemainingStreamTime += PlayerManager.Instance.StreamTimeIncrease * value;
+        StartCoroutine(PlayerManager.Instance.StatUI.SpawnSubPopupNumber(value));
     }
 
     public IEnumerator SimulateSingleSubscription()

@@ -14,17 +14,17 @@ public abstract class Entity : MonoBehaviour
     [SerializeField] public float decayInterval = 3f;
     [SerializeField] public float InFocusDecayMultiplier = 0.5f;
     [SerializeField] public bool IntegrityDecay = true;
-    [SerializeField] public int recoverIntegrityLimit = 50;
     [SerializeField] public bool InFocus = false;
     [SerializeField] public bool Interactable = true;
     [SerializeField] public bool IsBeingRepaired = false;
     [SerializeField] protected bool talkInOrder = true;
     [SerializeField] protected bool talkRepeatable = true;
-    [SerializeField] protected float talkRollCD = 2f;
+    [SerializeField] protected float talkRollInterval = 2f;
     [SerializeField] protected float talkChance = 0.25f;
-    [SerializeField] protected float corruptRollCD = 10f;
+    [SerializeField] protected float corruptRollInterval = 1f;
     [SerializeField] protected float minCorruptRoll = 0.3f; //minroll
     [SerializeField] protected float maxCorruptRoll = 0.7f; //start rolling at this integrity
+    [SerializeField] protected float corruptCD = 30f;
     [SerializeField] public List<AnimatorClipsPair> defaultAnimatorClips;
     [SerializeField] public List<AnimatorClipsPair> idleAnimatorClips;
     [SerializeField] public List<AnimatorClipsPair> dialoguePlayingAnimation; //plays while dialogue is playing
@@ -40,8 +40,9 @@ public abstract class Entity : MonoBehaviour
     }
     [SerializeField] public AnimationState CurrentAnimationState = AnimationState.Default;
 
-    protected float rollTalkTimer = 0f;
-    protected float rollCorruptTimer = 0f;
+    protected float talkRollTimer = 0f;
+    protected float corruptRollTimer = 0f;
+    protected float corruptCDTimer = 0f;
     public bool corrupted {get; set;} = false;
     protected int dialogueSetIndex = 0;
 
@@ -79,7 +80,7 @@ public abstract class Entity : MonoBehaviour
         if(PlayerManager.Instance.state == PlayerManager.PlayerState.repair && !IsBeingRepaired)
         {
             PlayerManager.Instance.SetState(PlayerManager.PlayerState.normal);
-            StartRepairing();
+            WorkerManager.Instance.UseRepairWorker(this);
         }
     }
     protected virtual void SubmitInteract()
@@ -94,25 +95,24 @@ public abstract class Entity : MonoBehaviour
         }
     }
 
-    public virtual void StartRepairing()
+    public virtual void StartRepairing(RepairWorker repairWorker)
     {
         IsBeingRepaired = true;
         Interactable = false;
         IntegrityDecay = false;
-        StartCoroutine(Repairing());
+        StartCoroutine(Repairing(repairWorker));
     }
 
-    protected virtual IEnumerator Repairing()
+    protected virtual IEnumerator Repairing(RepairWorker repairWorker)
     {
-        float repairTime = 3f;
         float elapsedTime = 0f;
-        int repairAmount = 30;
-        while(elapsedTime < repairTime)
+        while(elapsedTime < repairWorker.RepairSpeed)
         {
             elapsedTime += Time.deltaTime;
-            AddIntegrity(repairAmount * Time.deltaTime / repairTime);
+            AddIntegrity(repairWorker.RepairAmount * Time.deltaTime / repairWorker.RepairSpeed);
             yield return null;
         }
+        repairWorker.FinishWork();
         FinishRepairing();
     }
 
@@ -298,15 +298,15 @@ public abstract class Entity : MonoBehaviour
     {
         if(!dialogueManager.IsDialoguePlaying)
         {
-            if(rollTalkTimer >= talkRollCD)
+            if(talkRollTimer >= talkRollInterval)
             {
                 if(Random.Range(0f, 1f) < talkChance)
                 {
                     Speak();
                 }
-                rollTalkTimer = 0f;
+                talkRollTimer = 0f;
             }
-            else rollTalkTimer += Time.deltaTime;
+            else talkRollTimer += Time.deltaTime;
         }
     }
 
@@ -339,32 +339,40 @@ public abstract class Entity : MonoBehaviour
     {
         corrupted = false;
         dialogueSetIndex = 0;
-        rollCorruptTimer = 0f;
+        corruptCDTimer = corruptCD;
+        corruptRollTimer = 0f;
         SetNormalAppearance();
-        Integrity = Mathf.Max(Integrity, recoverIntegrityLimit);
     }
 
     protected virtual void RollChanceToCorrupt()
     {
-        if(rollCorruptTimer >= corruptRollCD)
+        if(corruptCDTimer > 0)
         {
-            float integrityRatio = Integrity / MaxIntegrity;
-            if (integrityRatio <= minCorruptRoll)
+            corruptCDTimer -= Time.deltaTime;
+            return;
+        }
+         
+        {
+            if(corruptRollTimer >= corruptRollInterval)
             {
-                EnterCorruptState();
-            }
-            else if (integrityRatio < maxCorruptRoll)
-            {
-                float t = (integrityRatio - maxCorruptRoll) / (minCorruptRoll-maxCorruptRoll);
-                float probability = Mathf.Pow(t, 3); //cubic curve
-                if (Random.Range(0f, 1f) < probability)
+                float integrityRatio = Integrity / MaxIntegrity;
+                if (integrityRatio <= minCorruptRoll)
                 {
                     EnterCorruptState();
                 }
+                else if (integrityRatio < maxCorruptRoll)
+                {
+                    float t = (integrityRatio - maxCorruptRoll) / (minCorruptRoll-maxCorruptRoll);
+                    float probability = Mathf.Pow(t, 3); //cubic curve
+                    if (Random.Range(0f, 1f) < probability)
+                    {
+                        EnterCorruptState();
+                    }
+                }
+                corruptRollTimer = 0f;
             }
-            rollCorruptTimer = 0f;
+            else corruptRollTimer += Time.deltaTime; 
         }
-        else rollCorruptTimer += Time.deltaTime;        
 
     }
 

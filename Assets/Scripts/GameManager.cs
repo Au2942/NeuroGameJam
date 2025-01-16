@@ -12,11 +12,13 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     [SerializeField] private TextMeshProUGUI roomText;
-    [SerializeField] public List<Entity> Entities;
+    [SerializeField] public ChannelData ChannelData;
 
     [SerializeField] private StreamSO defaultStream;
+    [SerializeField] private LivefeedRenderer LivefeedRenderer;
 
-
+    public int ChannelCount => ChannelData.GetChannelCount();
+    public List<Entity> Entities => ChannelData.GetChannelEntities();
 
     public StreamSO CurrentStream { get; private set; }
     public bool isStreaming { get; set; } = false;
@@ -40,13 +42,9 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
-        TimelineManager.Instance.OnChangeMemoryIndex += SetMemoryIndex;
-
-        Entities.AddRange(FindObjectsByType<Entity>(FindObjectsSortMode.None));
-
-        
-        InitialiseStream(defaultStream);
-
+        ChannelNavigationManager.Instance.OnChangeChannelIndex += SetChannelIndex;
+        StartNewStream(defaultStream);
+        SetChannelIndex(0);
     }
 
 
@@ -66,33 +64,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void SetMemoryIndex(int index)
+    private void SetChannelIndex(int index)
     {
-
-        for(int i = 0; i < Entities.Count; i++)
+        for(int i = 0; i < ChannelCount; i++)
         {
-
-            Entity entity = Entities[i];
+            ChannelInfo channelInfo = ChannelData.GetChannelInfo(i);
+            Entity entity = channelInfo.entity;
             if (i == index)
             {
                 entity.SetInFocus(true);
-                if (index == Entities.Count - 1)
-                {
-                    roomText.text = "Livestream";
-                }
-                else
-                {
-                    string roomName;
-                    if (!entity.corrupted)
-                    {
-                        roomName = "Memory of ";
-                    }
-                    else
-                    {
-                        roomName = "Corrupted Memory of ";
-                    }
-                    roomText.text = roomName + entity.name + " stream";
-                }
+                roomText.text = LivefeedManager.Instance.Livefeeds[i].LivefeedName;
             }
             else
             {
@@ -102,34 +83,24 @@ public class GameManager : MonoBehaviour
     }
 
 
-    public void InitialiseStream(StreamSO newStream)
-    {
-        CurrentStream = newStream;
-        GameObject stream = TimelineManager.Instance.SetUpStream(CurrentStream);
-        Entities.Add(stream.GetComponent<StreamEntity>());
-        isStreaming = true;
-        TimelineManager.Instance.SetEntityIndex(0);
-        OnStartStream?.Invoke();
-    }
-
     public void StartNewStream(StreamSO newStream)
     {
         CurrentStream = newStream;
-        GameObject stream = TimelineManager.Instance.ChangeStream(CurrentStream);
-        Entities.Add(stream.GetComponent<StreamEntity>());
-        TimelineManager.Instance.SetEntityIndex(Entities.Count-1);
+        GameObject stream = ChannelNavigationManager.Instance.SetUpStream(CurrentStream);
+        ChannelNavigationManager.Instance.SetChannelIndex(ChannelCount-1);
         isStreaming = true;
         OnStartStream?.Invoke();
     }
 
     public void ContinueStream()
     {
-        Entities[TimelineManager.Instance.currentEntityIndex].SetInFocus(true);
+        ChannelData.GetChannelEntity(ChannelNavigationManager.Instance.CurrentChannelIndex).SetInFocus(true);
         isStreaming = true;
     }
 
     public void StopStream()
     {
+        List<Entity> Entities = ChannelData.GetChannelEntities();   
         Entities.ForEach(entity => entity.SetInFocus(false));
         Entities.ForEach(entity => entity.ShutUp());
         isStreaming = false;
@@ -140,10 +111,8 @@ public class GameManager : MonoBehaviour
 
         StopStream();
 
-        GameObject memory = TimelineManager.Instance.AddStreamToMemory(CurrentStream);
-        Entities[^1] = memory.GetComponent<MemoryEntity>();
-        PlayerManager.Instance.TakeDamage(-5);
-
+        GameObject memory = ChannelNavigationManager.Instance.AddStreamMemoryToChannel(CurrentStream);
+        ChannelData.ReplaceChannel(ChannelCount-1, CurrentStream.streamName, memory.GetComponent<MemoryEntity>());
         OnEndStream?.Invoke();
     }
 

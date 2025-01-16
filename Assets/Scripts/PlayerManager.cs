@@ -5,6 +5,10 @@ using UnityEngine;
 public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager Instance;
+    [SerializeField] public PlayerViewersHandler ViewersHandler;  
+
+    [SerializeField] public PlayerSubscriptionsHandler SubscriptionsHandler;
+    [SerializeField] public PlayerStatUI StatUI;
 
     [SerializeField] public float Integrity = 100; //integrity of self
     [SerializeField] public float MaxIntegrity = 100;
@@ -20,9 +24,6 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] public float HypeChangeAmount = 0.1f;
     [SerializeField] public float HypeUpdateInterval = 10f; 
 
-    [SerializeField] public PlayerViewersHandler viewersHandler;  
-
-    [SerializeField] public PlayerSubscriptionsHandler subscriptionsHandler;
 
     [SerializeField] public PlayerState state = PlayerState.normal;
     [SerializeField] public CustomCursor repairCursor;
@@ -50,11 +51,11 @@ public class PlayerManager : MonoBehaviour
     void Start()
     {
         StartCoroutine(UpdateHype());
-        StartCoroutine(viewersHandler.SimulateViewers());
-        StartCoroutine(viewersHandler.SimulateViewersMovement());
-        StartCoroutine(viewersHandler.SimulateViewersNoise());
-        StartCoroutine(subscriptionsHandler.SimulateSingleSubscription());
-        StartCoroutine(subscriptionsHandler.SimulateMassSubscription());
+        StartCoroutine(ViewersHandler.SimulateViewers());
+        StartCoroutine(ViewersHandler.SimulateViewersMovement());
+        StartCoroutine(ViewersHandler.SimulateViewersNoise());
+        StartCoroutine(SubscriptionsHandler.SimulateSingleSubscription());
+        StartCoroutine(SubscriptionsHandler.SimulateMassSubscription());
     }
 
     public void ProgressStream()
@@ -72,6 +73,7 @@ public class PlayerManager : MonoBehaviour
             if(InputManager.Instance.Cancel.triggered || InputManager.Instance.RightClick.triggered)
             {
                 SetState(PlayerState.normal);
+                WorkerManager.Instance.DeselectRepairWorker();
             }
         }
     }

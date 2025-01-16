@@ -8,6 +8,7 @@ Shader "Unlit/Glitch_Shader"
         _NoiseIntensity ("Noise Intensity", Range(0, 10)) = 1
         _ScanlineStrength ("Scanline Strength", Range(0, 1)) = 1
         _ScanlineAmount ("Scanline Amount", Range(0, 1000)) = 600
+        _Padding ("Padding", Range(0, 1)) = 0.05
     }
     SubShader
     {		
@@ -52,6 +53,7 @@ Shader "Unlit/Glitch_Shader"
             float _NoiseIntensity;
             float _ScanlineStrength;
             float _ScanlineAmount;
+            float _Padding;
 
 	        sampler2D _CameraSortingLayerTexture;
 
@@ -126,11 +128,10 @@ Shader "Unlit/Glitch_Shader"
                 float remappedScanline;
                 Unity_Remap_float(scanline, float2(-1, 1), float2(0.2, 1), remappedScanline);
 
-                float mask = step(0.0, i.screenPos.x) * step(0.0, i.screenPos.y) * step(i.screenPos.x, 1.0) * step(i.screenPos.y, 1.0);
-                float4 outTexture = tex2D(_CameraSortingLayerTexture, (i.screenPos + float2(finalNoise, 0)) * mask) * remappedScanline;
+                float mask = step(0 + _Padding, i.uv.x) * step( i.uv.x , 1 - _Padding); 
+                float4 outTexture = tex2D(_CameraSortingLayerTexture, i.screenPos + float2(finalNoise * mask, 0)) * remappedScanline;
                 
                 
-
                 return (outTexture);
             }
             ENDCG

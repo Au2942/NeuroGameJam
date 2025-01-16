@@ -8,9 +8,10 @@ public class PlayerStatUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI healthText;
     [SerializeField] private TextMeshProUGUI viewersText;
     [SerializeField] private TextMeshProUGUI subscribersText;
-
     [SerializeField] private TextMeshProUGUI remainingStreamTime;
     [SerializeField] private TextMeshProUGUI elapsedStreamTime;
+    [SerializeField] private int popupNumberMax = 20;
+    [SerializeField] private float popupNumberDuration = 2f;
     
     [SerializeField] private Image lavaLampContent;
     [SerializeField] private Color maxLampColor;
@@ -23,7 +24,7 @@ public class PlayerStatUI : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(MoveIntegrityBar());
+        StartCoroutine(UpdateIntegrityBar());
     }
 
 
@@ -43,7 +44,7 @@ public class PlayerStatUI : MonoBehaviour
         elapsedStreamTime.text = FloatToTimeString(PlayerManager.Instance.ElapsedStreamTime*timeMultiplier);
 
         ChangeLavaLampColor();
-        UpdateIntegrityBar();
+        UpdateIntegrityBarTargetValue();
     }
 
     private string FloatToTimeString(float timeInSeconds)
@@ -53,18 +54,33 @@ public class PlayerStatUI : MonoBehaviour
         int seconds = Mathf.FloorToInt(timeInSeconds - hours * 3600 - minutes * 60);
         return string.Format("{0:00}:{1:00}:{2:00}", hours, minutes, seconds); 
     }
-    private void UpdateIntegrityBar()
+    private void UpdateIntegrityBarTargetValue()
     {
-        int index = TimelineManager.Instance.currentEntityIndex;
-        targetIntegrityBarValue = GameManager.Instance.Entities[index].Integrity/GameManager.Instance.Entities[index].MaxIntegrity;
+        int index = ChannelNavigationManager.Instance.CurrentChannelIndex;
+        targetIntegrityBarValue = LivefeedManager.Instance.Livefeeds[index].integrityBar.fillAmount;
+        integrityBar.color = LivefeedManager.Instance.Livefeeds[index].integrityBar.color;
     }
 
-    private IEnumerator MoveIntegrityBar()
+    private IEnumerator UpdateIntegrityBar()
     {
         while (true)
         {
             integrityBar.fillAmount = Mathf.MoveTowards(integrityBar.fillAmount, targetIntegrityBarValue, Time.deltaTime);
             yield return null;
+        }
+    }
+
+    public IEnumerator SpawnSubPopupNumber(int times)
+    {
+        int amount = Mathf.Min(times, popupNumberMax);
+        float rangeX = remainingStreamTime.textBounds.size.x;
+        float rangeY = remainingStreamTime.textBounds.size.y;
+        for(int i = 0; i < amount; i++)
+        {
+            Vector3 randomOffset = new Vector3(Random.Range(-rangeX, rangeX), Random.Range(-rangeY, rangeY), 0);
+            Vector3 worldPosition = remainingStreamTime.rectTransform.TransformPoint(remainingStreamTime.textBounds.center + randomOffset);
+            PopupTextSpawner.Instance.SpawnPopupText(remainingStreamTime.transform ,worldPosition, "+" + Mathf.FloorToInt(PlayerManager.Instance.StreamTimeIncrease*timeMultiplier));
+            yield return new WaitForSeconds(popupNumberDuration/amount);
         }
     }
 }

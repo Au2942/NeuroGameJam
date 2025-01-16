@@ -6,6 +6,8 @@ public abstract class MemoryEntity : Entity
     [SerializeField] protected float timeToShutup = 5f;
     protected float shutupTimer = 0f;
 
+    protected GameObject glitchEffect;
+
     protected override void InFocusBehavior()
     {
         base.InFocusBehavior();
@@ -36,6 +38,18 @@ public abstract class MemoryEntity : Entity
     {
         base.OnEndStream();
         if(corrupted) ExitCorruptState();
+    }
+
+    public override void EnterCorruptState()
+    {
+        base.EnterCorruptState();
+        glitchEffect = OverlayEffectManager.Instance.AddOverlayEffect(transform);
+    }
+
+    public override void ExitCorruptState()
+    {
+        base.ExitCorruptState();
+        OverlayEffectManager.Instance.RemoveOverlayEffect(glitchEffect);
     }
 
 }

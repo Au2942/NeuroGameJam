@@ -38,10 +38,11 @@ Material:
     m_Ints: []
     m_Floats:
     - _Intensity: 1
-    - _NoiseAmount: 30
-    - _NoiseIntensity: 1
+    - _NoiseAmount: 50
+    - _NoiseIntensity: 0.5
     - _NoiseScale: 50
     - _NoiseStrength: 1
+    - _Padding: 0
     - _ScanlineAmount: 600
     - _ScanlineStrength: 0.5
     - _alpha: 0.59
