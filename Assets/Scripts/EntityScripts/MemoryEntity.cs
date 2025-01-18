@@ -11,7 +11,9 @@ public abstract class MemoryEntity : Entity
     {
         base.SharedBehavior();
         
-        glitchEffect.SetGlitchIntensity(1 - Integrity/MaxIntegrity);
+        float t = 1 - (Integrity / MaxIntegrity);
+        float easedT = t*t*t*t;
+        glitchEffect.SetGlitchIntensity(easedT);
     }
 
     protected override void InFocusBehavior()

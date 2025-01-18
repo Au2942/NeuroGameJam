@@ -29,16 +29,16 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BlockSeed1: 25673
-    - _BlockSeed2: 126933
+    - _BlockSeed1: 71
+    - _BlockSeed2: 113
     - _BlockSize: 32
-    - _BlockStrength: 0.383
-    - _BlockStride: 30
-    - _Shake: 0
+    - _BlockStrength: 9.969556e-16
+    - _BlockStride: 1
+    - _Shake: 0.000009989842
     m_Colors:
-    - _Drift: {r: 0.07905868, g: 0, b: 0, a: 0}
-    - _Jitter: {r: 1.001, g: 0.002, b: 0, a: 0}
-    - _Jump: {r: 0, g: 0, b: 0, a: 0}
+    - _Drift: {r: 1.9295688, g: 0.0000019979684, b: 0, a: 0}
+    - _Jitter: {r: 1.000988, g: 0.002, b: 0, a: 0}
+    - _Jump: {r: 0.0009022867, g: 0.000009989842, b: 0, a: 0}
     - _MeshBound: {r: -832.0001, g: 368, b: 319.99997, a: 1015.99994}
     - _MeshSize: {r: 1152, g: 648, b: 0, a: 0}
     - _ScreenBounds: {r: 0, g: 0, b: 1920, a: 1080}

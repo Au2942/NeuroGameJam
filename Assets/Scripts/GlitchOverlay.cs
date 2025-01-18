@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 public class GlitchOverlay : MonoBehaviour
 {
-    [SerializeField] private Image fsEffect;
-    [SerializeField] Material fsMaterial;
     [SerializeField] private Image glitchEffect;
     [SerializeField] Material glitchMaterial;
 
@@ -22,10 +20,11 @@ public class GlitchOverlay : MonoBehaviour
     [SerializeField] private float shake = 0;
 
     [SerializeField] private float blockShuffleRate = 60f;
-    [SerializeField] private float origFlicker = 50;
-    [SerializeField] private float origScanline = 600;
+    [SerializeField] private float flickerStrength = 1f;
+    [SerializeField] private float flickerIntensity = 0.1f;
+    [SerializeField] private float scanlineStrength = 1f;
+    [SerializeField] private bool manageValue = true;
 
-    [SerializeField] private bool updateBoundsAlways = false;
     float _prevTime;
     float _jumpTime;
     private float _blockTime;
@@ -35,28 +34,14 @@ public class GlitchOverlay : MonoBehaviour
     
     void Start()
     {
-        fsEffect.material = Instantiate(fsMaterial);
         glitchEffect.material = Instantiate(glitchMaterial);
         FlickerAndScanline(false);
         UpdateBounds();
-        ChannelNavigationManager.Instance.OnUpdateChannelLayout += UpdateBounds;
+        //ChannelNavigationManager.Instance.OnUpdateChannelLayout += UpdateBounds;
     }
 
     public void UpdateBounds()
     {
-        // Vector3[] corners = new Vector3[4];
-        // glitchEffect.rectTransform.GetWorldCorners(corners);
-        // for (int i = 0; i < corners.Length; i++)
-        // {
-        //     corners[i] = Camera.main.WorldToScreenPoint(corners[i]);
-        // }
-        // glitchEffect.material.SetVector("_MeshBound", 
-        //     new Vector4(corners[0].x, corners[0].y, corners[2].x, corners[2].y));
-
-        // fsEffect.material.SetVector("_MeshBound", 
-        //     new Vector4(corners[0].x, corners[0].y, corners[2].x, corners[2].y));
-        fsEffect.material.SetVector("_MeshBound", 
-            new Vector4(320, 368, 1472, 1016));
         glitchEffect.material.SetVector("_MeshBound",
             new Vector4(320, 368, 1472, 1016));
     }
@@ -87,11 +72,11 @@ public class GlitchOverlay : MonoBehaviour
     {
         if(show)
         {
-            fsEffect.material.SetFloat("_NoiseAmount", origFlicker);
+            glitchEffect.material.SetFloat("_NoiseStrength", flickerStrength);
         }
         else
         {
-            fsEffect.material.SetFloat("_NoiseAmount", 0f);
+            glitchEffect.material.SetFloat("_NoiseStrength", 0);
         }
     }
 
@@ -99,11 +84,11 @@ public class GlitchOverlay : MonoBehaviour
     {
         if(show)
         {
-            fsEffect.material.SetFloat("_ScanlineAmount", origScanline);
+            glitchEffect.material.SetFloat("_ScanlineStrength", scanlineStrength);
         }
         else
         {
-            fsEffect.material.SetFloat("_ScanlineAmount", 0f);
+            glitchEffect.material.SetFloat("_ScanlineStrength", 0);
         }
     }
 
@@ -117,16 +102,21 @@ public class GlitchOverlay : MonoBehaviour
 
     public void UpdateParameters()
     {
+        if(!manageValue)
+        {
+            return;
+        }
         var time = Time.time;
         var delta = time - _prevTime;
         _jumpTime += delta * jump * 11.3f;
+
         _prevTime = time;
 
-        var block3 = block;
+        var block3 = block*block*block;
     
         // Shuffle block parameters every 1/30 seconds.
         _blockTime += Time.deltaTime * blockShuffleRate;
-        if (_blockTime > 1)
+        if (_blockTime > 1 && block > 0)
         {
             if (Random.value < 0.09f) _blockSeed1 += 251;
             if (Random.value < 0.29f) _blockSeed2 += 373;
@@ -138,6 +128,7 @@ public class GlitchOverlay : MonoBehaviour
             time * 606.11f % (Mathf.PI * 2),
             drift * 0.04f
         );
+        if(drift == 0) vdrift = Vector2.zero;
 
         // Jitter parameters (threshold, displacement)
         var jv = jitter;
@@ -145,8 +136,10 @@ public class GlitchOverlay : MonoBehaviour
             Mathf.Max(0, 1.001f - jv * 1.2f),
             0.002f + jv * jv * jv * 0.05f
         );
+        if(jitter == 0) vjitter = Vector2.zero;
 
         var vjump = new Vector2(_jumpTime, jump);
+        if(jump == 0) vjump = Vector2.zero;
 
 
         glitchEffect.material.SetFloat("_BlockStrength", block3);

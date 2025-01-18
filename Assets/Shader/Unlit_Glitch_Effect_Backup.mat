@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: GlitchEffect
-  m_Shader: {fileID: 4800000, guid: 2eb95152b4a6a3d4c8e151469d513286, type: 3}
+  m_Name: Unlit_Glitch_Effect_Backup
+  m_Shader: {fileID: 4800000, guid: 9290cbfe0a6646e448d320f5bbd97654, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -31,19 +31,19 @@ Material:
     m_Floats:
     - _BlockSeed1: 71
     - _BlockSeed2: 113
-    - _BlockSize: 32
-    - _BlockStrength: 3.7017185e-16
+    - _BlockSize: 35.8
+    - _BlockStrength: 7.100272e-15
     - _BlockStride: 1
     - _NoiseAmount: 50
     - _NoiseIntensity: 0.1
-    - _NoiseStrength: 1
+    - _NoiseStrength: 0
     - _ScanlineAmount: 600
-    - _ScanlineStrength: 1
-    - _Shake: 0.0000071801655
+    - _ScanlineStrength: 0
+    - _Shake: 0.000019220219
     m_Colors:
-    - _Drift: {r: 1.7636285, g: 0.000001436033, b: 0, a: 0}
-    - _Jitter: {r: 1.0009915, g: 0.002, b: 0, a: 0}
-    - _Jump: {r: 0.0005975308, g: 0.0000071801655, b: 0, a: 0}
+    - _Drift: {r: 3.270631, g: 0.0000038440435, b: 0, a: 0}
+    - _Jitter: {r: 1.000977, g: 0.002, b: 0, a: 0}
+    - _Jump: {r: 0.0020552746, g: 0.000019220219, b: 0, a: 0}
     - _MeshBound: {r: 0, g: 0, b: 1920, a: 1080}
     - _ScreenBounds: {r: 0, g: 0, b: 1920, a: 1080}
   m_BuildTextureStacks: []

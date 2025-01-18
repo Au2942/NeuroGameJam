@@ -148,7 +148,7 @@ Shader "Unlit/Glitch_Effect_Shader"
                 uint columns = _MeshSize.x / block_size;
 
                 // Block index
-                uint2 block_xy = input.uv * _MeshSize.xy  / block_size;
+                uint2 block_xy = screenUV * _MeshSize.xy / block_size;
                 uint block = block_xy.y * columns + block_xy.x;
 
                 // Segment index
@@ -165,10 +165,10 @@ Shader "Unlit/Glitch_Effect_Shader"
 
                 // Screen space position reconstruction
                 uint2 ssp = uint2(block % columns, block / columns) * block_size;
-                ssp += (uint2)(screenUV * _MeshSize.xy * _ScreenSize.xy) % block_size;
+                ssp += (uint2)(screenUV * _MeshSize.xy) % block_size;
 
                 // UV recalculation
-                uv = frac((ssp + 0.5) / (_MeshSize.xy *  _ScreenSize.xy));
+                uv = frac((ssp + 0.5) / _MeshSize.xy);
 
                 // Clamp the UV to the bounds of the mesh in screen space
                 uv.x = (uv.x < _MeshBound.x / screenSize.x || uv.x > _MeshBound.z / screenSize.x) ? screenUV.x : uv.x;
@@ -182,59 +182,72 @@ Shader "Unlit/Glitch_Effect_Shader"
                 ty = lerp(ty, frac(ty + _Jump.x), _Jump.y);
 
                 // Screen space Y coordinate
-                uint sy = ty * _ScreenSize.y;
+                uint sy = ty * _MeshSize.y;
 
                 // Jitter
-                // float jitter = Hash(sy + _Seed) * 2 - 1;
-                // tx += jitter * (_Jitter.x < abs(jitter)) * _Jitter.y;
                 float jitter = Hash(sy + _Seed) * 2 - 1;
-                float jx = jitter * (_Jitter.x < abs(jitter)) * _Jitter.y;
-                tx = (tx + jx < _MeshBound.x / screenSize.x || tx + jx > _MeshBound.z / screenSize.x) ? tx : tx + jx;
+                tx += jitter * (_Jitter.x < abs(jitter)) * _Jitter.y;
 
                 // Shake
-                // tx = frac(tx + (Hash(_Seed) - 0.5) * sin(_Shake*_Time.y) * _Shake);
-
-                float shx = frac(tx + (Hash(_Seed) - 0.5) * sin(_Time.y) * _Shake);
-                tx = (shx < _MeshBound.x / screenSize.x || shx > _MeshBound.z / screenSize.x) ? tx : shx;
+                tx = frac(tx + (Hash(_Seed) - 0.5) * sin(_Shake*_Time.y) * _Shake);
 
                 // Drift
                 float drift = sin(ty * 2 + _Drift.x) * _Drift.y;
 
-                // Flicker
-                float strength = _Time.y * _NoiseStrength;
-                float stripe = (screenUV.y + strength);
-                float2 noiseUV = float2(stripe, stripe);
-                float gradientNoise;
-                Unity_GradientNoise_float(noiseUV, _NoiseAmount, gradientNoise) ;
-                float noise1;
-                Unity_Remap_float(gradientNoise, float2(0, 1), float2(-_NoiseIntensity, _NoiseIntensity), noise1);
-
-                float noise2;
-                Unity_GradientNoise_float(strength, _NoiseAmount, noise2);
-                noise2 *= noise2;
-                noise2 *= noise2;
-                noise2 *= 0.1;
-
-                float finalNoise = noise1 * noise2;
-
                 // Source sample
-                uint sx1 = (tx) * _ScreenSize.x;
-                uint sx2 = (tx + drift) * _ScreenSize.x;
-                float2 suv1 = uint2(sx1, sy) / _ScreenSize.xy;
-                float2 suv2 = uint2(sx2, sy) / _ScreenSize.xy;
+                uint sx1 = (tx        ) * _MeshSize.x;
+                uint sx2 = (tx + drift) * _MeshSize.x;
 
-                suv1.x = (suv1.x + finalNoise < _MeshBound.x / screenSize.x || suv1.x + finalNoise > _MeshBound.z / screenSize.x) ? suv1.x : suv1.x + finalNoise;
-                suv2.x = (suv2.x + finalNoise < _MeshBound.x / screenSize.x || suv2.x + finalNoise > _MeshBound.z / screenSize.x) ? suv2.x : suv2.x + finalNoise;
+                float2 combinedUV1 = float2(sx1, sy)/_MeshSize;
+                float2 combinedUV2 = float2(sx2, sy)/_MeshSize;
+            
+                float strenght = _Time.y * _NoiseStrength;
+                float stripe1 = (combinedUV1.y + strenght);
+                float2 noiseUV1 = float2(stripe1, stripe1);
+                float gradientNoise1;
+                Unity_GradientNoise_float(noiseUV1, _NoiseAmount, gradientNoise1);
+                float noise11;
+                Unity_Remap_float(gradientNoise1, float2(0, 1), float2(-_NoiseIntensity, _NoiseIntensity), noise11);
 
-                float4 c1 = SAMPLE_TEXTURE2D(_CameraSortingLayerTexture, sampler_CameraSortingLayerTexture , suv1);// + uint2(sx1, sy));
-                float4 c2 = SAMPLE_TEXTURE2D(_CameraSortingLayerTexture, sampler_CameraSortingLayerTexture , suv2);// + uint2(sx2, sy));
+                float noise12;
+                Unity_GradientNoise_float(strenght, _NoiseAmount, noise12);
+                noise12 *= noise12;
+                noise12 *= noise12;
+                noise12 *= 0.1;
+
+                float noise1 = noise11 * noise12;
+
+                float2 finalUV1 = float2(combinedUV1.x + noise1, combinedUV1.y);
+                finalUV1.x = (finalUV1.x < _MeshBound.x / screenSize.x || finalUV1.x > _MeshBound.z / screenSize.x) ? combinedUV1.x : finalUV1.x;
+
+                float stripe2 = (combinedUV2.y + strenght);
+                float2 noiseUV2 = float2(stripe2, stripe2);
+                float gradientNoise2;
+                Unity_GradientNoise_float(noiseUV2, _NoiseAmount, gradientNoise2) ;
+                float noise21;
+                Unity_Remap_float(gradientNoise2, float2(0, 1), float2(-_NoiseIntensity, _NoiseIntensity), noise21);
+
+                float noise22;
+                Unity_GradientNoise_float(strenght, _NoiseAmount, noise22);
+                noise22 *= noise22;
+                noise22 *= noise22;
+                noise22 *= 0.1;
+
+                float noise2 = noise21 * noise22;
+
+                float2 finalUV2 = float2(combinedUV2.x + noise2, combinedUV2.y);
+                finalUV2.x = (finalUV2.x < _MeshBound.x / screenSize.x || finalUV2.x > _MeshBound.z / screenSize.x) ? combinedUV2.x : finalUV2.x;
+
+                float4 c1 = SAMPLE_TEXTURE2D(_CameraSortingLayerTexture, sampler_CameraSortingLayerTexture , finalUV1);// + uint2(sx1, sy));
+                float4 c2 = SAMPLE_TEXTURE2D(_CameraSortingLayerTexture, sampler_CameraSortingLayerTexture , finalUV2);// + uint2(sx2, sy));
                 float4 c = float4(c1.r, c2.g, c1.b, c1.a);
 
                 //scanline
-                float scanline = clamp(sin((screenUV.y*_ScanlineAmount + strength)), 1-_ScanlineStrength ,1);
+                float scanline = clamp(sin((screenUV.y*_ScanlineAmount + strenght)), 1-_ScanlineStrength ,1);
                 float remappedScanline;
                 Unity_Remap_float(scanline, float2(-1, 1), float2(0.2, 1), remappedScanline);
 
+                //float4 outTexture = SAMPLE_TEXTURE2D(_CameraSortingLayerTexture, sampler_CameraSortingLayerTexture, input.screenPos + blockOffset);
                 
                 // Block damage (color mixing)
                 if (frac(rand * 1234) < _BlockStrength * 0.1)
@@ -243,9 +256,8 @@ Shader "Unlit/Glitch_Effect_Shader"
                     hsv = hsv * float3(-1, 1, 0) + float3(0.5, 0, 0.9);
                     c.rgb = HsvToRgb(hsv);
                 }
-                c.rgb *= remappedScanline;
 
-                return c;
+                return c * remappedScanline;
             }
             ENDHLSL
         }

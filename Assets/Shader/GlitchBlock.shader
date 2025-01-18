@@ -1,3 +1,4 @@
+//modified from keijiro's kino glitch shader https://github.com/keijiro/Kino
 Shader "Unlit/Glitch_Block_Shader"
 {
 
