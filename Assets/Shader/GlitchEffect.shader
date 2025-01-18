@@ -1,4 +1,4 @@
-Shader "Unlit/Glitch_Block_Shader"
+Shader "Unlit/Glitch_Effect_Shader"
 {
 
     Properties
@@ -13,6 +13,11 @@ Shader "Unlit/Glitch_Block_Shader"
         _Jitter ("Jitter", Vector) = (0.1, 0.1, 0 ,0)
         _Jump ("Jump", Vector) = (0.1, 0.1, 0, 0)
         _Shake ("Shake", float) = 0.1
+        _NoiseStrength ("Noise Strength", Range(0, 1)) = 0.5
+        _NoiseAmount ("Noise Amount", Range(0, 100)) = 50
+        _NoiseIntensity ("Noise Intensity", Range(0, 10)) = 1
+        _ScanlineStrength ("Scanline Strength", Range(0, 1)) = 1
+        _ScanlineAmount ("Scanline Amount", Range(0, 1000)) = 600
         _MeshBound ("Mesh Bound", Vector) = (0, 0, 1920, 1080)
         _ScreenBounds ("Screen Bounds", Vector) = (0, 0, 1920, 1080)
     }
@@ -83,10 +88,45 @@ Shader "Unlit/Glitch_Block_Shader"
             float2 _Jump;
             float _Shake;
 
+            float _NoiseStrength;
+            float _NoiseAmount;
+            float _NoiseIntensity;
+            float _ScanlineStrength;
+            float _ScanlineAmount;
+
             float4 _MeshBound;
             float4 _ScreenBounds;
 
+            float2 unity_gradientNoise_dir(float2 p)
+            {
+                p = p % 289;
+                float x = (34 * p.x + 1) * p.x % 289 + p.y;
+                x = (34 * x + 1) * x % 289;
+                x = frac(x / 41) * 2 - 1;
+                return normalize(float2(x - floor(x + 0.5), abs(x) - 0.5));
+            }
+            
+            float unity_gradientNoise(float2 p)
+            {
+                float2 ip = floor(p);
+                float2 fp = frac(p);
+                float d00 = dot(unity_gradientNoise_dir(ip), fp);
+                float d01 = dot(unity_gradientNoise_dir(ip + float2(0, 1)), fp - float2(0, 1));
+                float d10 = dot(unity_gradientNoise_dir(ip + float2(1, 0)), fp - float2(1, 0));
+                float d11 = dot(unity_gradientNoise_dir(ip + float2(1, 1)), fp - float2(1, 1));
+                fp = fp * fp * fp * (fp * (fp * 6 - 15) + 10);
+                return lerp(lerp(d00, d01, fp.y), lerp(d10, d11, fp.y), fp.x);
+            }
+            
+            void Unity_GradientNoise_float(float2 UV, float Scale, out float Out)
+            {
+                Out = unity_gradientNoise(UV * Scale) + 0.5;
+            }
 
+            void Unity_Remap_float(float In, float2 InMinMax, float2 OutMinMax, out float Out)
+            {
+                Out = OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
+            }
 
             float FRandom(uint seed)
             {
@@ -157,8 +197,54 @@ Shader "Unlit/Glitch_Block_Shader"
                 // Source sample
                 uint sx1 = (tx        ) * _MeshSize.x;
                 uint sx2 = (tx + drift) * _MeshSize.x;
-                float4 c1 = SAMPLE_TEXTURE2D(_CameraSortingLayerTexture, sampler_CameraSortingLayerTexture , uint2(sx1, sy)/_MeshSize);// + uint2(sx1, sy));
-                float4 c2 = SAMPLE_TEXTURE2D(_CameraSortingLayerTexture, sampler_CameraSortingLayerTexture , uint2(sx2, sy)/_MeshSize);// + uint2(sx2, sy));
+
+                float2 combinedUV1 = float2(sx1, sy)/_MeshSize;
+                float2 combinedUV2 = float2(sx2, sy)/_MeshSize;
+            
+                float strenght = _Time.y * _NoiseStrength;
+                float stripe1 = (combinedUV1.y + strenght);
+                float2 noiseUV1 = float2(stripe1, stripe1);
+                float gradientNoise1;
+                Unity_GradientNoise_float(noiseUV1, _NoiseAmount, gradientNoise1);
+                float noise11;
+                Unity_Remap_float(gradientNoise1, float2(0, 1), float2(-_NoiseIntensity, _NoiseIntensity), noise11);
+
+                float noise12;
+                Unity_GradientNoise_float(strenght, _NoiseAmount, noise12);
+                noise12 *= noise12;
+                noise12 *= noise12;
+                noise12 *= 0.1;
+
+                float noise1 = noise11 * noise12;
+
+                float2 finalUV1 = float2(combinedUV1.x + noise1, combinedUV1.y);
+                finalUV1.x = (finalUV1.x < _MeshBound.x / screenSize.x || finalUV1.x > _MeshBound.z / screenSize.x) ? combinedUV1.x : finalUV1.x;
+
+                float stripe2 = (combinedUV2.y + strenght);
+                float2 noiseUV2 = float2(stripe2, stripe2);
+                float gradientNoise2;
+                Unity_GradientNoise_float(noiseUV2, _NoiseAmount, gradientNoise2) ;
+                float noise21;
+                Unity_Remap_float(gradientNoise2, float2(0, 1), float2(-_NoiseIntensity, _NoiseIntensity), noise21);
+
+                float noise22;
+                Unity_GradientNoise_float(strenght, _NoiseAmount, noise22);
+                noise22 *= noise22;
+                noise22 *= noise22;
+                noise22 *= 0.1;
+
+                float noise2 = noise21 * noise22;
+
+                //scanline
+                float scanline = clamp(sin((screenUV.y*_ScanlineAmount + strenght)), 1-_ScanlineStrength ,1);
+                float remappedScanline;
+                Unity_Remap_float(scanline, float2(-1, 1), float2(0.2, 1), remappedScanline);
+
+                float2 finalUV2 = float2(combinedUV2.x + noise2, combinedUV2.y);
+                finalUV2.x = (finalUV2.x < _MeshBound.x / screenSize.x || finalUV2.x > _MeshBound.z / screenSize.x) ? combinedUV2.x : finalUV2.x;
+
+                float4 c1 = SAMPLE_TEXTURE2D(_CameraSortingLayerTexture, sampler_CameraSortingLayerTexture , finalUV1);// + uint2(sx1, sy));
+                float4 c2 = SAMPLE_TEXTURE2D(_CameraSortingLayerTexture, sampler_CameraSortingLayerTexture , finalUV2);// + uint2(sx2, sy));
                 float4 c = float4(c1.r, c2.g, c1.b, c1.a);
 
 
@@ -172,7 +258,7 @@ Shader "Unlit/Glitch_Block_Shader"
                     c.rgb = HsvToRgb(hsv);
                 }
 
-                return c;
+                return c * remappedScanline;
             }
             ENDHLSL
         }

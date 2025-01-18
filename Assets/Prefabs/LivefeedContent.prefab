@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4230905704969763912}
   - component: {fileID: 7284766122990146415}
   - component: {fileID: 7317200019340740318}
-  - component: {fileID: 3568357802022591545}
   m_Layer: 7
   m_Name: LivefeedContent
   m_TagString: Untagged
@@ -62,25 +61,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   livefeedNameText: {fileID: 5097519630498600573}
-  integrityIndicator: {fileID: 3568357802022591545}
---- !u!114 &3568357802022591545
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 922668819263488583}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d851af2ffa0aeef41beddcc4054ef7bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  integrityBar: {fileID: 2953601530729529015}
-  integrityColorStages:
-  - {r: 1, g: 0, b: 0, a: 1}
-  - {r: 1, g: 1, b: 0, a: 1}
-  - {r: 0, g: 1, b: 0, a: 1}
-  entity: {fileID: 0}
+  integrityIndicator: {fileID: 598522776588023331}
 --- !u!1 &5574280304545765533
 GameObject:
   m_ObjectHideFlags: 0
@@ -315,6 +296,7 @@ GameObject:
   - component: {fileID: 2464407520910550998}
   - component: {fileID: 6625205753665382260}
   - component: {fileID: 5746060960814630857}
+  - component: {fileID: 598522776588023331}
   m_Layer: 7
   m_Name: IntegrityIndicator
   m_TagString: Untagged
@@ -381,6 +363,24 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &598522776588023331
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7524485196023778624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d851af2ffa0aeef41beddcc4054ef7bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  integrityBar: {fileID: 2953601530729529015}
+  integrityColorStages:
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 1, g: 1, b: 0, a: 1}
+  - {r: 0, g: 1, b: 0, a: 1}
+  entityIndex: 0
 --- !u!1 &7939888663922931895
 GameObject:
   m_ObjectHideFlags: 0

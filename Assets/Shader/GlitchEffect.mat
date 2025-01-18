@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: GlitchBlock
-  m_Shader: {fileID: 4800000, guid: fec940ae700da0142bdb3b93781b7c4d, type: 3}
+  m_Name: GlitchEffect
+  m_Shader: {fileID: 4800000, guid: 2eb95152b4a6a3d4c8e151469d513286, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -16,7 +16,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
   m_LockedProperties: 
@@ -29,18 +29,22 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BlockSeed1: 25673
-    - _BlockSeed2: 126933
+    - _BlockSeed1: 71
+    - _BlockSeed2: 113
     - _BlockSize: 32
-    - _BlockStrength: 0.383
-    - _BlockStride: 30
-    - _Shake: 0
+    - _BlockStrength: 0.0001
+    - _BlockStride: 1
+    - _NoiseAmount: 50
+    - _NoiseIntensity: 1
+    - _NoiseStrength: 0.5
+    - _ScanlineAmount: 600
+    - _ScanlineStrength: 1
+    - _Shake: 0.1
     m_Colors:
-    - _Drift: {r: 0.07905868, g: 0, b: 0, a: 0}
-    - _Jitter: {r: 1.001, g: 0.002, b: 0, a: 0}
-    - _Jump: {r: 0, g: 0, b: 0, a: 0}
-    - _MeshBound: {r: -832.0001, g: 368, b: 319.99997, a: 1015.99994}
-    - _MeshSize: {r: 1152, g: 648, b: 0, a: 0}
+    - _Drift: {r: 0.1, g: 0.1, b: 0, a: 0}
+    - _Jitter: {r: 0.1, g: 0.1, b: 0, a: 0}
+    - _Jump: {r: 0.1, g: 0.1, b: 0, a: 0}
+    - _MeshBound: {r: 0, g: 0, b: 1920, a: 1080}
     - _ScreenBounds: {r: 0, g: 0, b: 1920, a: 1080}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

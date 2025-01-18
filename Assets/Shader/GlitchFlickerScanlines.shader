@@ -9,6 +9,7 @@ Shader "Unlit/Glitch_Flicker_Shader"
         _ScanlineStrength ("Scanline Strength", Range(0, 1)) = 1
         _ScanlineAmount ("Scanline Amount", Range(0, 1000)) = 600
         _MeshBound ("Mesh Bound", Vector) = (0, 0, 1920, 1080)
+        _ScreenBounds ("Screen Bounds", Vector) = (0, 0, 1920, 1080)
     }
     SubShader
     {		
@@ -43,6 +44,8 @@ Shader "Unlit/Glitch_Flicker_Shader"
                 float2 uv : TEXCOORD0;
                 float4 vertex : SV_POSITION;
 		        float4 screenPos : TEXCOORD3;
+                float2 meshSize : TEXCOORD4;
+                float2 screenSize : TEXCOORD5;
             };
 
             sampler2D _MainTex;
@@ -53,6 +56,7 @@ Shader "Unlit/Glitch_Flicker_Shader"
             float _ScanlineStrength;
             float _ScanlineAmount;
             float4 _MeshBound;
+            float4 _ScreenBounds;
             sampler2D _CameraSortingLayerTexture;
     
             float2 unity_gradientNoise_dir(float2 p)
@@ -86,10 +90,6 @@ Shader "Unlit/Glitch_Flicker_Shader"
                 Out = OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
             }
 
-            void Unity_TilingAndOffset_float(float2 UV, float2 Tiling, float2 Offset, out float2 Out)
-            {
-                Out = UV * Tiling + Offset;
-            }
 
             Varyings vert(Attributes IN)
             {
@@ -106,13 +106,15 @@ Shader "Unlit/Glitch_Flicker_Shader"
 
             half4 frag(Varyings input) : SV_Target
             {
+                float2 _MeshSize = float2(_MeshBound.z-_MeshBound.x, _MeshBound.w-_MeshBound.y);
                 float2 screenUV = input.screenPos.xy / input.screenPos.w;
-                
+                float2 screenSize = float2(_ScreenBounds.z-_ScreenBounds.x, _ScreenBounds.w-_ScreenBounds.y);
+
                 //flickering
                 
                 float2 center = float2(0.5, 0.5);
                 float strenght = _Time.y * _NoiseStrength;
-                float stripe = (input.uv.y + strenght);
+                float stripe = (screenUV.y + strenght);
                 float2 noiseUV = float2(stripe, stripe);
                 float gradientNoise;
                 Unity_GradientNoise_float(noiseUV, _NoiseAmount, gradientNoise) ;
@@ -128,14 +130,14 @@ Shader "Unlit/Glitch_Flicker_Shader"
                 float finalNoise = noise1 * noise2;
 
                 //scanline
-                float scanline = clamp(sin((input.uv.y*_ScanlineAmount + strenght)), 1-_ScanlineStrength ,1);
+                float scanline = clamp(sin((screenUV.y*_ScanlineAmount + strenght)), 1-_ScanlineStrength ,1);
                 float remappedScanline;
                 Unity_Remap_float(scanline, float2(-1, 1), float2(0.2, 1), remappedScanline);
 
-                float2 finalUV;
-                finalUV.x = clamp(screenUV.x + finalNoise, _MeshBound.x / _ScreenSize.x, _MeshBound.z / _ScreenSize.x);
-                finalUV.y = screenUV.y;
-                float4 outTexture = tex2D(_CameraSortingLayerTexture,  finalUV) * remappedScanline;
+                float2 uv = float2(screenUV.x + finalNoise, screenUV.y);
+                uv.x = (uv.x < _MeshBound.x / screenSize.x || uv.x > _MeshBound.z / screenSize.x) ? screenUV.x : uv.x;
+                //uv.y = (uv.y < _MeshBound.y / screenSize.y || uv.y > _MeshBound.w / screenSize.y) ? screenUV.y : uv.y;
+                float4 outTexture = tex2D(_CameraSortingLayerTexture,  uv) * remappedScanline;
                 
                 
                 return (outTexture);

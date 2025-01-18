@@ -18,6 +18,7 @@ public class ChannelNavigationManager : MonoBehaviour
     public Dictionary<string, int> MemoryTypesCount {get; set;} = new Dictionary<string, int>();
 
     public event Action<int> OnChangeChannelIndex;
+    public event Action OnUpdateChannelLayout;
     public event Action OnNewStream;
     private Vector2 originalAnchorPosition;
 
@@ -106,6 +107,7 @@ public class ChannelNavigationManager : MonoBehaviour
     private void UpdateChannelLayoutPosition()
     {
         entityContainer.anchoredPosition = originalAnchorPosition + new Vector2(spacing * CurrentChannelIndex, 0);
+        OnUpdateChannelLayout?.Invoke();
     }
 
 

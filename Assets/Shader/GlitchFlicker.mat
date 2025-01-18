@@ -16,7 +16,7 @@ Material:
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 3000
   stringTagMap: {}
   disabledShaderPasses: []
   m_LockedProperties: 
@@ -36,6 +36,7 @@ Material:
     - _ScanlineAmount: 600
     - _ScanlineStrength: 1
     m_Colors:
-    - _MeshBound: {r: 319.99997, g: 368, b: 1472, a: 1015.99994}
+    - _MeshBound: {r: -832.0001, g: 368, b: 319.99997, a: 1015.99994}
+    - _ScreenBounds: {r: 0, g: 0, b: 1920, a: 1080}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
