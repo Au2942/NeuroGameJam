@@ -29,16 +29,17 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BlockSeed1: 16135
-    - _BlockSeed2: 67253
+    - _BlockSeed1: 60813
+    - _BlockSeed2: 296275
     - _BlockSize: 32
-    - _BlockStrength: 0.660456
-    - _BlockStride: 18
-    - _Shake: 0.660456
+    - _BlockStrength: 0.383
+    - _BlockStride: 7
+    - _Shake: 0
     m_Colors:
-    - _Drift: {r: 6.111297, g: 0.026418239, b: 0, a: 0}
-    - _Jitter: {r: 0.2084528, g: 0.016404616, b: 0, a: 0}
-    - _Jump: {r: 217.62206, g: 0.660456, b: 0, a: 0}
+    - _Drift: {r: 5.8168902, g: 0, b: 0, a: 0}
+    - _Jitter: {r: 1.001, g: 0.002, b: 0, a: 0}
+    - _Jump: {r: 0, g: 0, b: 0, a: 0}
+    - _MeshBound: {r: 319.99997, g: 368, b: 1472, a: 1015.99994}
     - _MeshSize: {r: 1152, g: 648, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

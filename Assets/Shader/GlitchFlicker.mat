@@ -35,6 +35,7 @@ Material:
     - _Padding: 0.05
     - _ScanlineAmount: 600
     - _ScanlineStrength: 1
-    m_Colors: []
+    m_Colors:
+    - _MeshBound: {r: 319.99997, g: 368, b: 1472, a: 1015.99994}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

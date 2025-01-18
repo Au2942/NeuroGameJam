@@ -13,7 +13,7 @@ Shader "Unlit/Glitch_Block_Shader"
         _Jitter ("Jitter", Vector) = (0.1, 0.1, 0 ,0)
         _Jump ("Jump", Vector) = (0.1, 0.1, 0, 0)
         _Shake ("Shake", float) = 0.1
-        _MeshSize ("Mesh Size", Vector) = (1920, 1080, 0, 0)
+        _MeshBound ("Mesh Bound", Vector) = (0, 0, 1920, 1080)
     }
     SubShader
     {		
@@ -82,7 +82,7 @@ Shader "Unlit/Glitch_Block_Shader"
             float2 _Jump;
             float _Shake;
 
-            float2 _MeshSize;
+            float4 _MeshBound;
 
 
 
@@ -94,6 +94,7 @@ Shader "Unlit/Glitch_Block_Shader"
             float4 frag(Varyings input) : SV_Target
             {
 
+                float2 _MeshSize = float2(_MeshBound.z-_MeshBound.x, _MeshBound.w-_MeshBound.y);
                 float2 screenUV = input.screenPos.xy / input.screenPos.w;
                 float2 uv = input.uv;
 
@@ -124,7 +125,11 @@ Shader "Unlit/Glitch_Block_Shader"
                 ssp += (uint2)(screenUV * _MeshSize.xy) % block_size;
 
                 // UV recalculation
-                uv = frac((ssp + 0.5) / _MeshSize.xy);
+                uv = (ssp + 0.5) / _MeshSize.xy;
+
+                // Clamp the UV to the bounds of the mesh
+                uv.x = clamp(uv.x, _MeshBound.x / _ScreenSize.x, _MeshBound.z / _ScreenSize.x);
+                uv.y = clamp(uv.y, _MeshBound.y / _ScreenSize.y, _MeshBound.w / _ScreenSize.y);
 
                 // Texture position
                 float tx = uv.x;
@@ -141,7 +146,7 @@ Shader "Unlit/Glitch_Block_Shader"
                 tx += jitter * (_Jitter.x < abs(jitter)) * _Jitter.y;
 
                 // Shake
-                tx = frac(tx + (Hash(_Seed) - 0.5) * _Shake * _SinTime.w);
+                tx = frac(tx + (Hash(_Seed) - 0.5) * sin(_Shake*_Time.y));
 
                 // Drift
                 float drift = sin(ty * 2 + _Drift.x) * _Drift.y;

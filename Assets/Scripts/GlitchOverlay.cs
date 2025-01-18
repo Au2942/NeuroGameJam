@@ -16,6 +16,8 @@ public class GlitchOverlay : MonoBehaviour
     [SerializeField] private float blockShuffleRate = 60f;
     [SerializeField] private float origFlicker = 50;
     [SerializeField] private float origScanline = 600;
+
+    [SerializeField] private bool updateBoundsAlways = false;
     float _prevTime;
     float _jumpTime;
     private float _blockTime;
@@ -26,9 +28,26 @@ public class GlitchOverlay : MonoBehaviour
     void Start()
     {
         FlickerAndScanline(false);
-        blockEffect.materialForRendering.SetVector("_MeshSize", new Vector4(blockEffect.rectTransform.rect.width, blockEffect.rectTransform.rect.height, 0, 0));
+        UpdateBounds();
+        ChannelNavigationManager.Instance.OnChangeChannelIndex += (t) => UpdateBounds();
     }
 
+    public void UpdateBounds()
+    {
+        Vector3[] corners = new Vector3[4];
+        blockEffect.rectTransform.GetWorldCorners(corners);
+        for (int i = 0; i < corners.Length; i++)
+        {
+            corners[i] = Camera.main.WorldToScreenPoint(corners[i]);
+        }
+        blockEffect.materialForRendering.SetVector("_MeshBound", 
+            new Vector4(corners[0].x, corners[0].y, corners[2].x, corners[2].y));
+
+        fsEffect.materialForRendering.SetVector("_MeshBound", 
+            new Vector4(corners[0].x, corners[0].y, corners[2].x, corners[2].y));
+    }
+
+    
     void Update()
     {
         if(!GameManager.Instance.isStreaming)
@@ -90,7 +109,7 @@ public class GlitchOverlay : MonoBehaviour
         _prevTime = time;
 
         var block3 = block;
-
+    
         // Shuffle block parameters every 1/30 seconds.
         _blockTime += Time.deltaTime * blockShuffleRate;
         if (_blockTime > 1)
@@ -124,6 +143,10 @@ public class GlitchOverlay : MonoBehaviour
         blockEffect.materialForRendering.SetVector("_Jitter", vjitter);
         blockEffect.materialForRendering.SetVector("_Jump", vjump);
         blockEffect.materialForRendering.SetFloat("_Shake", shake);
+        if(updateBoundsAlways)
+        {
+            UpdateBounds();
+        }
 
     }
 }

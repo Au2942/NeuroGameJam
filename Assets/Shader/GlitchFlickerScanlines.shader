@@ -8,7 +8,7 @@ Shader "Unlit/Glitch_Flicker_Shader"
         _NoiseIntensity ("Noise Intensity", Range(0, 10)) = 1
         _ScanlineStrength ("Scanline Strength", Range(0, 1)) = 1
         _ScanlineAmount ("Scanline Amount", Range(0, 1000)) = 600
-        _Padding ("Padding", Range(0, 1)) = 0.05
+        _MeshBound ("Mesh Bound", Vector) = (0, 0, 1920, 1080)
     }
     SubShader
     {		
@@ -47,13 +47,12 @@ Shader "Unlit/Glitch_Flicker_Shader"
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
-            float4 _Color;
             float _NoiseStrength;
             float _NoiseAmount;
             float _NoiseIntensity;
             float _ScanlineStrength;
             float _ScanlineAmount;
-            float _Padding;
+            float4 _MeshBound;
             sampler2D _CameraSortingLayerTexture;
     
             float2 unity_gradientNoise_dir(float2 p)
@@ -99,6 +98,7 @@ Shader "Unlit/Glitch_Flicker_Shader"
                 // The TransformObjectToHClip function transforms vertex positions
                 // from object space to homogenous clip space.
                 Output.vertex = TransformObjectToHClip(IN.vertex.xyz);
+                Output.uv = IN.texcoord;
                 // Returning the output.        
 		        Output.screenPos = ComputeScreenPos(Output.vertex);
                 return Output;
@@ -112,7 +112,7 @@ Shader "Unlit/Glitch_Flicker_Shader"
                 
                 float2 center = float2(0.5, 0.5);
                 float strenght = _Time.y * _NoiseStrength;
-                float stripe = (screenUV.y + strenght);
+                float stripe = (input.uv.y + strenght);
                 float2 noiseUV = float2(stripe, stripe);
                 float gradientNoise;
                 Unity_GradientNoise_float(noiseUV, _NoiseAmount, gradientNoise) ;
@@ -128,14 +128,14 @@ Shader "Unlit/Glitch_Flicker_Shader"
                 float finalNoise = noise1 * noise2;
 
                 //scanline
-                float scanline = clamp(sin((screenUV.y*_ScanlineAmount + strenght)), 1-_ScanlineStrength ,1);
+                float scanline = clamp(sin((input.uv.y*_ScanlineAmount + strenght)), 1-_ScanlineStrength ,1);
                 float remappedScanline;
                 Unity_Remap_float(scanline, float2(-1, 1), float2(0.2, 1), remappedScanline);
 
-                float mask = step(0 + _Padding, input.uv.x) * step( input.uv.x , 1 - _Padding); 
-
-                
-                float4 outTexture = tex2D(_CameraSortingLayerTexture, float2(finalNoise * mask, 0)) * remappedScanline;
+                float2 finalUV;
+                finalUV.x = clamp(screenUV.x + finalNoise, _MeshBound.x / _ScreenSize.x, _MeshBound.z / _ScreenSize.x);
+                finalUV.y = screenUV.y;
+                float4 outTexture = tex2D(_CameraSortingLayerTexture,  finalUV) * remappedScanline;
                 
                 
                 return (outTexture);
