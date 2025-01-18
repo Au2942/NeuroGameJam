@@ -4,8 +4,11 @@ using System.Collections.Generic;
 public class OverlayEffectManager : MonoBehaviour
 {
     public static OverlayEffectManager Instance { get; private set; }
-    [SerializeField] private GameObject overlayEffectPrefab;
-    public List<GameObject> activeOverlayEffects = new List<GameObject>();
+    [SerializeField] private GlitchOverlay overlayEffectPrefab;
+    [SerializeField] private int initialPoolSize = 10;
+    public Queue<GlitchOverlay> overlayEffectPool = new Queue<GlitchOverlay>();
+    public List<GlitchOverlay> activeOverlayEffects = new List<GlitchOverlay>();
+
 
     void Awake()
     {
@@ -19,22 +22,55 @@ public class OverlayEffectManager : MonoBehaviour
         }
     }
 
-    public GameObject AddOverlayEffect(Vector3 position, Transform parent)
+    void Start()
     {
-        GameObject overlayEffect = Instantiate(overlayEffectPrefab, position, Quaternion.identity, parent);
-        activeOverlayEffects.Add(overlayEffect);
-        return overlayEffect;
+        for (int i = 0; i < initialPoolSize; i++)
+        {
+            GlitchOverlay overlayEffect = Instantiate(overlayEffectPrefab);
+            overlayEffect.gameObject.SetActive(false);
+            overlayEffectPool.Enqueue(overlayEffect);
+        }
     }
-    public GameObject AddOverlayEffect(Transform parent)
+
+    public GlitchOverlay AddOverlayEffect(Vector3 position, Transform parent)
     {
-        GameObject overlayEffect = Instantiate(overlayEffectPrefab, parent);
+        GlitchOverlay overlayEffect;
+        if (overlayEffectPool.Count > 0)
+        {
+            overlayEffect = overlayEffectPool.Dequeue();
+            overlayEffect.transform.position = position;
+            overlayEffect.transform.SetParent(parent);
+            overlayEffect.gameObject.SetActive(true);
+        }
+        else
+        {
+            overlayEffect = Instantiate(overlayEffectPrefab, position, Quaternion.identity, parent);
+        }
         activeOverlayEffects.Add(overlayEffect);
         return overlayEffect;
     }
 
-    public void RemoveOverlayEffect(GameObject overlayEffect)
+    public GlitchOverlay AddOverlayEffect(Transform parent)
+    {
+        GlitchOverlay overlayEffect;
+        if (overlayEffectPool.Count > 0)
+        {
+            overlayEffect = overlayEffectPool.Dequeue();
+            overlayEffect.transform.SetParent(parent);
+            overlayEffect.gameObject.SetActive(true);
+        }
+        else
+        {
+            overlayEffect = Instantiate(overlayEffectPrefab, parent);
+        }
+        activeOverlayEffects.Add(overlayEffect);
+        return overlayEffect;
+    }
+
+    public void RemoveOverlayEffect(GlitchOverlay overlayEffect)
     {
         activeOverlayEffects.Remove(overlayEffect);
-        Destroy(overlayEffect);
+        overlayEffect.gameObject.SetActive(false);
+        overlayEffectPool.Enqueue(overlayEffect);
     }
 }

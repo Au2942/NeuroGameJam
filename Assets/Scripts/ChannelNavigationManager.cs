@@ -8,7 +8,7 @@ public class ChannelNavigationManager : MonoBehaviour
 {
     public static ChannelNavigationManager Instance;
     [SerializeField] private Transform channelTransform;
-    [SerializeField] private GameObject entityContainer;
+    [SerializeField] private RectTransform entityContainer;
     [SerializeField] private GameObject entityLayout;
     [SerializeField] public float spacing = 1216;
 
@@ -38,7 +38,7 @@ public class ChannelNavigationManager : MonoBehaviour
 
     void Start()
     {
-        originalAnchorPosition = channelTransform.transform.position;
+        originalAnchorPosition = entityContainer.anchoredPosition;
         cooldownTimer = cooldownBetweenNavigation;
     }
 
@@ -48,6 +48,11 @@ public class ChannelNavigationManager : MonoBehaviour
         {
             CheckNavigationInput();
         }    
+    }
+
+    public Entity GetCurrentEntity()
+    {
+        return GameManager.Instance.ChannelData.GetChannelEntity(CurrentChannelIndex);
     }
 
     private void CheckNavigationInput()
@@ -100,15 +105,14 @@ public class ChannelNavigationManager : MonoBehaviour
 
     private void UpdateChannelLayoutPosition()
     {
-        if(_channelCount == 0) return;
-        channelTransform.position = originalAnchorPosition - new Vector2(spacing * CurrentChannelIndex, 0);
+        entityContainer.anchoredPosition = originalAnchorPosition + new Vector2(spacing * CurrentChannelIndex, 0);
     }
 
 
     public GameObject SetUpStream(StreamSO newStream)
     {
-        GameObject stream = Instantiate(newStream.stream.gameObject, entityLayout.transform);
-        GameManager.Instance.ChannelData.AddChannel("Subathon", stream.GetComponent<StreamEntity>());
+        StreamEntity stream = Instantiate(newStream.stream, entityLayout.transform);
+        GameManager.Instance.ChannelData.AddChannel("Subathon", stream);
         stream.name = newStream.streamName;
 
         if(entityLayout.transform.childCount > 1)
@@ -120,7 +124,7 @@ public class ChannelNavigationManager : MonoBehaviour
 
         OnNewStream?.Invoke();
         
-        return stream;
+        return stream.gameObject;
     }
 
     public GameObject AddStreamMemoryToChannel(StreamSO stream)
@@ -129,15 +133,14 @@ public class ChannelNavigationManager : MonoBehaviour
         {
             MemoryTypesCount[stream.name]++;
         }
-        GameObject memory = Instantiate(stream.memory.gameObject, entityLayout.transform);
-        ChannelInfo channelInfo = GameManager.Instance.ChannelData.ChannelInfos[_channelCount-1];
-        channelInfo.name = stream.streamName;
+        MemoryEntity memory = Instantiate(stream.memory, entityLayout.transform);
+        LivefeedManager.Instance.Livefeeds[^1].SetLivefeedName("Memory of " + stream.streamName + " stream #" + MemoryTypesCount[stream.name]);
         memory.name = stream.streamName;
         memory.transform.SetSiblingIndex(1);
 
 
         
-        return memory;
+        return memory.gameObject;
     }
     
 }

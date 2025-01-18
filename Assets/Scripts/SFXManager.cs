@@ -6,7 +6,7 @@ public class SFXManager : MonoBehaviour
     public static SFXManager Instance;
 
     [SerializeField] public AudioSource SoundFXObjectPrefab;
-    private int poolSize;
+    private int poolSize = 128;
     private Queue<AudioSource> audioSourcePool = new Queue<AudioSource>();
 
     void Awake()
@@ -18,17 +18,22 @@ public class SFXManager : MonoBehaviour
         else
         {
             Instance = this;
-            InitializePool();
+            
         }
+    }
+
+    void Start()
+    {
+        InitializePool();
     }
 
     private void InitializePool()
     {
         // Get the maximum number of virtual voices (channels) available
-        int maxVirtualChannels = AudioSettings.GetConfiguration().numVirtualVoices;
+        //int maxVirtualChannels = AudioSettings.GetConfiguration().numVirtualVoices;
 
         // Set the pool size to the maximum number of virtual channels
-        poolSize = maxVirtualChannels;
+        //poolSize = maxVirtualChannels;
 
         // Initialize the pool
         if(SoundFXObjectPrefab != null)
@@ -36,6 +41,7 @@ public class SFXManager : MonoBehaviour
             for (int i = 0; i < poolSize; i++)
             {
                 AudioSource audioSource = Instantiate(SoundFXObjectPrefab);
+                audioSource.gameObject.transform.parent = transform;
                 audioSource.gameObject.SetActive(false);
                 audioSourcePool.Enqueue(audioSource);
             }
@@ -63,6 +69,7 @@ public class SFXManager : MonoBehaviour
         if (audioSource != null)
         {
             audioSource.Stop();
+            audioSource.gameObject.transform.parent = transform;
             audioSource.gameObject.SetActive(false);
             audioSourcePool.Enqueue(audioSource);
         }

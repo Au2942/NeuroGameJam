@@ -1,4 +1,3 @@
-using UnityEngine;
 
 public class StreamEntity : Entity
 {
@@ -28,6 +27,12 @@ public class StreamEntity : Entity
     {
         base.ExitCorruptState();
         Interactable = true;
+    }
+
+    protected override void CorruptBehavior()
+    {
+        base.CorruptBehavior();
+
     }
 
 }

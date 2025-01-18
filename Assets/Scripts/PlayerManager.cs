@@ -19,15 +19,25 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] public int CurrentViewers = 0; //ccv 
     [SerializeField] public int PeakViewers = 0;
     [SerializeField] public int Subscriptions = 0;
-    [SerializeField] public float CurrentHype = 2;
+    [SerializeField] public float CurrentHype = 0.5f;
     [SerializeField] public float TargetHype = -999;
-    [SerializeField] public float HypeChangeAmount = 0.1f;
-    [SerializeField] public float HypeUpdateInterval = 10f; 
+    [SerializeField] public float HypePeakDuration = -999;
+    [SerializeField] public float MaxHype = 2f;
+    [SerializeField] public float MinHype = -2f;
+    [SerializeField] public float HypeGain = 0.05f;
+    [SerializeField] public float HypeDrop = 0.1f;
+    [SerializeField] public float HypeDropBelowZero = 0.1f;
+    [SerializeField] public float HypeUpdateInterval = 5f; 
+
+    [SerializeField] public int[] GainWorkerSubsMilestones;
+    [SerializeField] private RepairWorker RepairWorkerPrefab; 
+
+
 
 
     [SerializeField] public PlayerState state = PlayerState.normal;
     [SerializeField] public CustomCursor repairCursor;
-    public event System.Action<float> OnHypeChanged;
+    //public event System.Action<float> OnHypeChanged;
 
 
     public enum PlayerState
@@ -50,12 +60,14 @@ public class PlayerManager : MonoBehaviour
     }
     void Start()
     {
+
         StartCoroutine(UpdateHype());
         StartCoroutine(ViewersHandler.SimulateViewers());
         StartCoroutine(ViewersHandler.SimulateViewersMovement());
         StartCoroutine(ViewersHandler.SimulateViewersNoise());
         StartCoroutine(SubscriptionsHandler.SimulateSingleSubscription());
         StartCoroutine(SubscriptionsHandler.SimulateMassSubscription());
+        
     }
 
     public void ProgressStream()
@@ -65,6 +77,19 @@ public class PlayerManager : MonoBehaviour
         PeakViewers = Mathf.Max(PeakViewers, CurrentViewers);
         UpdateMemoryIntegrity();
     }
+
+    private void GainDrone()
+    {
+        for(int i = 0; i < GainWorkerSubsMilestones.Length; i++)
+        {
+            if(Subscriptions >= GainWorkerSubsMilestones[i])
+            {
+                WorkerManager.Instance.AddWorker(RepairWorkerPrefab);
+                break;
+            }
+        }
+    }
+
 
     public void CheckPlayerInput()
     {
@@ -122,9 +147,9 @@ public class PlayerManager : MonoBehaviour
         return GetPerformance() / (MaxIntegrity + MaxMemoriesIntegrity);
     }
 
-    public void IncreaseStreamTime()
+    public void IncreaseStreamTime(int multiplier)
     {
-        RemainingStreamTime += StreamTimeIncrease;
+        RemainingStreamTime += StreamTimeIncrease*multiplier;
     }
 
     public void AddViewers(int value)
@@ -153,24 +178,35 @@ public class PlayerManager : MonoBehaviour
     {
         while (true)
         {
-            if(!GameManager.Instance.isStreaming)
+            while (!GameManager.Instance.isStreaming)
             {
                 yield return null;
             }
-            if(CurrentHype < TargetHype)
+
+            if (TargetHype != -999)
             {
-                CurrentHype += HypeChangeAmount;
-                
-                if(CurrentHype >= TargetHype)
+                CurrentHype += HypeGain;
+
+                if (CurrentHype >= TargetHype)
                 {
                     CurrentHype = TargetHype;
+                    yield return new WaitForSeconds(HypePeakDuration);
                     TargetHype = -999;
                 }
             }
             else
             {
-                CurrentHype -= HypeChangeAmount;
+                if (CurrentHype > 0)
+                {
+                    CurrentHype = Mathf.Max(CurrentHype - HypeDrop, 0);
+                }
+                else
+                {
+                    CurrentHype -= HypeDropBelowZero;
+                }
             }
+
+            CurrentHype = Mathf.Clamp(CurrentHype, MinHype, MaxHype);
 
             yield return new WaitForSeconds(HypeUpdateInterval);
         }

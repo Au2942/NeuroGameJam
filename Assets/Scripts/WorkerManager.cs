@@ -31,10 +31,17 @@ public class WorkerManager : MonoBehaviour
         }
     }
 
-    public void AddRepairWorker(RepairWorker newRepairWorker)
+    public void AddWorker(RepairWorker newWorkerPrefab)
     {
-        RepairWorkers.Add(newRepairWorker);
-        newRepairWorker.OnSelected += SelectRepairWorker;
+        RepairWorker newWorker = Instantiate(newWorkerPrefab, transform);
+        if(newWorker == null)
+        {
+            Destroy(newWorker);
+            return;
+        }
+
+        RepairWorkers.Add(newWorker);
+        newWorker.OnSelected += SelectRepairWorker;
     }
 
     public void SelectRepairWorker(RepairWorker repairWorker)
@@ -48,15 +55,15 @@ public class WorkerManager : MonoBehaviour
         selectedRepairWorker = null;
     }
 
-    public RepairWorker UseRepairWorker(Entity entity)
+    public bool TryUseRepairWorker(Entity entity)
     {
         if(selectedRepairWorker != null)
         {
             entity.StartRepairing(selectedRepairWorker);
             selectedRepairWorker = null;
-            return selectedRepairWorker;
+            return true;
         }
-        return null;
+        return false;
     }
 
     public void ReturnRepairWorker(RepairWorker repairWorker)

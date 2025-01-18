@@ -1,25 +1,52 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class IntegrityIndicator : MonoBehaviour
 {
-    [SerializeField] private Image indicator;
-    [SerializeField] private Entity entity; 
-    private Color originalColor;
+    [SerializeField] public Image integrityBar;
+    [SerializeField] public Color[] integrityColorStages = {Color.red, Color.yellow, Color.green};
+    [SerializeField] private int entityIndex; 
+    private float targetIntegrityBarValue;
 
     void Start()
     {
-        originalColor = indicator.color;
+        StartCoroutine(UpdateIntegrityBar());
     }
-    void Update()
+
+    public void SetEntityIndex(int index)
     {
-
-        //bar.fillAmount = entity.Integrity / (float)entity.MaxIntegrity;
-
-        float integrityPercentage = entity.Integrity / entity.MaxIntegrity;
-        Color.RGBToHSV(originalColor, out float h, out float s, out float v);
-        integrityPercentage = Mathf.Clamp(integrityPercentage, 0, v);
-        Color updatedColor = Color.HSVToRGB(h, s, integrityPercentage);
-        indicator.color = updatedColor;
+        entityIndex = index;
     }
+
+    private IEnumerator UpdateIntegrityBar()
+    {
+        while (true)
+        {
+            Entity entity = GameManager.Instance.ChannelData.GetChannelEntity(entityIndex);
+
+            if(entity != null)
+            {
+                float integrity = entity.Integrity;
+                float maxIntegrity = entity.MaxIntegrity;
+                float percentage = integrity / maxIntegrity;
+
+                int stage = Mathf.FloorToInt(percentage * (integrityColorStages.Length - 1));
+                int nextStage = Mathf.Clamp(stage + 1, 0, integrityColorStages.Length - 1);
+                float stagePercentage = (percentage * (integrityColorStages.Length - 1)) - stage;
+
+                integrityBar.color = Color.Lerp(integrityColorStages[stage], integrityColorStages[nextStage], stagePercentage);
+                targetIntegrityBarValue = percentage;
+            }
+            else 
+            {
+                targetIntegrityBarValue = 1;
+            }
+
+            integrityBar.fillAmount = Mathf.MoveTowards(integrityBar.fillAmount, targetIntegrityBarValue, Time.deltaTime);
+            yield return null;
+        }
+    }
+
+
 }

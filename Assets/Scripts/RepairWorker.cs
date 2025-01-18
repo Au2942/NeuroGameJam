@@ -25,7 +25,7 @@ public class RepairWorker : MonoBehaviour
 
     public void Selected()
     {
-        if(PlayerManager.Instance.state == PlayerManager.PlayerState.repair) return;
+        if(PlayerManager.Instance.state == PlayerManager.PlayerState.repair || !IsAvailable) return;
         PlayerManager.Instance.SetState(PlayerManager.PlayerState.repair);
         SetAvailability(false);
         OnSelected?.Invoke(this);

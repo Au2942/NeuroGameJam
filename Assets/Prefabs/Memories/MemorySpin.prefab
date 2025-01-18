@@ -214,7 +214,6 @@ MonoBehaviour:
   decayInterval: 2
   InFocusDecayMultiplier: 0.5
   IntegrityDecay: 1
-  recoverIntegrityLimit: 50
   InFocus: 0
   Interactable: 1
   IsBeingRepaired: 0
@@ -247,6 +246,7 @@ MonoBehaviour:
   extraAnimatorClipsPairs: []
   CurrentAnimationState: 0
   timeToShutup: 2
+  glitchEffect: {fileID: 7362587985674339196}
   currentSpeed: 1
   maxAccerelation: 20
   SpinSpeedIncrement: 0.5
@@ -314,5 +314,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 584513c97eb7815409c5bf06e15191d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7362587985674339196 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2003727210736196899, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+  m_PrefabInstance: {fileID: 9071236510721416799}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56ec4e3cb42fb704e838d1dee44d2c47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

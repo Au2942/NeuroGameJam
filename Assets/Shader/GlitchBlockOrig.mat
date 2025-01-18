@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: GlitchOverlay
-  m_Shader: {fileID: 4800000, guid: 8572c3fb84b84fb4d9c1a162a0c39918, type: 3}
+  m_Name: GlitchBlockOrig
+  m_Shader: {fileID: 4800000, guid: 589bc2c36a664cc42ad98d94cac4aa5d, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -23,35 +23,23 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _CameraSortingLayerTexture:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _CameraTarget:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Intensity: 1
+    - _BlockSeed1: 34458
+    - _BlockSeed2: 170947
+    - _BlockSize: 32
+    - _BlockStrength: 1
+    - _BlockStride: 18
     - _NoiseAmount: 0
-    - _NoiseIntensity: 0.5
-    - _NoiseScale: 50
-    - _NoiseStrength: 1
-    - _Padding: -0
+    - _NoiseIntensity: 1
+    - _NoiseStrength: 0.462
+    - _Padding: 0.05
     - _ScanlineAmount: 0
-    - _ScanlineStrength: 0.5
-    - _alpha: 0.59
-    - _amount: 0.51
-    - _spread: 0.97
-    - _width: 0.52
-    m_Colors:
-    - _Color: {r: 0, g: 0.75600004, b: 1, a: 1}
-    - _EffectColor: {r: 1, g: 1, b: 1, a: 1}
-    - _OverlayColor: {r: 0, g: 1, b: 0.25110126, a: 1}
+    - _ScanlineStrength: 0.672
+    m_Colors: []
   m_BuildTextureStacks: []
   m_AllowLocking: 1

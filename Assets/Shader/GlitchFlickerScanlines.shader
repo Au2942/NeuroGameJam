@@ -1,4 +1,4 @@
-Shader "Unlit/Glitch_Overlay_Shader"
+Shader "Unlit/Glitch_Flicker_Shader"
 {
     Properties
     {
@@ -26,19 +26,19 @@ Shader "Unlit/Glitch_Overlay_Shader"
         
         Pass
         {
-            CGPROGRAM
-            #pragma vertex vert alpha
-            #pragma fragment frag alpha
+            HLSLPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
 
-            #include "UnityCG.cginc"
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
-            struct appdata
+            struct Attributes
             {
                 float4 vertex : POSITION;
                 float2 texcoord : TEXCOORD0;
             };
 
-            struct Interpolation
+            struct Varyings
             {
                 float2 uv : TEXCOORD0;
                 float4 vertex : SV_POSITION;
@@ -54,9 +54,7 @@ Shader "Unlit/Glitch_Overlay_Shader"
             float _ScanlineStrength;
             float _ScanlineAmount;
             float _Padding;
-
-	        sampler2D _CameraSortingLayerTexture;
-
+            sampler2D _CameraSortingLayerTexture;
     
             float2 unity_gradientNoise_dir(float2 p)
             {
@@ -94,24 +92,27 @@ Shader "Unlit/Glitch_Overlay_Shader"
                 Out = UV * Tiling + Offset;
             }
 
-            Interpolation vert (appdata v)
+            Varyings vert(Attributes IN)
             {
-                Interpolation o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);                
-		        o.screenPos = ComputeScreenPos(o.vertex);
-                return o;
+                // Declaring the output object (OUT) with the Varyings struct.
+                Varyings Output;
+                // The TransformObjectToHClip function transforms vertex positions
+                // from object space to homogenous clip space.
+                Output.vertex = TransformObjectToHClip(IN.vertex.xyz);
+                // Returning the output.        
+		        Output.screenPos = ComputeScreenPos(Output.vertex);
+                return Output;
             }
 
-            fixed4 frag(Interpolation i) : SV_Target
+            half4 frag(Varyings input) : SV_Target
             {
-
-
+                float2 screenUV = input.screenPos.xy / input.screenPos.w;
+                
                 //flickering
-
+                
                 float2 center = float2(0.5, 0.5);
                 float strenght = _Time.y * _NoiseStrength;
-                float stripe = (i.uv.y + strenght);
+                float stripe = (screenUV.y + strenght);
                 float2 noiseUV = float2(stripe, stripe);
                 float gradientNoise;
                 Unity_GradientNoise_float(noiseUV, _NoiseAmount, gradientNoise) ;
@@ -127,17 +128,19 @@ Shader "Unlit/Glitch_Overlay_Shader"
                 float finalNoise = noise1 * noise2;
 
                 //scanline
-                float scanline = clamp(sin((i.uv.y*_ScanlineAmount + strenght)), 1-_ScanlineStrength ,1);
+                float scanline = clamp(sin((screenUV.y*_ScanlineAmount + strenght)), 1-_ScanlineStrength ,1);
                 float remappedScanline;
                 Unity_Remap_float(scanline, float2(-1, 1), float2(0.2, 1), remappedScanline);
 
-                float mask = step(0 + _Padding, i.uv.x) * step( i.uv.x , 1 - _Padding); 
-                float4 outTexture = tex2D(_CameraSortingLayerTexture, i.screenPos + float2(finalNoise * mask, 0)) * remappedScanline;
+                float mask = step(0 + _Padding, input.uv.x) * step( input.uv.x , 1 - _Padding); 
+
+                
+                float4 outTexture = tex2D(_CameraSortingLayerTexture, float2(finalNoise * mask, 0)) * remappedScanline;
                 
                 
                 return (outTexture);
             }
-            ENDCG
+            ENDHLSL
         }
     }
 }

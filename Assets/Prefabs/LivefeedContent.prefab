@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4230905704969763912}
   - component: {fileID: 7284766122990146415}
   - component: {fileID: 7317200019340740318}
+  - component: {fileID: 3568357802022591545}
   m_Layer: 7
   m_Name: LivefeedContent
   m_TagString: Untagged
@@ -31,8 +32,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7714254871403896653}
-  - {fileID: 2464407520910550998}
   - {fileID: 8204575090863714002}
+  - {fileID: 2464407520910550998}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -60,12 +61,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16e67a148882de145bc3e318da0b3867, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  livefeedNameText: {fileID: 5097519630498600573}
+  integrityIndicator: {fileID: 3568357802022591545}
+--- !u!114 &3568357802022591545
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 922668819263488583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d851af2ffa0aeef41beddcc4054ef7bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   integrityBar: {fileID: 2953601530729529015}
   integrityColorStages:
   - {r: 1, g: 0, b: 0, a: 1}
-  - {r: 1, g: 0.49952504, b: 0, a: 1}
+  - {r: 1, g: 1, b: 0, a: 1}
   - {r: 0, g: 1, b: 0, a: 1}
-  livefeedNameText: {fileID: 5097519630498600573}
+  entity: {fileID: 0}
 --- !u!1 &5574280304545765533
 GameObject:
   m_ObjectHideFlags: 0
@@ -323,11 +338,11 @@ RectTransform:
   - {fileID: 5586030254710809450}
   m_Father: {fileID: 4230905704969763912}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 16}
-  m_Pivot: {x: 0.5, y: 1}
+  m_SizeDelta: {x: 16, y: 0}
+  m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &6625205753665382260
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -400,8 +415,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 8, y: 0}
+  m_SizeDelta: {x: -16, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9003699178021211355
 CanvasRenderer:
@@ -465,7 +480,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 4
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0

@@ -1,11 +1,8 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.Video;
 using TMPro;
 using System.Collections;
-using UnityEngine.SceneManagement;
 
 
 public class GameManager : MonoBehaviour
@@ -18,6 +15,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private LivefeedRenderer LivefeedRenderer;
 
     public int ChannelCount => ChannelData.GetChannelCount();
+    public int CurrentChannelIndex => ChannelNavigationManager.Instance.CurrentChannelIndex;
     public List<Entity> Entities => ChannelData.GetChannelEntities();
 
     public StreamSO CurrentStream { get; private set; }
@@ -94,7 +92,7 @@ public class GameManager : MonoBehaviour
 
     public void ContinueStream()
     {
-        ChannelData.GetChannelEntity(ChannelNavigationManager.Instance.CurrentChannelIndex).SetInFocus(true);
+        ChannelData.GetChannelEntity(CurrentChannelIndex).SetInFocus(true);
         isStreaming = true;
     }
 
@@ -114,6 +112,11 @@ public class GameManager : MonoBehaviour
         GameObject memory = ChannelNavigationManager.Instance.AddStreamMemoryToChannel(CurrentStream);
         ChannelData.ReplaceChannel(ChannelCount-1, CurrentStream.streamName, memory.GetComponent<MemoryEntity>());
         OnEndStream?.Invoke();
+    }
+
+    public Entity GetCurrentEntity()
+    {
+        return ChannelData.GetChannelEntity(CurrentChannelIndex);
     }
 
 }

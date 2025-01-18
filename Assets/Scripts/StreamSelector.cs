@@ -7,10 +7,9 @@ public class StreamSelector : MonoBehaviour
     [SerializeField] private StreamCardSO[] streamCards;
     [SerializeField] private GameObject streamSelectionLayout;
     [SerializeField] private GameObject streamCardLayout;
-    [SerializeField] private GameObject streamCard;
+    [SerializeField] private StreamCard streamCard;
     [SerializeField] private int cardCount = 2;
-    [SerializeField] public float hypeIncrease = 0.5f;
-    private List<GameObject> streamCardList = new List<GameObject>();
+    private List<StreamCard> streamCardList = new List<StreamCard>();
     private List<StreamCardSO> selectedStreams = new List<StreamCardSO>(); 
     private List<StreamCardSO> availableStreams = new List<StreamCardSO>();
 
@@ -60,14 +59,14 @@ public class StreamSelector : MonoBehaviour
 
         for(int i = streamCardList.Count; i < cardCount; i++)
         {
-            GameObject newStreamCard = Instantiate(streamCard, streamCardLayout.transform);
-            newStreamCard.GetComponent<StreamCard>().OnSelect += (stream) => SetNewStream(stream);
+            StreamCard newStreamCard = Instantiate(streamCard, streamCardLayout.transform);
+            newStreamCard.OnSelect += (stream) => SetNewStream(stream);
             streamCardList.Add(newStreamCard);
         }
-        foreach(GameObject streamCard in streamCardList)
+        foreach(StreamCard streamCard in streamCardList)
         {
             int randomIndex = Random.Range(0, selectableStreams.Count);
-            streamCard.GetComponent<StreamCard>().Setup(selectableStreams[randomIndex]);
+            streamCard.Setup(selectableStreams[randomIndex]);
             selectedStreams.Add(selectableStreams[randomIndex]);
             selectableStreams.RemoveAt(randomIndex);
         }
@@ -79,9 +78,18 @@ public class StreamSelector : MonoBehaviour
         GameManager.Instance.EndStream();
         previousStream = stream;
         GameManager.Instance.StartNewStream(stream);
-        PlayerManager.Instance.TargetHype = PlayerManager.Instance.CurrentHype + hypeIncrease;
+        ApplyStreamHypeStat(stream);
         isCardSet = false;
         CloseUI();
+    }
+
+    private void ApplyStreamHypeStat(StreamSO stream)
+    {
+        PlayerManager.Instance.TargetHype = PlayerManager.Instance.CurrentHype + stream.hypePotential;
+        PlayerManager.Instance.HypeGain = stream.hypeGain;
+        PlayerManager.Instance.HypeDrop = stream.hypeDrop;
+        PlayerManager.Instance.HypePeakDuration = stream.hypePeakDuration;
+        PlayerManager.Instance.CurrentHype += stream.impactHype;
     }
 
     public void CloseUI()
@@ -94,16 +102,14 @@ public class StreamSelector : MonoBehaviour
 
     void OnDestroy()
     {
-        foreach(GameObject streamCardObject in streamCardList)
+        foreach(StreamCard streamCard in streamCardList)
         {
-            if(streamCardObject != null)
+
+            if (streamCard != null)
             {
-                StreamCard streamCard = streamCardObject.GetComponent<StreamCard>();
-                if (streamCard != null)
-                {
-                    streamCard.OnSelect -= (stream) => SetNewStream(stream);
-                }
+                streamCard.OnSelect -= (stream) => SetNewStream(stream);
             }
+
         }
     }
 }

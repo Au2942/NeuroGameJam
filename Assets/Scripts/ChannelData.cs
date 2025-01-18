@@ -46,6 +46,10 @@ public class ChannelData : MonoBehaviour
 
     public string GetChannelName(int index)
     {
+        if(index < 0 || index >= ChannelInfos.Count)
+        {
+            return null;
+        }
         return ChannelInfos[index].name;
     }
 
@@ -69,6 +73,10 @@ public class ChannelData : MonoBehaviour
 
     public Entity GetChannelEntity(int index)
     {
+        if(index < 0 || index >= ChannelInfos.Count)
+        {
+            return null;
+        }
         return ChannelInfos[index].entity;
     }
 
@@ -95,6 +103,10 @@ public class ChannelData : MonoBehaviour
 
     public ChannelInfo GetChannelInfo(int index)
     {
+        if(index < 0 || index >= ChannelInfos.Count)
+        {
+            return new ChannelInfo();
+        }
         return ChannelInfos[index];
     }
 
@@ -117,6 +129,10 @@ public class ChannelData : MonoBehaviour
 
     public float GetChannelEntityIntegrityPercentage(int index)
     {
+        if(index < 0 || index >= ChannelInfos.Count)
+        {
+            return 0;
+        }
         ChannelInfo channelInfo = ChannelInfos[index];
         float result = channelInfo.entity.Integrity / channelInfo.entity.MaxIntegrity * 100;
         return result;

@@ -24,7 +24,7 @@ public class PlayerViewersHandler : MonoBehaviour
     {
         while (true)
         {
-            if(!GameManager.Instance.isStreaming)
+            while(!GameManager.Instance.isStreaming)
             {
                 yield return null;
             }
@@ -48,7 +48,7 @@ public class PlayerViewersHandler : MonoBehaviour
     {
         while (true)
         {
-            if(!GameManager.Instance.isStreaming)
+            while(!GameManager.Instance.isStreaming)
             {
                 yield return null;
             }
@@ -68,7 +68,7 @@ public class PlayerViewersHandler : MonoBehaviour
     {
         while (true)
         {
-            if(!GameManager.Instance.isStreaming)
+            while(!GameManager.Instance.isStreaming)
             {
                 yield return null;
             }

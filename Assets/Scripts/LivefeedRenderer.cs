@@ -9,7 +9,7 @@ public class LivefeedRenderer : MonoBehaviour
     [SerializeField] private ScrollRect scrollRect;
     [SerializeField] private Camera livefeedCamera;
     [SerializeField] private RectTransform contentUI;
-    [SerializeField] private GameObject livefeedPrefab;
+    [SerializeField] private Livefeed livefeedPrefab;
     [SerializeField] private GameObject selectBorderPrefab;
     [SerializeField] float refreshRate = 0.1f;
 
@@ -32,9 +32,8 @@ public class LivefeedRenderer : MonoBehaviour
 
     public void AddLivefeed()
     {
-        GameObject livefeed = Instantiate(livefeedPrefab, contentUI);
-        Livefeed selectLivefeed = livefeed.GetComponent<Livefeed>();
-        LivefeedManager.Instance.AddLivefeed(selectLivefeed);
+        Livefeed livefeed = Instantiate(livefeedPrefab, contentUI);
+        LivefeedManager.Instance.AddLivefeed(livefeed);
         RawImage rawImage = livefeed.GetComponentInChildren<RawImage>();
         if(rawImage != null)
         {
@@ -43,14 +42,13 @@ public class LivefeedRenderer : MonoBehaviour
             RenderTexture renderTexture = new RenderTexture(320, 180, 16);
             renderTextures.Add(renderTexture);
             rawImage.texture = renderTexture;
-            selectLivefeed.SetLivefeed(GameManager.Instance.ChannelData.GetChannelName(livefeedIndex) ,livefeedIndex); 
+            livefeed.SetLivefeed(GameManager.Instance.ChannelData.GetChannelName(livefeedIndex) ,livefeedIndex); 
         }
     }
     public void AddLivefeed(string name)
     {
-        GameObject livefeed = Instantiate(livefeedPrefab, contentUI);
-        Livefeed selectLivefeed = livefeed.GetComponent<Livefeed>();
-        LivefeedManager.Instance.AddLivefeed(selectLivefeed);
+        Livefeed livefeed = Instantiate(livefeedPrefab, contentUI);
+        LivefeedManager.Instance.AddLivefeed(livefeed);
         RawImage rawImage = livefeed.GetComponentInChildren<RawImage>();
         if(rawImage != null)
         {
@@ -59,7 +57,7 @@ public class LivefeedRenderer : MonoBehaviour
             RenderTexture renderTexture = new RenderTexture(320, 180, 16);
             renderTextures.Add(renderTexture);
             rawImage.texture = renderTexture;
-            selectLivefeed.SetLivefeed(name ,livefeedIndex); 
+            livefeed.SetLivefeed(name ,livefeedIndex); 
         }
     }
 
@@ -86,7 +84,7 @@ public class LivefeedRenderer : MonoBehaviour
                 livefeedCamera.targetTexture = renderTextures[i];
                 livefeedCamera.Render();
                 livefeedCamera.targetTexture = null;
-                livefeedCamera.transform.localPosition += new Vector3(ChannelNavigationManager.Instance.spacing, 0, 0);
+                livefeedCamera.transform.localPosition -= new Vector3(ChannelNavigationManager.Instance.spacing, 0, 0);
             }
             yield return new WaitForSeconds(refreshRate);
         }

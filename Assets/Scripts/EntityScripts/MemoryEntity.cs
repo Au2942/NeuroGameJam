@@ -4,9 +4,15 @@ public abstract class MemoryEntity : Entity
 {
 
     [SerializeField] protected float timeToShutup = 5f;
+    [SerializeField] GlitchOverlay glitchEffect;
     protected float shutupTimer = 0f;
 
-    protected GameObject glitchEffect;
+    protected override void SharedBehavior()
+    {
+        base.SharedBehavior();
+        
+        glitchEffect.SetGlitchIntensity(1 - Integrity/MaxIntegrity);
+    }
 
     protected override void InFocusBehavior()
     {
@@ -43,13 +49,14 @@ public abstract class MemoryEntity : Entity
     public override void EnterCorruptState()
     {
         base.EnterCorruptState();
-        glitchEffect = OverlayEffectManager.Instance.AddOverlayEffect(transform);
+        glitchEffect.FlickerAndScanline(true);
     }
 
     public override void ExitCorruptState()
     {
         base.ExitCorruptState();
-        OverlayEffectManager.Instance.RemoveOverlayEffect(glitchEffect);
+        glitchEffect.FlickerAndScanline(false);
+
     }
 
 }

@@ -79,8 +79,10 @@ public abstract class Entity : MonoBehaviour
     {
         if(PlayerManager.Instance.state == PlayerManager.PlayerState.repair && !IsBeingRepaired)
         {
-            PlayerManager.Instance.SetState(PlayerManager.PlayerState.normal);
-            WorkerManager.Instance.UseRepairWorker(this);
+            if(WorkerManager.Instance.TryUseRepairWorker(this))
+            {
+                PlayerManager.Instance.SetState(PlayerManager.PlayerState.normal);
+            }
         }
     }
     protected virtual void SubmitInteract()
