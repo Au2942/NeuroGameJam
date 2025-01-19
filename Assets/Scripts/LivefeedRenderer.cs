@@ -11,6 +11,7 @@ public class LivefeedRenderer : MonoBehaviour
     [SerializeField] private RectTransform contentUI;
     [SerializeField] private Livefeed livefeedPrefab;
     [SerializeField] private GameObject selectBorderPrefab;
+    [SerializeField] private Vector2Int resolution = new Vector2Int(320, 180);
     [SerializeField] float refreshRate = 0.1f;
 
     private List<RawImage> renderImages = new List<RawImage>();
@@ -39,7 +40,7 @@ public class LivefeedRenderer : MonoBehaviour
         {
             int livefeedIndex = renderImages.Count;
             renderImages.Add(rawImage);
-            RenderTexture renderTexture = new RenderTexture(320, 180, 16);
+            RenderTexture renderTexture = new RenderTexture(resolution.x, resolution.y, 16);
             renderTextures.Add(renderTexture);
             rawImage.texture = renderTexture;
             livefeed.SetLivefeed(GameManager.Instance.ChannelData.GetChannelName(livefeedIndex) ,livefeedIndex); 

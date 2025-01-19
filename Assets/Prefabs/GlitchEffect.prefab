@@ -192,7 +192,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   glitchEffect: {fileID: 9194156233974471049}
   glitchMaterial: {fileID: 2100000, guid: ac140811ffa176042bdac80be7be45fd, type: 2}
-  maxBlock: 0.1
+  maxBlock: 0.5
   maxDrift: 0.5
   maxJitter: 0.1
   maxJump: 0.1
@@ -204,6 +204,6 @@ MonoBehaviour:
   shake: 0
   blockShuffleRate: 60
   flickerStrength: 1
-  flickerIntensity: 0.1
+  flickerIntensity: 1
   scanlineStrength: 1
   manageValue: 1

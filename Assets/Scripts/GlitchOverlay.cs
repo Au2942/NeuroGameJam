@@ -21,7 +21,7 @@ public class GlitchOverlay : MonoBehaviour
 
     [SerializeField] private float blockShuffleRate = 60f;
     [SerializeField] private float flickerStrength = 1f;
-    [SerializeField] private float flickerIntensity = 0.1f;
+    //[SerializeField] private float flickerIntensity = 1f;
     [SerializeField] private float scanlineStrength = 1f;
     [SerializeField] private bool manageValue = true;
 
@@ -42,8 +42,14 @@ public class GlitchOverlay : MonoBehaviour
 
     public void UpdateBounds()
     {
-        glitchEffect.material.SetVector("_MeshBound",
-            new Vector4(320, 368, 1472, 1016));
+        Vector3[] corners = new Vector3[4];
+        glitchEffect.rectTransform.GetWorldCorners(corners);
+        for (int i = 0; i < corners.Length; i++)
+        {
+            corners[i] = Camera.main.WorldToScreenPoint(corners[i]);
+        }
+        glitchEffect.material.SetVector("_MeshBound", 
+            new Vector4(corners[0].x, corners[0].y, corners[2].x, corners[2].y));
     }
 
     
@@ -60,6 +66,10 @@ public class GlitchOverlay : MonoBehaviour
 
     public void SetGlitchIntensity(float value)
     {
+        if(!manageValue)
+        {
+            return;
+        }
         block = Mathf.Lerp(0, maxBlock, value);
         drift = Mathf.Lerp(0, maxDrift, value);
         jitter = Mathf.Lerp(0, maxJitter, value);
@@ -128,7 +138,6 @@ public class GlitchOverlay : MonoBehaviour
             time * 606.11f % (Mathf.PI * 2),
             drift * 0.04f
         );
-        if(drift == 0) vdrift = Vector2.zero;
 
         // Jitter parameters (threshold, displacement)
         var jv = jitter;
@@ -136,10 +145,8 @@ public class GlitchOverlay : MonoBehaviour
             Mathf.Max(0, 1.001f - jv * 1.2f),
             0.002f + jv * jv * jv * 0.05f
         );
-        if(jitter == 0) vjitter = Vector2.zero;
 
         var vjump = new Vector2(_jumpTime, jump);
-        if(jump == 0) vjump = Vector2.zero;
 
 
         glitchEffect.material.SetFloat("_BlockStrength", block3);
@@ -151,7 +158,7 @@ public class GlitchOverlay : MonoBehaviour
         glitchEffect.material.SetVector("_Jump", vjump);
         glitchEffect.material.SetFloat("_Shake", shake);
         
-
+        UpdateBounds();
     }
 
 }
