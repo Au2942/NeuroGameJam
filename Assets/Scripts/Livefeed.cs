@@ -7,7 +7,6 @@ public class Livefeed : MonoBehaviour, IPointerClickHandler
 {
 
     [SerializeField] public TextMeshProUGUI livefeedNameText; 
-    [SerializeField] IntegrityIndicator integrityIndicator;
     public string LivefeedName {get; set;}
     public int LivefeedIndex {get; set;} = -1;
     public void OnPointerClick(PointerEventData eventData)
@@ -19,7 +18,6 @@ public class Livefeed : MonoBehaviour, IPointerClickHandler
     {
         SetLivefeedName(name);
         LivefeedIndex = newIndex;
-        integrityIndicator.SetEntityIndex(newIndex);
     }
     
 

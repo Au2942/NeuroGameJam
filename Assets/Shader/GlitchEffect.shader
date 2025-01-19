@@ -144,8 +144,13 @@ Shader "Unlit/Glitch_Effect_Shader"
                 float2 screenUV = input.screenPos.xy / input.screenPos.w;
                 float2 targetScreenSize = float2(_TargetScreenBounds.z-_TargetScreenBounds.x, _TargetScreenBounds.w-_TargetScreenBounds.y);
                 float3 cameraPos = _WorldSpaceCameraPos;
-                float2 cameraBottomLeft = float2(cameraPos.x, cameraPos.y );
-                float4 targetUVBound = float4((_MeshBound.x - cameraBottomLeft.x)/(_ScreenSize.x), (_MeshBound.y - cameraBottomLeft.y)/(_ScreenSize.y), (_MeshBound.z - cameraBottomLeft.x)/(_ScreenSize.x), (_MeshBound.w - cameraBottomLeft.y)/(_ScreenSize.y));
+                float2 cameraBottomLeft = float2(cameraPos.x - _ScreenSize.x/2  , cameraPos.y - _ScreenSize.y/2   );
+                float4 targetUVBound = 
+                float4((_MeshBound.x - cameraBottomLeft.x)/_ScreenSize.x, 
+                    (_MeshBound.y - cameraBottomLeft.y)/_ScreenSize.y, 
+                    (_MeshBound.z - cameraBottomLeft.x)/_ScreenSize.x, 
+                    (_MeshBound.w - cameraBottomLeft.y)/_ScreenSize.y);
+
                 float2 uv;
 
                 //
@@ -252,8 +257,7 @@ Shader "Unlit/Glitch_Effect_Shader"
                 }
                 c.rgb *= remappedScanline;
 
-                
-
+            
                 return c;
             }
             ENDHLSL

@@ -44,10 +44,6 @@ public class GlitchOverlay : MonoBehaviour
     {
         Vector3[] corners = new Vector3[4];
         glitchEffect.rectTransform.GetWorldCorners(corners);
-        for (int i = 0; i < corners.Length; i++)
-        {
-            corners[i] = Camera.main.WorldToScreenPoint(corners[i]);
-        }
         glitchEffect.material.SetVector("_MeshBound", 
             new Vector4(corners[0].x, corners[0].y, corners[2].x, corners[2].y));
     }
