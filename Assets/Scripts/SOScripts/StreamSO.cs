@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Video;
 
 [CreateAssetMenu(fileName = "StreamSO", menuName = "Scriptable Objects/StreamSO")]
 public class StreamSO : ScriptableObject
@@ -15,5 +14,7 @@ public class StreamSO : ScriptableObject
     public float impactHype = 0f;
     public float hypeGain = 0.1f;
     public float hypeDrop = 0.1f;
+    public float viewsBonus = 0f;
+    public float subsBonus = 0f;
     
 }

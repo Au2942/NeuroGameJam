@@ -6,14 +6,13 @@ public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager Instance;
     [SerializeField] public PlayerViewersHandler ViewersHandler;  
-
     [SerializeField] public PlayerSubscriptionsHandler SubscriptionsHandler;
     [SerializeField] public PlayerStatUI StatUI;
 
-    [SerializeField] public float Integrity = 100; //integrity of self
-    [SerializeField] public float MaxIntegrity = 100;
-    [SerializeField] public float MemoriesIntegrity = 100; //average of all memory entities integrity
-    [SerializeField] public float MaxMemoriesIntegrity = 100;
+    [SerializeField] public float Health = 100; //integrity of self
+    [SerializeField] public float MaxHealth = 100;
+    [SerializeField] public float Performance = 0.1f; //average of all memory entities integrity
+    [SerializeField] public float MaxPerformance = 2f;
     [SerializeField] public float RemainingStreamTime = 60f;
     [SerializeField] public float StreamTimeIncrease = 0.03f; //3 seconds per subscription
     [SerializeField] public int CurrentViewers = 0; //ccv 
@@ -21,23 +20,19 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] public int Subscriptions = 0;
     [SerializeField] public float CurrentHype = 0.5f;
     [SerializeField] public float TargetHype = -999;
-    [SerializeField] public float HypePeakDuration = -999;
     [SerializeField] public float MaxHype = 2f;
     [SerializeField] public float MinHype = -2f;
-    [SerializeField] public float HypeGain = 0.05f;
-    [SerializeField] public float HypeDrop = 0.1f;
     [SerializeField] public float HypeDropBelowZero = 0.1f;
     [SerializeField] public float HypeUpdateInterval = 5f; 
-
-    [SerializeField] public int[] GainWorkerSubsMilestones;
-    [SerializeField] private RepairWorker RepairWorkerPrefab; 
-
-
-
 
     [SerializeField] public PlayerState state = PlayerState.normal;
     [SerializeField] public CustomCursor repairCursor;
     //public event System.Action<float> OnHypeChanged;
+    private StreamSO currentStream => GameManager.Instance.CurrentStream;
+
+
+
+
 
 
     public enum PlayerState
@@ -75,20 +70,8 @@ public class PlayerManager : MonoBehaviour
         ElapsedStreamTime += Time.deltaTime;
         RemainingStreamTime -= Time.deltaTime;
         PeakViewers = Mathf.Max(PeakViewers, CurrentViewers);
-        UpdateMemoryIntegrity();
     }
 
-    private void GainDrone()
-    {
-        for(int i = 0; i < GainWorkerSubsMilestones.Length; i++)
-        {
-            if(Subscriptions >= GainWorkerSubsMilestones[i])
-            {
-                WorkerManager.Instance.AddWorker(RepairWorkerPrefab);
-                break;
-            }
-        }
-    }
 
 
     public void CheckPlayerInput()
@@ -120,33 +103,6 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
-    private void UpdateMemoryIntegrity()
-    {
-        if(GameManager.Instance.Entities.Count <= 1)
-        {
-            MemoriesIntegrity = MaxMemoriesIntegrity;
-            return;
-        }
-        float totalIntegrity = 0;
-        float totalMaxIntegrity = 0;
-        for(int i = 1; i < GameManager.Instance.Entities.Count; i++)
-        {
-            totalIntegrity += GameManager.Instance.Entities[i].Integrity;
-            totalMaxIntegrity += GameManager.Instance.Entities[i].MaxIntegrity;
-        }
-        MemoriesIntegrity = totalIntegrity / totalMaxIntegrity * MaxMemoriesIntegrity;
-    }
-
-    public float GetPerformance()
-    {
-        return MemoriesIntegrity + Integrity; // -1 to make it 0 when everything is at max 
-    }
-
-    public float GetPerformancePercentage()
-    {
-        return GetPerformance() / (MaxIntegrity + MaxMemoriesIntegrity);
-    }
-
     public void IncreaseStreamTime(int multiplier)
     {
         RemainingStreamTime += StreamTimeIncrease*multiplier;
@@ -160,16 +116,16 @@ public class PlayerManager : MonoBehaviour
 
     public void TakeDamage(int value)
     {
-        Integrity -= value;
-        if(Integrity > MaxIntegrity)
+        Health -= value;
+        if(Health > MaxHealth)
         {
-            Integrity = MaxIntegrity;
+            Health = MaxHealth;
         }
 
-        if(Integrity < 0)
+        if(Health < 0)
         {
             //to-do game over
-            Integrity = 0;
+            Health = 0;
             StartCoroutine(EndingManager.Instance.EndGame(0));
         }
     }
@@ -185,12 +141,12 @@ public class PlayerManager : MonoBehaviour
 
             if (TargetHype != -999)
             {
-                CurrentHype += HypeGain;
+                CurrentHype += currentStream.hypeGain;
 
                 if (CurrentHype >= TargetHype)
                 {
                     CurrentHype = TargetHype;
-                    yield return new WaitForSeconds(HypePeakDuration);
+                    yield return new WaitForSeconds(currentStream.hypePeakDuration);
                     TargetHype = -999;
                 }
             }
@@ -198,7 +154,7 @@ public class PlayerManager : MonoBehaviour
             {
                 if (CurrentHype > 0)
                 {
-                    CurrentHype = Mathf.Max(CurrentHype - HypeDrop, 0);
+                    CurrentHype = Mathf.Max(CurrentHype - currentStream.hypeDrop, 0);
                 }
                 else
                 {

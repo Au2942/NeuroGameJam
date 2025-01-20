@@ -5,8 +5,10 @@ public class WorkerManager : MonoBehaviour
 {
     public static WorkerManager Instance;
     
-    [SerializeField] public List<RepairWorker> RepairWorkers = new List<RepairWorker>();
-    private RepairWorker selectedRepairWorker;
+    [SerializeField] public List<Worker> RepairWorkers = new List<Worker>();
+    private Worker selectedRepairWorker;
+    [SerializeField] private Worker RepairWorkerPrefab; 
+
 
     void Awake()
     {
@@ -20,9 +22,10 @@ public class WorkerManager : MonoBehaviour
         }
     }
 
+
     void Start()
     {
-        foreach(RepairWorker repairWorker in RepairWorkers)
+        foreach(Worker repairWorker in RepairWorkers)
         {
             if(repairWorker != null)
             {
@@ -31,9 +34,9 @@ public class WorkerManager : MonoBehaviour
         }
     }
 
-    public void AddWorker(RepairWorker newWorkerPrefab)
+    public void AddWorker(Worker newWorkerPrefab)
     {
-        RepairWorker newWorker = Instantiate(newWorkerPrefab, transform);
+        Worker newWorker = Instantiate(newWorkerPrefab, transform);
         if(newWorker == null)
         {
             Destroy(newWorker);
@@ -44,7 +47,7 @@ public class WorkerManager : MonoBehaviour
         newWorker.OnSelected += SelectRepairWorker;
     }
 
-    public void SelectRepairWorker(RepairWorker repairWorker)
+    public void SelectRepairWorker(Worker repairWorker)
     {
         selectedRepairWorker = repairWorker;
     }
@@ -66,14 +69,14 @@ public class WorkerManager : MonoBehaviour
         return false;
     }
 
-    public void ReturnRepairWorker(RepairWorker repairWorker)
+    public void ReturnRepairWorker(Worker repairWorker)
     {
         repairWorker.IsAvailable = true;
     }
 
     void OnDestroy()
     {
-        foreach(RepairWorker repairWorker in RepairWorkers)
+        foreach(Worker repairWorker in RepairWorkers)
         {
             if(repairWorker == null) continue;
             repairWorker.OnSelected -= SelectRepairWorker;

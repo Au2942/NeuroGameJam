@@ -10,9 +10,9 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
     [SerializeField] private TextMeshProUGUI roomText;
     [SerializeField] public ChannelData ChannelData;
-
     [SerializeField] private StreamSO defaultStream;
     [SerializeField] private LivefeedRenderer LivefeedRenderer;
+    [SerializeField] public ScreenEffectController ScreenEffectController;
 
     public int ChannelCount => ChannelData.GetChannelCount();
     public int CurrentChannelIndex => ChannelNavigationManager.Instance.CurrentChannelIndex;
@@ -52,6 +52,14 @@ public class GameManager : MonoBehaviour
         { 
             PlayerManager.Instance.ProgressStream();
             PlayerManager.Instance.CheckPlayerInput();
+            if(ChannelData.GetChannelEntity(CurrentChannelIndex).corrupted)
+            {
+                ScreenEffectController.Show();
+            }
+            else
+            {
+                ScreenEffectController.Hide();
+            }
         }
         if(StreamSelector.Instance.isOpen)
         {
@@ -64,6 +72,7 @@ public class GameManager : MonoBehaviour
 
     private void SetChannelIndex(int index)
     {
+        
         for(int i = 0; i < ChannelCount; i++)
         {
             ChannelInfo channelInfo = ChannelData.GetChannelInfo(i);
@@ -85,11 +94,16 @@ public class GameManager : MonoBehaviour
     {
         CurrentStream = newStream;
         GameObject stream = ChannelNavigationManager.Instance.SetUpStream(CurrentStream);
+        SetPlayerStream(CurrentStream);
         ChannelNavigationManager.Instance.SetChannelIndex(ChannelCount-1);
         isStreaming = true;
         OnStartStream?.Invoke();
     }
-
+    private void SetPlayerStream(StreamSO stream)
+    {
+        PlayerManager.Instance.TargetHype = PlayerManager.Instance.CurrentHype + stream.hypePotential;
+        PlayerManager.Instance.CurrentHype += stream.impactHype;
+    }
     public void ContinueStream()
     {
         ChannelData.GetChannelEntity(CurrentChannelIndex).SetInFocus(true);
@@ -106,9 +120,7 @@ public class GameManager : MonoBehaviour
 
     public void EndStream()
     {
-
         StopStream();
-
         GameObject memory = ChannelNavigationManager.Instance.AddStreamMemoryToChannel(CurrentStream);
         ChannelData.ReplaceChannel(ChannelCount-1, CurrentStream.streamName, memory.GetComponent<MemoryEntity>());
         OnEndStream?.Invoke();

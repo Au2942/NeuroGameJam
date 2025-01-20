@@ -11,9 +11,22 @@ public abstract class MemoryEntity : Entity
     {
         base.SharedBehavior();
         
-        float t = 1 - (Integrity / MaxIntegrity);
-        float easedT = t*t*t*t;
-        glitchEffect.SetGlitchIntensity(easedT);
+    }
+
+    protected override void OnIntegrityChanged()
+    {
+        base.OnIntegrityChanged();
+        if(glitchEffect != null)
+        {
+            if(Health/MaxHealth <= 0.7f)
+            {
+                glitchEffect.Show();
+                float t = 1 - (Health / MaxHealth);
+                float easedT = t*t*t*t;
+                glitchEffect.SetGlitchIntensity(easedT);
+            }
+            else glitchEffect.Hide();
+        }
     }
 
     protected override void InFocusBehavior()
@@ -39,7 +52,6 @@ public abstract class MemoryEntity : Entity
     protected override void SubmitInteract()
     {
         base.SubmitInteract();
-        Converse();
     }
 
     protected override void OnEndStream()
@@ -51,13 +63,11 @@ public abstract class MemoryEntity : Entity
     public override void EnterCorruptState()
     {
         base.EnterCorruptState();
-        glitchEffect.FlickerAndScanline(true);
     }
 
     public override void ExitCorruptState()
     {
         base.ExitCorruptState();
-        glitchEffect.FlickerAndScanline(false);
 
     }
 

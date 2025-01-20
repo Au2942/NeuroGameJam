@@ -78,19 +78,11 @@ public class StreamSelector : MonoBehaviour
         GameManager.Instance.EndStream();
         previousStream = stream;
         GameManager.Instance.StartNewStream(stream);
-        ApplyStreamHypeStat(stream);
         isCardSet = false;
         CloseUI();
     }
 
-    private void ApplyStreamHypeStat(StreamSO stream)
-    {
-        PlayerManager.Instance.TargetHype = PlayerManager.Instance.CurrentHype + stream.hypePotential;
-        PlayerManager.Instance.HypeGain = stream.hypeGain;
-        PlayerManager.Instance.HypeDrop = stream.hypeDrop;
-        PlayerManager.Instance.HypePeakDuration = stream.hypePeakDuration;
-        PlayerManager.Instance.CurrentHype += stream.impactHype;
-    }
+
 
     public void CloseUI()
     {

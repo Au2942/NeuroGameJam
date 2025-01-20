@@ -18,25 +18,27 @@ public class GlitchOverlay : MonoBehaviour
     [SerializeField] private float jitter = 0;
     [SerializeField] private float jump = 0;
     [SerializeField] private float shake = 0;
-
     [SerializeField] private float blockShuffleRate = 60f;
-    [SerializeField] private float flickerStrength = 1f;
-    //[SerializeField] private float flickerIntensity = 1f;
-    [SerializeField] private float scanlineStrength = 1f;
+    // [SerializeField] private float flickerStrength = 1f;
+    // [SerializeField] private float flickerIntensity = 1f;
+    // [SerializeField] private float scanlineStrength = 1f;
     [SerializeField] private bool manageValue = true;
-
+    [SerializeField] private bool show = false;
     float _prevTime;
     float _jumpTime;
     private float _blockTime;
     private int _blockSeed1 = 71;
     private int _blockSeed2 = 113;
     private int _blockStride = 1;
+    [SerializeField] private Material material;
     
     void Start()
     {
-        glitchEffect.material = Instantiate(glitchMaterial);
-        FlickerAndScanline(false);
+        material = new Material(glitchMaterial);
+        glitchEffect.material = material;
+        //FlickerAndScanline(false);
         UpdateBounds();
+        glitchEffect.gameObject.SetActive(show);
         //ChannelNavigationManager.Instance.OnUpdateChannelLayout += UpdateBounds;
     }
 
@@ -51,14 +53,24 @@ public class GlitchOverlay : MonoBehaviour
     
     void Update()
     {
-        if(!GameManager.Instance.isStreaming)
+        if(!GameManager.Instance.isStreaming || !show)
         {
             return;
         }
         UpdateParameters();
     }
 
+    public void Show()
+    {
+        show = true;
+        glitchEffect.gameObject.SetActive(show);
+    }
 
+    public void Hide()
+    {
+        show = false;
+        glitchEffect.gameObject.SetActive(show);
+    }
 
     public void SetGlitchIntensity(float value)
     {
@@ -74,35 +86,35 @@ public class GlitchOverlay : MonoBehaviour
         blockShuffleRate = Mathf.Lerp(0, 60, value);
     }
 
-    public void Flicker(bool show)
-    {
-        if(show)
-        {
-            glitchEffect.material.SetFloat("_NoiseStrength", flickerStrength);
-        }
-        else
-        {
-            glitchEffect.material.SetFloat("_NoiseStrength", 0);
-        }
-    }
+    // public void Flicker(bool show)
+    // {
+    //     if(show)
+    //     {
+    //         glitchEffect.material.SetFloat("_NoiseStrength", flickerStrength);
+    //     }
+    //     else
+    //     {
+    //         glitchEffect.material.SetFloat("_NoiseStrength", 0);
+    //     }
+    // }
 
-    public void Scanline(bool show)
-    {
-        if(show)
-        {
-            glitchEffect.material.SetFloat("_ScanlineStrength", scanlineStrength);
-        }
-        else
-        {
-            glitchEffect.material.SetFloat("_ScanlineStrength", 0);
-        }
-    }
+    // public void Scanline(bool show)
+    // {
+    //     if(show)
+    //     {
+    //         glitchEffect.material.SetFloat("_ScanlineStrength", scanlineStrength);
+    //     }
+    //     else
+    //     {
+    //         glitchEffect.material.SetFloat("_ScanlineStrength", 0);
+    //     }
+    // }
 
-    public void FlickerAndScanline(bool show)
-    {
-        Flicker(show);
-        Scanline(show);
-    }
+    // public void FlickerAndScanline(bool show)
+    // {
+    //     Flicker(show);
+    //     Scanline(show);
+    // }
 
 
 
@@ -157,4 +169,9 @@ public class GlitchOverlay : MonoBehaviour
         UpdateBounds();
     }
 
+    void OnDestroy()
+    {
+        //ChannelNavigationManager.Instance.OnUpdateChannelLayout -= UpdateBounds;
+        Destroy(material);
+    }
 }

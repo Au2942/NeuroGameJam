@@ -4,13 +4,13 @@ public class StreamEntity : Entity
     protected override void Start()
     {
         base.Start();
-        Integrity = PlayerManager.Instance.GetPerformance();
-        MaxIntegrity = PlayerManager.Instance.MaxIntegrity + PlayerManager.Instance.MaxMemoriesIntegrity;
+        Health = PlayerManager.Instance.Health;
+        MaxHealth = PlayerManager.Instance.MaxHealth;
     }
     protected override void Update()
     {
         base.Update();
-        Integrity = PlayerManager.Instance.GetPerformance();
+        Health = PlayerManager.Instance.Health;
     }
 
     protected override void SubmitInteract()

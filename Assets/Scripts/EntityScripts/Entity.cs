@@ -9,11 +9,11 @@ public abstract class Entity : MonoBehaviour
     [SerializeField] protected UIEventHandler[] clickInteractHandlers;
     [SerializeField] protected DialogueManager dialogueManager;
     [SerializeField] protected List<DialogueSet> dialogueSets;
-    [SerializeField] public float Integrity = 100;
-    [SerializeField] public float MaxIntegrity = 100;
-    [SerializeField] public float decayInterval = 3f;
-    [SerializeField] public float InFocusDecayMultiplier = 0.5f;
-    [SerializeField] public bool IntegrityDecay = true;
+    [SerializeField] public float Health = 100;
+    [SerializeField] public float MaxHealth = 100;
+    // [SerializeField] public float decayInterval = 3f;
+    // [SerializeField] public float InFocusDecayMultiplier = 0.5f;
+    // [SerializeField] public bool IntegrityDecay = true;
     [SerializeField] public bool InFocus = false;
     [SerializeField] public bool Interactable = true;
     [SerializeField] public bool IsBeingRepaired = false;
@@ -97,15 +97,15 @@ public abstract class Entity : MonoBehaviour
         }
     }
 
-    public virtual void StartRepairing(RepairWorker repairWorker)
+    public virtual void StartRepairing(Worker repairWorker)
     {
         IsBeingRepaired = true;
         Interactable = false;
-        IntegrityDecay = false;
+        //IntegrityDecay = false;
         StartCoroutine(Repairing(repairWorker));
     }
 
-    protected virtual IEnumerator Repairing(RepairWorker repairWorker)
+    protected virtual IEnumerator Repairing(Worker repairWorker)
     {
         float elapsedTime = 0f;
         while(elapsedTime < repairWorker.RepairSpeed)
@@ -122,7 +122,7 @@ public abstract class Entity : MonoBehaviour
     {
         IsBeingRepaired = false;
         Interactable = true;
-        IntegrityDecay = true;
+        //IntegrityDecay = true;
     }
 
     protected virtual void Update()
@@ -150,7 +150,7 @@ public abstract class Entity : MonoBehaviour
             RollChanceToCorrupt();
         }
         
-        Decay();
+        //Decay();
 
     }
 
@@ -195,24 +195,29 @@ public abstract class Entity : MonoBehaviour
 
     public void AddIntegrity(float amount)
     {
-        Integrity += amount;
-        if (Integrity > MaxIntegrity)
+        Health += amount;
+        if (Health > MaxHealth)
         {
-            Integrity = MaxIntegrity;
+            Health = MaxHealth;
         }
-        if (Integrity < 0)
+        if (Health < 0)
         {
-            Integrity = 0;
+            Health = 0;
         }
+        OnIntegrityChanged();
     }
 
-    protected virtual void Decay()
+    protected virtual void OnIntegrityChanged()
     {
-        if(!IntegrityDecay || decayInterval <= 0) return;
-        float decayMultiplier = InFocus ? InFocusDecayMultiplier : 1f;
-        AddIntegrity(-1/decayInterval * Time.deltaTime * decayMultiplier);
         
     }
+
+    // protected virtual void Decay()
+    // {
+    //     if(!IntegrityDecay || decayInterval <= 0) return;
+    //     float decayMultiplier = InFocus ? InFocusDecayMultiplier : 1f;
+    //     AddIntegrity(-1/decayInterval * Time.deltaTime * decayMultiplier);   
+    // }
 
     protected virtual void PlayDefaultAnimation()
     {
@@ -357,7 +362,7 @@ public abstract class Entity : MonoBehaviour
         {
             if(corruptRollTimer >= corruptRollInterval)
             {
-                float integrityRatio = Integrity / MaxIntegrity;
+                float integrityRatio = Health / MaxHealth;
                 if (integrityRatio <= minCorruptRoll)
                 {
                     EnterCorruptState();

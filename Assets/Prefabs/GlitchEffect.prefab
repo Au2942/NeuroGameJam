@@ -203,7 +203,5 @@ MonoBehaviour:
   jump: 0
   shake: 0
   blockShuffleRate: 60
-  flickerStrength: 1
-  flickerIntensity: 1
-  scanlineStrength: 1
   manageValue: 1
+  show: 0

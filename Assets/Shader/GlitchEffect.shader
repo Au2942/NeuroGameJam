@@ -1,4 +1,4 @@
-Shader "Unlit/Glitch_Effect_Shader"
+Shader "CustomEffects/Glitch_Effect_Shader"
 {
 
     Properties
@@ -13,11 +13,11 @@ Shader "Unlit/Glitch_Effect_Shader"
         _Jitter ("Jitter", Vector) = (0.1, 0.1, 0 ,0)
         _Jump ("Jump", Vector) = (0.1, 0.1, 0, 0)
         _Shake ("Shake", float) = 0.1
-        _NoiseStrength ("Noise Strength", Range(0, 1)) = 1
-        _NoiseAmount ("Noise Amount", Range(0, 100)) = 50
-        _NoiseIntensity ("Noise Intensity", Range(0, 1)) = 0.1
-        _ScanlineStrength ("Scanline Strength", Range(0, 1)) = 1
-        _ScanlineAmount ("Scanline Amount", Range(0, 1000)) = 600
+        // _NoiseStrength ("Noise Strength", Range(0, 1)) = 1
+        // _NoiseAmount ("Noise Amount", Range(0, 100)) = 50
+        // _NoiseIntensity ("Noise Intensity", Range(0, 1)) = 0.1
+        // _ScanlineStrength ("Scanline Strength", Range(0, 1)) = 1
+        // _ScanlineAmount ("Scanline Amount", Range(0, 1000)) = 600
         _MeshBound ("Mesh Bound", Vector) = (0, 0, 1920, 1080)
         _TargetScreenBounds ("Screen Bounds", Vector) = (0, 0, 1920, 1080)
     }
@@ -28,7 +28,7 @@ Shader "Unlit/Glitch_Effect_Shader"
 		"Queue"="Transparent"
 		"RenderPipeline" = "UniversalPipeline"
 	}
-        Blend SrcAlpha OneMinusSrcAlpha       
+        //Blend SrcAlpha OneMinusSrcAlpha       
         
         Pass
         {
@@ -88,11 +88,11 @@ Shader "Unlit/Glitch_Effect_Shader"
             float2 _Jump;
             float _Shake;
 
-            float _NoiseStrength;
-            float _NoiseAmount;
-            float _NoiseIntensity;
-            float _ScanlineStrength;
-            float _ScanlineAmount;
+            // float _NoiseStrength;
+            // float _NoiseAmount;
+            // float _NoiseIntensity;
+            // float _ScanlineStrength;
+            // float _ScanlineAmount;
 
             float4 _MeshBound;
             float4 _TargetScreenBounds;
@@ -196,37 +196,33 @@ Shader "Unlit/Glitch_Effect_Shader"
                 uint sy = ty * targetScreenSize.y;
 
                 // Jitter
-                // float jitter = Hash(sy + _Seed) * 2 - 1;
-                // tx += jitter * (_Jitter.x < abs(jitter)) * _Jitter.y;
+
                 float jitter = Hash(sy + _Seed) * 2 - 1;
                 float jx = jitter * (_Jitter.x < abs(jitter)) * _Jitter.y;
-                //tx = (tx + jx < _MeshBound.x / screenSize.x || tx + jx > _MeshBound.z / screenSize.x) ? tx : tx + jx;
                 tx += jx;
 
                 // Shake
-                tx = frac(tx + (Hash(_Seed) - 0.5) * sin(_Shake*_Time.y) * _Shake);
+                tx = frac(tx + (Hash(_Seed) - 0.5) * _Shake);
 
-                float shx = frac(tx + (Hash(_Seed) - 0.5) * sin(_Time.y) * _Shake);
-                //tx = (shx < _MeshBound.x / screenSize.x || shx > _MeshBound.z / screenSize.x) ? tx : shx;
                 // Drift
                 float drift = sin(ty * 2 + _Drift.x) * _Drift.y;
 
                 // Flicker
-                float strength = _Time.y * _NoiseStrength;
-                float stripe = (input.uv.y + strength);
-                float2 noiseUV = float2(stripe, stripe);
-                float gradientNoise;
-                Unity_GradientNoise_float(noiseUV, _NoiseAmount, gradientNoise) ;
-                float noise1;
-                Unity_Remap_float(gradientNoise, float2(0, 1), float2(-_NoiseIntensity, _NoiseIntensity), noise1);
+                // float strength = _Time.y * _NoiseStrength;
+                // float stripe = (input.uv.y + strength);
+                // float2 noiseUV = float2(stripe, stripe);
+                // float gradientNoise;
+                // Unity_GradientNoise_float(noiseUV, _NoiseAmount, gradientNoise) ;
+                // float noise1;
+                // Unity_Remap_float(gradientNoise, float2(0, 1), float2(-_NoiseIntensity, _NoiseIntensity), noise1);
 
-                float noise2;
-                Unity_GradientNoise_float(strength, 10, noise2);
-                noise2 *= noise2;
-                noise2 *= noise2;
-                noise2 *= 0.1;
+                // float noise2;
+                // Unity_GradientNoise_float(strength, 10, noise2);
+                // noise2 *= noise2;
+                // noise2 *= noise2;
+                // noise2 *= 0.1;
 
-                float finalNoise = (_NoiseStrength > 0 ) ? noise1 * noise2 : 0;
+                // float finalNoise = (_NoiseStrength > 0 ) ? noise1 * noise2 : 0;
 
                 // Source sample
                 uint sx1 = (tx) * targetScreenSize.x;
@@ -234,18 +230,21 @@ Shader "Unlit/Glitch_Effect_Shader"
                 float2 suv1 = uint2(sx1, sy) / (targetScreenSize.xy);
                 float2 suv2 = uint2(sx2, sy) / (targetScreenSize.xy);
 
-                suv1.x = wrap(suv1.x + finalNoise, targetUVBound.x, targetUVBound.z);
-                suv2.x = wrap(suv2.x + finalNoise, targetUVBound.x, targetUVBound.z);
-
+                // wrap inside the target area
+                // suv1.x = wrap(suv1.x + finalNoise, targetUVBound.x, targetUVBound.z);
+                // suv2.x = wrap(suv2.x + finalNoise, targetUVBound.x, targetUVBound.z);
+                suv1.x = wrap(suv1.x , targetUVBound.x, targetUVBound.z);
+                suv2.x = wrap(suv2.x , targetUVBound.x, targetUVBound.z);
+                
 
                 float4 c1 = SAMPLE_TEXTURE2D(_CameraSortingLayerTexture, sampler_CameraSortingLayerTexture , suv1);// + uint2(sx1, sy));
                 float4 c2 = SAMPLE_TEXTURE2D(_CameraSortingLayerTexture, sampler_CameraSortingLayerTexture , suv2);// + uint2(sx2, sy));
                 float4 c = float4(c1.r, c2.g, c1.b, c1.a);
 
                 //scanline
-                float scanline = clamp(sin((input.uv.y*_ScanlineAmount + strength)), 1-_ScanlineStrength ,1);
-                float remappedScanline;
-                Unity_Remap_float(scanline, float2(-1, 1), float2(0.2, 1), remappedScanline);
+                // float scanline = clamp(sin((input.uv.y*_ScanlineAmount + strength)), 1-_ScanlineStrength ,1);
+                // float remappedScanline;
+                // Unity_Remap_float(scanline, float2(-1, 1), float2(0.2, 1), remappedScanline);
 
                 
                 // Block damage (color mixing)
@@ -255,9 +254,9 @@ Shader "Unlit/Glitch_Effect_Shader"
                     hsv = hsv * float3(-1, 1, 0) + float3(0.5, 0, 0.9);
                     c.rgb = HsvToRgb(hsv);
                 }
-                c.rgb *= remappedScanline;
+                //apply scanline
+                //c.rgb *= remappedScanline;
 
-            
                 return c;
             }
             ENDHLSL

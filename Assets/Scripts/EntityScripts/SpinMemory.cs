@@ -31,7 +31,7 @@ public class SpinMemory : MemoryEntity
 
     void UpdateSpinSpeed()
     {
-        currentAcceleration = 1f + (1f - Integrity / MaxIntegrity) * (maxAccerelation - 1f);
+        currentAcceleration = 1f + (1f - Health / MaxHealth) * (maxAccerelation - 1f);
     }
 
     public override void EnterCorruptState()

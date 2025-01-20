@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 
-public class RepairWorker : MonoBehaviour
+public class Worker : MonoBehaviour
 {
     [SerializeField] public string Identifier;
     [SerializeField] public Image WorkerIcon;
@@ -16,7 +16,7 @@ public class RepairWorker : MonoBehaviour
     [SerializeField] public float Cooldown = 5f;
     [SerializeField] public bool IsAvailable = true;
 
-    public event System.Action<RepairWorker> OnSelected; 
+    public event System.Action<Worker> OnSelected; 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {

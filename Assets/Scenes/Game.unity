@@ -309,10 +309,10 @@ MonoBehaviour:
   ViewersHandler: {fileID: 56981518}
   SubscriptionsHandler: {fileID: 56981517}
   StatUI: {fileID: 56981519}
-  Integrity: 100
-  MaxIntegrity: 100
-  MemoriesIntegrity: 100
-  MaxMemoriesIntegrity: 100
+  Health: 100
+  MaxHealth: 100
+  Performance: 0.1
+  MaxPerformance: 2
   RemainingStreamTime: 60
   StreamTimeIncrease: 0.1666667
   CurrentViewers: 0
@@ -320,15 +320,10 @@ MonoBehaviour:
   Subscriptions: 0
   CurrentHype: 0.25
   TargetHype: 0.5
-  HypePeakDuration: -999
   MaxHype: 2
   MinHype: -2
-  HypeGain: 0.05
-  HypeDrop: 0.1
   HypeDropBelowZero: 0.1
   HypeUpdateInterval: 6
-  GainWorkerSubsMilestones: 40420f00
-  RepairWorkerPrefab: {fileID: 6816021588467933377, guid: bfb1eb88a84a9c04baf7e416814342b2, type: 3}
   state: 0
   repairCursor:
     texture: {fileID: 2800000, guid: 4cc2c6bc10fd8224688570b66875aa52, type: 3}
@@ -1049,7 +1044,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -1118,7 +1113,7 @@ Camera:
   m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
-  m_OcclusionCulling: 1
+  m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
 --- !u!4 &519420032
@@ -1249,7 +1244,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 1
+  m_RenderPostProcessing: 0
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -1314,7 +1309,7 @@ Camera:
   m_TargetTexture: {fileID: 8400000, guid: e22e71eab94a34e499c1626ab0410529, type: 2}
   m_TargetDisplay: 0
   m_TargetEye: 3
-  m_HDR: 1
+  m_HDR: 0
   m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
@@ -1622,8 +1617,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d851af2ffa0aeef41beddcc4054ef7bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  integrityBar: {fileID: 1205966723}
-  integrityColorStages:
+  healthBar: {fileID: 0}
+  colorStages:
   - {r: 1, g: 0, b: 0, a: 1}
   - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   - {r: 0, g: 1, b: 0, a: 1}
@@ -2717,6 +2712,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  RepairWorkerPrefab: {fileID: 0}
 --- !u!1 &1587223854
 GameObject:
   m_ObjectHideFlags: 0
@@ -3210,6 +3206,7 @@ GameObject:
   - component: {fileID: 1919729825}
   - component: {fileID: 1919729826}
   - component: {fileID: 1919729827}
+  - component: {fileID: 1919729828}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -3293,6 +3290,7 @@ MonoBehaviour:
   ChannelData: {fileID: 1919729825}
   defaultStream: {fileID: 11400000, guid: c3a646e50b6ae0f42bc3233e9fb75bee, type: 2}
   LivefeedRenderer: {fileID: 277287458}
+  ScreenEffectController: {fileID: 1919729828}
 --- !u!114 &1919729821
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3383,6 +3381,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Livefeeds: []
+--- !u!114 &1919729828
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1919729811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76b8dca45798622498a3054216671c2d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  screenEffectRendererFeature: {fileID: -8603332377010048691, guid: 424799608f7334c24bf367e4bbfa7f9a, type: 2}
+  noiseStrength: 1
+  noiseAmount: 50
+  noiseIntensity: 0.1
+  scanlineStrength: 1
+  scanlineAmount: 600
 --- !u!1 &1925710896
 GameObject:
   m_ObjectHideFlags: 0

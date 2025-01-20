@@ -13,14 +13,14 @@ public class LavaLamp : MonoBehaviour
 
     private void ChangeLavaLampColor()
     {
-        float healthPercentage = PlayerManager.Instance.MemoriesIntegrity / PlayerManager.Instance.MaxMemoriesIntegrity;
+        float healthPercentage = PlayerManager.Instance.Health / PlayerManager.Instance.MaxHealth;
         Color updatedColor = Color.Lerp(minLampColor, maxLampColor, healthPercentage);
         lavaLampContent.color = updatedColor;
     }
     
     void Update()
     {
-        healthText.text = PlayerManager.Instance.MemoriesIntegrity.ToString("F0");
+        healthText.text = PlayerManager.Instance.Health.ToString("F0");
         ChangeLavaLampColor();
     }
    

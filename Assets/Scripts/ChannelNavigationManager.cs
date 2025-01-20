@@ -114,7 +114,7 @@ public class ChannelNavigationManager : MonoBehaviour
     public GameObject SetUpStream(StreamSO newStream)
     {
         StreamEntity stream = Instantiate(newStream.stream, entityLayout.transform);
-        GameManager.Instance.ChannelData.AddChannel("Subathon", stream);
+        GameManager.Instance.ChannelData.AddChannel("Subathon " + newStream.streamName + " stream", stream);
         stream.name = newStream.streamName;
 
         if(entityLayout.transform.childCount > 1)

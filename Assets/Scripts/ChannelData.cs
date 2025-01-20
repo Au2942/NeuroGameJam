@@ -20,9 +20,11 @@ public class ChannelData : MonoBehaviour
 
     public void AddChannel(string channelName, Entity channelEntity)
     {
-        ChannelInfo newChannelInfo = new ChannelInfo();
-        newChannelInfo.name = channelName;
-        newChannelInfo.entity = channelEntity;
+        ChannelInfo newChannelInfo = new ChannelInfo
+        {
+            name = channelName,
+            entity = channelEntity
+        };
         ChannelInfos.Add(newChannelInfo);
     }
 
@@ -30,8 +32,6 @@ public class ChannelData : MonoBehaviour
     {
         ChannelInfos.Add(newChannelInfo);
     }
-
-
 
 
     public void RemoveChannel(ChannelInfo channelInfoToRemove)
@@ -134,14 +134,14 @@ public class ChannelData : MonoBehaviour
             return 0;
         }
         ChannelInfo channelInfo = ChannelInfos[index];
-        float result = channelInfo.entity.Integrity / channelInfo.entity.MaxIntegrity * 100;
+        float result = channelInfo.entity.Health / channelInfo.entity.MaxHealth * 100;
         return result;
     }
 
     public float GetChannelEntityIntegrityPercentage(string channelName)
     {
         ChannelInfo channelInfo = ChannelInfos.Find(x => x.name == channelName);
-        float result = channelInfo.entity.Integrity / channelInfo.entity.MaxIntegrity * 100;
+        float result = channelInfo.entity.Health / channelInfo.entity.MaxHealth * 100;
         return result;
     }
 }

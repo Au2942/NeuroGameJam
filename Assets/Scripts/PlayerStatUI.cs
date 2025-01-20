@@ -9,7 +9,7 @@ public class PlayerStatUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI subscribersText;
     [SerializeField] private TextMeshProUGUI remainingStreamTime;
     [SerializeField] private TextMeshProUGUI elapsedStreamTime;
-    [SerializeField] private IntegrityIndicator integrityIndicator;
+    [SerializeField] private HealthIndicator integrityIndicator;
     [SerializeField] private float syncRemainingStreamTimeInterval = 10f;
     [SerializeField] private int popupNumberMax = 20;
     [SerializeField] private float popupNumberDuration = 2f;
