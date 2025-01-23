@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections;
 
-public class PlayerStatUI : MonoBehaviour
+public class PlayerStatsUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI viewersText;
     [SerializeField] private TextMeshProUGUI subscribersText;
@@ -14,8 +14,7 @@ public class PlayerStatUI : MonoBehaviour
     [SerializeField] private int popupNumberMax = 20;
     [SerializeField] private float popupNumberDuration = 2f;
     
-    [SerializeField] public float timeMultiplier = 60f;
-
+    private float timeMultiplier => TimescaleManager.Instance.displayTimeMultiplier;
 
     private float DisplayRemainingStreamTime = 0f;
 
@@ -30,7 +29,7 @@ public class PlayerStatUI : MonoBehaviour
     
     void Update()
     {
-        viewersText.text = PlayerManager.Instance.CurrentViewers.ToString();
+        viewersText.text = "<sprite name=\"viewers\">" + PlayerManager.Instance.CurrentViewers.ToString();
         subscribersText.text = "SUBS: " + PlayerManager.Instance.Subscriptions.ToString();
         DisplayRemainingStreamTime -= Time.deltaTime;
         if(DisplayRemainingStreamTime <= 0)

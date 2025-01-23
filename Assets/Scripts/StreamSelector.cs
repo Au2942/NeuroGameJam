@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using TMPro;
 
 public class StreamSelector : MonoBehaviour
 {
@@ -8,12 +9,14 @@ public class StreamSelector : MonoBehaviour
     [SerializeField] private GameObject streamSelectionLayout;
     [SerializeField] private GameObject streamCardLayout;
     [SerializeField] private StreamCard streamCard;
+    [SerializeField] private TextMeshProUGUI streamNo;
     [SerializeField] private int cardCount = 2;
     private List<StreamCard> streamCardList = new List<StreamCard>();
     private List<StreamCardSO> selectedStreams = new List<StreamCardSO>(); 
     private List<StreamCardSO> availableStreams = new List<StreamCardSO>();
 
     public bool isOpen {get; private set;} = false;
+    public bool forcedSelect {get; private set;} = false;
 
     private bool isCardSet = false;
 
@@ -36,15 +39,29 @@ public class StreamSelector : MonoBehaviour
         availableStreams.AddRange(streamCards);
     }
 
-    public void OpenUI()
+    public void OpenUI(bool force = false)
     {
+        GameManager.Instance.isPause = true;
         GameManager.Instance.StopStream();
-        Time.timeScale = 0;
+        TimescaleManager.Instance.SetTimescale(0);
+        streamNo.text = "Stream #" + GameManager.Instance.ChannelCount;
         isOpen = true;
+        forcedSelect = force;
         streamSelectionLayout.SetActive(true);
         if(!isCardSet)
         {
             Setup();
+        }
+    }
+
+    public void Update()
+    {
+        if(!forcedSelect)
+        {
+            if(InputManager.Instance.Cancel.triggered || InputManager.Instance.RightClick.triggered)
+            {
+                CloseUI();
+            }
         }
     }
 
@@ -78,6 +95,7 @@ public class StreamSelector : MonoBehaviour
         GameManager.Instance.EndStream();
         previousStream = stream;
         GameManager.Instance.StartNewStream(stream);
+        LivefeedManager.Instance.LivefeedRenderer.RenderLivefeeds(); 
         isCardSet = false;
         CloseUI();
     }
@@ -86,8 +104,9 @@ public class StreamSelector : MonoBehaviour
 
     public void CloseUI()
     {
+        GameManager.Instance.isPause = false;
         GameManager.Instance.ContinueStream();
-        Time.timeScale = 1;
+        TimescaleManager.Instance.ResetTimescale();
         isOpen = false;
         streamSelectionLayout.SetActive(false);
     }

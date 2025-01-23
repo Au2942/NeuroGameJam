@@ -20,7 +20,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5929771759949055298
 RectTransform:
   m_ObjectHideFlags: 0
@@ -40,7 +40,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.9}
   m_AnchorMax: {x: 1, y: 0.9}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 60}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &1199310244643247602
 CanvasRenderer:
@@ -172,9 +172,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 5929771759949055298}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 448, y: -20}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &7718640086383810112
@@ -317,7 +317,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1152, y: 648}
+  m_SizeDelta: {x: 896, y: 504}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9023345207242059758
 CanvasRenderer:
@@ -398,11 +398,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 9fbaedf57d1e6994980708b815e79ab4, type: 2}
   - dialogues:
     - {fileID: 11400000, guid: 0e1597600f6d1da43aec464204db6eaa, type: 2}
-  Integrity: 100
-  MaxIntegrity: 100
-  decayInterval: 100
-  InFocusDecayMultiplier: 0
-  IntegrityDecay: 0
+  Health: 100
+  MaxHealth: 100
   InFocus: 0
   Interactable: 1
   IsBeingRepaired: 0
@@ -410,10 +407,9 @@ MonoBehaviour:
   talkRepeatable: 1
   talkRollInterval: 2
   talkChance: 0.8
-  corruptRollInterval: 1
-  minCorruptRoll: 0.3
-  maxCorruptRoll: 0.7
-  corruptCD: 30
+  minGlitchRoll: 0.3
+  maxGlitchRoll: 0.7
+  glitchCD: 30
   defaultAnimatorClips:
   - animator: {fileID: 4094313050784987403}
     clipLayerPairs:
@@ -444,16 +440,18 @@ MonoBehaviour:
       layer: 0
   normalAnimatorClips:
   - animator: {fileID: 4094313050784987403}
-    clipLayerPair:
-      clip: {fileID: 7400000, guid: cc0f111ccece3d7439a2518b8281946e, type: 2}
-      layer: 1
-  corruptAnimatorClips:
-  - animator: {fileID: 4094313050784987403}
-    clipLayerPair:
-      clip: {fileID: 7400000, guid: 8ecc16e2234e3474789ae0a2ef74a2a4, type: 2}
-      layer: 1
-  extraAnimatorClipsPairs: []
+    clipLayerPairs: []
+  glitchAnimatorClips: []
   CurrentAnimationState: 0
+  sleepAnimatorClips:
+  - animator: {fileID: 1148648438089197321}
+    clipLayerPairs:
+    - clip: {fileID: 7400000, guid: 26255947a7ded4d449a1efbe1262b4da, type: 2}
+      layer: 0
+  - animator: {fileID: 4670663820255202524}
+    clipLayerPairs:
+    - clip: {fileID: 7400000, guid: 951174ab5bcc1cb468d9832274f4af80, type: 2}
+      layer: 0
 --- !u!114 &2617476193060667712
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -498,9 +496,9 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 5929771759949055298}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 448, y: -40}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &3400970444061045172
@@ -692,11 +690,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5884414372755848606, guid: 02d15b3868947634b904acc9e78c3734, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 339
+      value: 216
       objectReference: {fileID: 0}
     - target: {fileID: 5884414372755848606, guid: 02d15b3868947634b904acc9e78c3734, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -270
+      value: -190
       objectReference: {fileID: 0}
     - target: {fileID: 5884414372755848606, guid: 02d15b3868947634b904acc9e78c3734, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -818,7 +816,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7751617402849210353, guid: 33205f8487926a54b8756f2362d50662, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 1063
+      value: 843
       objectReference: {fileID: 0}
     - target: {fileID: 7751617402849210353, guid: 33205f8487926a54b8756f2362d50662, type: 3}
       propertyPath: m_AnchoredPosition.y

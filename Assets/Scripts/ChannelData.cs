@@ -80,6 +80,16 @@ public class ChannelData : MonoBehaviour
         return ChannelInfos[index].entity;
     }
 
+    public StreamEntity GetStreamEntity()
+    {
+        Entity entity = ChannelInfos[0].entity;
+        if(entity is StreamEntity)
+        {
+            return entity as StreamEntity;
+        }
+        else return null;
+    }
+
     public Entity GetChannelEntity(string channelName)
     {
         Entity channelEntity = ChannelInfos.Find(x => x.name == channelName).entity;

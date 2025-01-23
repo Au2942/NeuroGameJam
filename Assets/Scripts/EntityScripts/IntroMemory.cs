@@ -3,16 +3,16 @@ using UnityEngine;
 public class IntroMemory : MemoryEntity
 {
 
-    public override void ExitCorruptState()
+    public override void ExitGlitchState()
     {
-        base.ExitCorruptState();
+        base.ExitGlitchState();
     }
 
 
 
-    protected override void CorruptBehavior()
+    protected override void GlitchBehavior()
     {
-        base.CorruptBehavior();
+        base.GlitchBehavior();
         
     }
 

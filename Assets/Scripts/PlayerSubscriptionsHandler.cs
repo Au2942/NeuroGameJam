@@ -36,7 +36,7 @@ public class PlayerSubscriptionsHandler : MonoBehaviour
     {
         while (true)
         {
-            while(!GameManager.Instance.isStreaming)
+            while(GameManager.Instance.isPause)
             {
                 yield return null;
             }
@@ -94,7 +94,7 @@ public class PlayerSubscriptionsHandler : MonoBehaviour
     {
         while (true)
         {
-            while(!GameManager.Instance.isStreaming)
+            while(GameManager.Instance.isPause)
             {
                 yield return null;
             }

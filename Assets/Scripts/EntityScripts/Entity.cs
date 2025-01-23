@@ -5,7 +5,7 @@ using System.Collections;
 public abstract class Entity : MonoBehaviour
 {
 
-    [SerializeField] protected GameObject Body;
+    [SerializeField] public GameObject Body;
     [SerializeField] protected UIEventHandler[] clickInteractHandlers;
     [SerializeField] protected DialogueManager dialogueManager;
     [SerializeField] protected List<DialogueSet> dialogueSets;
@@ -21,17 +21,14 @@ public abstract class Entity : MonoBehaviour
     [SerializeField] protected bool talkRepeatable = true;
     [SerializeField] protected float talkRollInterval = 2f;
     [SerializeField] protected float talkChance = 0.25f;
-    [SerializeField] protected float corruptRollInterval = 1f;
-    [SerializeField] protected float minCorruptRoll = 0.3f; //minroll
-    [SerializeField] protected float maxCorruptRoll = 0.7f; //start rolling at this integrity
-    [SerializeField] protected float corruptCD = 30f;
+    [SerializeField] protected float glitchRollThreshold = 0.7f; //start rolling at this integrity
+    [SerializeField] protected float glitchCD = 30f;
     [SerializeField] public List<AnimatorClipsPair> defaultAnimatorClips;
     [SerializeField] public List<AnimatorClipsPair> idleAnimatorClips;
     [SerializeField] public List<AnimatorClipsPair> dialoguePlayingAnimation; //plays while dialogue is playing
     [SerializeField] public List<AnimatorClipsPair> dialogueTypingAnimation; //plays when playing a typing sound
-    [SerializeField] public List<AnimatorClipPair> normalAnimatorClips;
-    [SerializeField] public List<AnimatorClipPair> corruptAnimatorClips;
-    [SerializeField] public List<AnimatorClipsPair> extraAnimatorClipsPairs;
+    [SerializeField] public List<AnimatorClipsPair> normalAnimatorClips;
+    [SerializeField] public List<AnimatorClipsPair> glitchAnimatorClips;
 
     public enum AnimationState
     {
@@ -41,9 +38,8 @@ public abstract class Entity : MonoBehaviour
     [SerializeField] public AnimationState CurrentAnimationState = AnimationState.Default;
 
     protected float talkRollTimer = 0f;
-    protected float corruptRollTimer = 0f;
-    protected float corruptCDTimer = 0f;
-    public bool corrupted {get; set;} = false;
+    protected float glitchCDTimer = 0f;
+    public bool Glitched {get; set;} = false;
     protected int dialogueSetIndex = 0;
 
     protected int talkCounter = 0;
@@ -77,13 +73,7 @@ public abstract class Entity : MonoBehaviour
     }
     protected virtual void ClickInteract(GameObject clickedObject)
     {
-        if(PlayerManager.Instance.state == PlayerManager.PlayerState.repair && !IsBeingRepaired)
-        {
-            if(WorkerManager.Instance.TryUseRepairWorker(this))
-            {
-                PlayerManager.Instance.SetState(PlayerManager.PlayerState.normal);
-            }
-        }
+
     }
     protected virtual void SubmitInteract()
     {
@@ -97,39 +87,9 @@ public abstract class Entity : MonoBehaviour
         }
     }
 
-    public virtual void StartRepairing(Worker repairWorker)
-    {
-        IsBeingRepaired = true;
-        Interactable = false;
-        //IntegrityDecay = false;
-        StartCoroutine(Repairing(repairWorker));
-    }
-
-    protected virtual IEnumerator Repairing(Worker repairWorker)
-    {
-        float elapsedTime = 0f;
-        while(elapsedTime < repairWorker.RepairSpeed)
-        {
-            elapsedTime += Time.deltaTime;
-            AddIntegrity(repairWorker.RepairAmount * Time.deltaTime / repairWorker.RepairSpeed);
-            yield return null;
-        }
-        repairWorker.FinishWork();
-        FinishRepairing();
-    }
-
-    public virtual void FinishRepairing()
-    {
-        IsBeingRepaired = false;
-        Interactable = true;
-        //IntegrityDecay = true;
-    }
-
     protected virtual void Update()
     {
-        if(!GameManager.Instance.isStreaming) return;
-
-        if(IsBeingRepaired) return;
+        if(GameManager.Instance.isPause) return;
 
         if(InFocus)
         {
@@ -140,14 +100,13 @@ public abstract class Entity : MonoBehaviour
             OutOfFocusBehavior();
         }
 
-        if(corrupted)
+        if(Glitched)
         {
-            CorruptBehavior();
+            GlitchBehavior();
         }
         else
         {
             NormalBehavior();
-            RollChanceToCorrupt();
         }
         
         //Decay();
@@ -209,7 +168,7 @@ public abstract class Entity : MonoBehaviour
 
     protected virtual void OnIntegrityChanged()
     {
-        
+        RollChanceToGlitch();
     }
 
     // protected virtual void Decay()
@@ -223,10 +182,11 @@ public abstract class Entity : MonoBehaviour
     {
         for(int i = 0; i < defaultAnimatorClips.Count; i++)
         {
+            if(defaultAnimatorClips[i].animator == null) {continue;}
             foreach(ClipLayerPair clipLayerPair in defaultAnimatorClips[i].clipLayerPairs)
             {
-                if(clipLayerPair.clip != null)
-                    defaultAnimatorClips[i].animator.CrossFade(clipLayerPair.clip.name, 0.2f, clipLayerPair.layer);
+                if(clipLayerPair.clip == null) {continue;}
+                PlayAnimation(defaultAnimatorClips[i].animator, clipLayerPair.clip, clipLayerPair.layer);
             }
         }
         CurrentAnimationState = AnimationState.Default;
@@ -236,84 +196,63 @@ public abstract class Entity : MonoBehaviour
     {
         for(int i = 0; i < idleAnimatorClips.Count; i++)
         {
-            if(idleAnimatorClips[i].animator != null)
+            if(idleAnimatorClips[i].animator == null) {continue;}
+            foreach(ClipLayerPair clipLayerPair in idleAnimatorClips[i].clipLayerPairs)
             {
-                foreach(ClipLayerPair clipLayerPair in idleAnimatorClips[i].clipLayerPairs)
-                {
-                    if(clipLayerPair.clip != null)
-                        idleAnimatorClips[i].animator.CrossFade(clipLayerPair.clip.name,0.2f, clipLayerPair.layer);
-                }
+                if(clipLayerPair.clip == null) {continue;}
+                PlayAnimation(idleAnimatorClips[i].animator, clipLayerPair.clip, clipLayerPair.layer);
             }
         }
         CurrentAnimationState = AnimationState.Idle;
     }
 
-    protected virtual void SetAppearance(int index)
-    {
-        for (int i = 0; i < extraAnimatorClipsPairs.Count; i++)
-        {
-            if (extraAnimatorClipsPairs[i].animator != null )
-            { 
-                if(extraAnimatorClipsPairs[i].clipLayerPairs[index].clip != null)
-                {
-                    extraAnimatorClipsPairs[i].animator.CrossFade(extraAnimatorClipsPairs[i].clipLayerPairs[index].clip.name,0.2f, extraAnimatorClipsPairs[i].clipLayerPairs[index].layer);
-                }
-            }
-        }
-    }
+
 
     protected virtual void SetNormalAppearance()
     {
-        foreach(AnimatorClipPair clipPair in normalAnimatorClips)
+        foreach(AnimatorClipsPair animatorClipsPair in normalAnimatorClips)
         {
-            if(clipPair.animator != null) 
+            if(animatorClipsPair.animator == null) {continue;}
+            foreach(ClipLayerPair clipLayerPair in animatorClipsPair.clipLayerPairs)
             {
-
-                if(clipPair.clipLayerPair.clip != null)
-                {
-                    clipPair.animator.CrossFade(clipPair.clipLayerPair.clip.name, 0.2f, clipPair.clipLayerPair.layer);
-                }
-
+                if(clipLayerPair.clip == null) {continue;}
+                PlayAnimation(animatorClipsPair.animator, clipLayerPair.clip, clipLayerPair.layer);
             }
         }
     }
 
-    protected virtual void SetCorruptAppearance()
+    protected virtual void SetGlitchAppearance()
     {
-        foreach(AnimatorClipPair clipPair in corruptAnimatorClips)
+        foreach(AnimatorClipsPair animatorClipsPair in glitchAnimatorClips)
         {
-            if(clipPair.animator != null)
+            if(animatorClipsPair.animator == null) {continue;}
+            foreach(ClipLayerPair clipLayerPair in animatorClipsPair.clipLayerPairs)
             {
-                if(clipPair.clipLayerPair.clip != null)
-                {
-                    clipPair.animator.CrossFade(clipPair.clipLayerPair.clip.name, 0.2f, clipPair.clipLayerPair.layer);
-                }
+                if(clipLayerPair.clip == null) {continue;}
+                PlayAnimation(animatorClipsPair.animator, clipLayerPair.clip, clipLayerPair.layer);
             }
         }
     }
 
-    protected void PlayAnimation(int animatorIndex = 0, int clipIndex = 0)
+
+    protected void PlayAnimation(Animator animator, AnimationClip clip, int layer = 0)
     {
-        if (animatorIndex < 0 || animatorIndex >= extraAnimatorClipsPairs.Count) return;
-        if (extraAnimatorClipsPairs[animatorIndex].clipLayerPairs[clipIndex].clip != null)
-        {
-            extraAnimatorClipsPairs[animatorIndex].animator.CrossFade(extraAnimatorClipsPairs[animatorIndex].clipLayerPairs[clipIndex].clip.name, 0.2f, extraAnimatorClipsPairs[animatorIndex].clipLayerPairs[clipIndex].layer);
-        }
+        if (animator == null || clip == null) return;
+        animator.CrossFade(clip.name, 0.2f, layer);
     }
 
     protected virtual void RollChanceToTalk()
     {
         if(!dialogueManager.IsDialoguePlaying)
         {
-            if(talkRollTimer >= talkRollInterval)
+            if(talkRollTimer < Time.time)
             {
                 if(Random.Range(0f, 1f) < talkChance)
                 {
                     Speak();
                 }
-                talkRollTimer = 0f;
+                talkRollTimer = Time.time + talkRollInterval;
             }
-            else talkRollTimer += Time.deltaTime;
         }
     }
 
@@ -322,7 +261,7 @@ public abstract class Entity : MonoBehaviour
         SharedBehavior();
     }
 
-    protected virtual void CorruptBehavior()
+    protected virtual void GlitchBehavior()
     {
         SharedBehavior();
     }
@@ -332,55 +271,41 @@ public abstract class Entity : MonoBehaviour
 
     }
 
-    public virtual void EnterCorruptState()
+
+
+    public virtual void EnterGlitchState()
     {
-        corrupted = true;
+        Glitched = true;
         dialogueSetIndex = 1;
         ShutUp();
-        SetCorruptAppearance();
+        SetGlitchAppearance();
         
     }
 
 
-    public virtual void ExitCorruptState()
+    public virtual void ExitGlitchState()
     {
-        corrupted = false;
+        Glitched = false;
         dialogueSetIndex = 0;
-        corruptCDTimer = corruptCD;
-        corruptRollTimer = 0f;
+        glitchCDTimer = Time.time + glitchCD;
         SetNormalAppearance();
     }
 
-    protected virtual void RollChanceToCorrupt()
+    public virtual void RollChanceToGlitch()
     {
-        if(corruptCDTimer > 0)
+        if(glitchCDTimer < Time.time) return;
+        if (IntegrityRatio() < glitchRollThreshold)
         {
-            corruptCDTimer -= Time.deltaTime;
-            return;
-        }
-         
-        {
-            if(corruptRollTimer >= corruptRollInterval)
+            if (Random.Range(0f, 1f) >= IntegrityRatio())
             {
-                float integrityRatio = Health / MaxHealth;
-                if (integrityRatio <= minCorruptRoll)
-                {
-                    EnterCorruptState();
-                }
-                else if (integrityRatio < maxCorruptRoll)
-                {
-                    float t = (integrityRatio - maxCorruptRoll) / (minCorruptRoll-maxCorruptRoll);
-                    float probability = Mathf.Pow(t, 3); //cubic curve
-                    if (Random.Range(0f, 1f) < probability)
-                    {
-                        EnterCorruptState();
-                    }
-                }
-                corruptRollTimer = 0f;
+                EnterGlitchState();
             }
-            else corruptRollTimer += Time.deltaTime; 
         }
+    }
 
+    public float IntegrityRatio()
+    {
+        return Health / MaxHealth;
     }
 
     public virtual void Converse()

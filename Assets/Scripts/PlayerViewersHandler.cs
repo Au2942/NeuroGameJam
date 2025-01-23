@@ -24,7 +24,7 @@ public class PlayerViewersHandler : MonoBehaviour
     {
         while (true)
         {
-            while(!GameManager.Instance.isStreaming)
+            while(GameManager.Instance.isPause)
             {
                 yield return null;
             }
@@ -48,7 +48,7 @@ public class PlayerViewersHandler : MonoBehaviour
     {
         while (true)
         {
-            while(!GameManager.Instance.isStreaming)
+            while(GameManager.Instance.isPause)
             {
                 yield return null;
             }
@@ -64,26 +64,34 @@ public class PlayerViewersHandler : MonoBehaviour
         }
     }
 
+    public void UpdateBaselineViewers()
+    {
+        float adjustRange = (PlayerManager.Instance.CurrentViewers - BaselineViewers) * baselineChangePercentage/100f;
+        if(adjustRange > 0)
+        {
+            adjustRange = Random.Range(0, adjustRange);
+        }
+        else
+        {
+            adjustRange = Random.Range(adjustRange, 0);
+        }
+        BaselineViewers = Mathf.FloorToInt(Mathf.Max(0, BaselineViewers + adjustRange));
+    }
+
     public IEnumerator SimulateViewers()
     {
         while (true)
         {
-            while(!GameManager.Instance.isStreaming)
+            while(GameManager.Instance.isPause)
             {
                 yield return null;
             }
             // Gradually adjust baseline viewers toward current viewers
-            float adjustRange = (PlayerManager.Instance.CurrentViewers - BaselineViewers) * baselineChangePercentage/100f;
-            if(adjustRange > 0)
-            {
-                adjustRange = Random.Range(0, adjustRange);
-            }
-            else
-            {
-                adjustRange = Random.Range(adjustRange, 0);
-            }
-            BaselineViewers = Mathf.FloorToInt(Mathf.Max(0, BaselineViewers + adjustRange));
 
+            if(PlayerManager.Instance.state != PlayerManager.PlayerState.sleep)
+            {
+                UpdateBaselineViewers();
+            }
 
             // Calculate expected viewers
 

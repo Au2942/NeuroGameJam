@@ -7,10 +7,34 @@ public abstract class MemoryEntity : Entity
     [SerializeField] GlitchOverlay glitchEffect;
     protected float shutupTimer = 0f;
 
+    protected override void Update()
+    {
+        if(PlayerManager.Instance.state == PlayerManager.PlayerState.sleep) return;
+        if(IsBeingRepaired) return;
+        base.Update();
+    }
+
+    protected override void ClickInteract(GameObject clickedObject)
+    {
+        base.ClickInteract(clickedObject);
+        if(PlayerManager.Instance.state == PlayerManager.PlayerState.repair && !IsBeingRepaired && !Glitched)
+        {
+            if(WorkerManager.Instance.TryUseRepairWorker(this))
+            {
+                PlayerManager.Instance.SetState(PlayerManager.PlayerState.normal);
+            }
+        }
+    }
+
     protected override void SharedBehavior()
     {
         base.SharedBehavior();
         
+    }
+
+    public virtual void Recall()
+    {
+        //when work success
     }
 
     protected override void OnIntegrityChanged()
@@ -18,7 +42,7 @@ public abstract class MemoryEntity : Entity
         base.OnIntegrityChanged();
         if(glitchEffect != null)
         {
-            if(Health/MaxHealth <= 0.7f)
+            if(Health/MaxHealth <= glitchRollThreshold)
             {
                 glitchEffect.Show();
                 float t = 1 - (Health / MaxHealth);
@@ -57,17 +81,17 @@ public abstract class MemoryEntity : Entity
     protected override void OnEndStream()
     {
         base.OnEndStream();
-        if(corrupted) ExitCorruptState();
+        if(Glitched) ExitGlitchState();
     }
 
-    public override void EnterCorruptState()
+    public override void EnterGlitchState()
     {
-        base.EnterCorruptState();
+        base.EnterGlitchState();
     }
 
-    public override void ExitCorruptState()
+    public override void ExitGlitchState()
     {
-        base.ExitCorruptState();
+        base.ExitGlitchState();
 
     }
 

@@ -11,10 +11,10 @@ public class LivefeedRenderer : MonoBehaviour
     [SerializeField] private RectTransform contentUI;
     [SerializeField] private Livefeed livefeedPrefab;
     [SerializeField] private GameObject selectBorderPrefab;
+    [SerializeField] private List<RawImage> renderImages = new List<RawImage>();
     [SerializeField] private Vector2Int resolution = new Vector2Int(320, 180);
     [SerializeField] float refreshRate = 0.1f;
 
-    private List<RawImage> renderImages = new List<RawImage>();
     private List<RenderTexture> renderTextures = new List<RenderTexture>();
     private GameObject selectBorderInstance;
     private Vector3 initialPosition = new Vector3();
@@ -28,7 +28,7 @@ public class LivefeedRenderer : MonoBehaviour
 
         selectBorderInstance = Instantiate(selectBorderPrefab, contentUI);
 
-        StartCoroutine(RenderLiveFeedRoutine());
+        StartCoroutine(RenderLivefeedsRoutine());
     }
 
     public void AddLivefeed()
@@ -66,28 +66,32 @@ public class LivefeedRenderer : MonoBehaviour
     {
         if(smoothScrollCoroutine != null) StopCoroutine(smoothScrollCoroutine);
         
-        Transform renderImage = renderImages[index].transform;
+        RectTransform renderImage = renderImages[index].GetComponent<RectTransform>();
         
         selectBorderInstance.transform.SetParent(renderImage.parent, false);
         selectBorderInstance.transform.SetAsFirstSibling();
 
-        RectTransform rectTransform = renderImage.parent.GetComponent<RectTransform>();
-        smoothScrollCoroutine = StartCoroutine(SmoothScrollTo(rectTransform.localPosition.x));
+        smoothScrollCoroutine = StartCoroutine(SmoothScrollTo(renderImage.parent.GetComponent<RectTransform>().anchoredPosition.x));
     }
 
-    IEnumerator RenderLiveFeedRoutine()
+    IEnumerator RenderLivefeedsRoutine()
     {
         while(true)
         {
-            livefeedCamera.transform.localPosition = initialPosition;
-            for(int i = 0; i < renderTextures.Count; i++)
-            {
-                livefeedCamera.targetTexture = renderTextures[i];
-                livefeedCamera.Render();
-                livefeedCamera.targetTexture = null;
-                livefeedCamera.transform.localPosition -= new Vector3(ChannelNavigationManager.Instance.spacing, 0, 0);
-            }
+            RenderLivefeeds();
             yield return new WaitForSeconds(refreshRate);
+        }
+    }
+
+    public void RenderLivefeeds()
+    {
+        livefeedCamera.transform.localPosition = initialPosition;
+        for(int i = 0; i < renderTextures.Count; i++)
+        {
+            livefeedCamera.targetTexture = renderTextures[i];
+            livefeedCamera.Render();
+            livefeedCamera.targetTexture = null;
+            livefeedCamera.transform.localPosition -= new Vector3(ChannelNavigationManager.Instance.spacing, 0, 0);
         }
     }
     

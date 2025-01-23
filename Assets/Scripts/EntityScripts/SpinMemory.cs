@@ -34,9 +34,9 @@ public class SpinMemory : MemoryEntity
         currentAcceleration = 1f + (1f - Health / MaxHealth) * (maxAccerelation - 1f);
     }
 
-    public override void EnterCorruptState()
+    public override void EnterGlitchState()
     {
-        base.EnterCorruptState();
+        base.EnterGlitchState();
         currentSpeed = 100;
     }
 
@@ -63,9 +63,9 @@ public class SpinMemory : MemoryEntity
     }
 
 
-    protected override void CorruptBehavior()
+    protected override void GlitchBehavior()
     {
-        base.CorruptBehavior();
+        base.GlitchBehavior();
 
         if (damageTimer >= delayBetweenDamage)
         {
@@ -76,14 +76,14 @@ public class SpinMemory : MemoryEntity
 
         if(currentSpeed <= 50)
         {
-            ExitCorruptState();
+            ExitGlitchState();
         }
 
     }
 
-    public override void ExitCorruptState()
+    public override void ExitGlitchState()
     {
-        base.ExitCorruptState();
+        base.ExitGlitchState();
         currentSpeed = 0f;
     }
 

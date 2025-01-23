@@ -92,9 +92,18 @@ public class SFXManager : MonoBehaviour
     }
 
     public AudioSource PlaySoundFX(List<AudioClip> clips, Transform transform, float volume = 1f)
+    {   
+        int randomIndex = Random.Range(0, clips.Count);
+        return PlaySoundFX(clips[randomIndex], transform, volume);
+    }
+    public AudioSource PlaySoundFX(List<AudioClip> clips, float volume = 1f)
     {
         int randomIndex = Random.Range(0, clips.Count);
         return PlaySoundFX(clips[randomIndex], transform, volume);
+    }
+    public AudioSource PlaySoundFX(AudioClip clip, float volume = 1f)
+    {
+        return PlaySoundFX(clip, transform, volume);
     }
 
     private IEnumerator<WaitForSeconds> ReturnToPoolAfterPlaying(AudioSource audioSource, float delay)

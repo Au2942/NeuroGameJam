@@ -175,11 +175,8 @@ MonoBehaviour:
   - dialogues:
     - {fileID: 11400000, guid: cdf56ef6358a43248b2fb16443945da2, type: 2}
     - {fileID: 11400000, guid: 544af4d1bb9aca444a8c350241c07e1f, type: 2}
-  Integrity: 100
-  MaxIntegrity: 100
-  decayInterval: 2
-  InFocusDecayMultiplier: 0.5
-  IntegrityDecay: 1
+  Health: 100
+  MaxHealth: 100
   InFocus: 0
   Interactable: 1
   IsBeingRepaired: 0
@@ -187,10 +184,10 @@ MonoBehaviour:
   talkRepeatable: 1
   talkRollInterval: 2
   talkChance: 0.25
-  corruptRollInterval: 1
-  minCorruptRoll: 0.3
-  maxCorruptRoll: 0.7
-  corruptCD: 30
+  glitchRollInterval: 1
+  minGlitchRoll: 0.3
+  maxGlitchRoll: 0.7
+  glitchCD: 30
   defaultAnimatorClips:
   - animator: {fileID: 2989844170749626017}
     clipLayerPairs:
@@ -201,15 +198,14 @@ MonoBehaviour:
   dialogueTypingAnimation: []
   normalAnimatorClips:
   - animator: {fileID: 2989844170749626017}
-    clipLayerPair:
-      clip: {fileID: 7400000, guid: ccc37cdbbc015de43963662f1a641770, type: 2}
+    clipLayerPairs:
+    - clip: {fileID: 7400000, guid: ccc37cdbbc015de43963662f1a641770, type: 2}
       layer: 1
-  corruptAnimatorClips:
+  glitchAnimatorClips:
   - animator: {fileID: 2989844170749626017}
-    clipLayerPair:
-      clip: {fileID: 7400000, guid: ab8d71d9bca1a944f899ea65f4172593, type: 2}
+    clipLayerPairs:
+    - clip: {fileID: 7400000, guid: ab8d71d9bca1a944f899ea65f4172593, type: 2}
       layer: 1
-  extraAnimatorClipsPairs: []
   CurrentAnimationState: 0
   timeToShutup: 5
   glitchEffect: {fileID: 7017195604734307669}
@@ -246,8 +242,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d851af2ffa0aeef41beddcc4054ef7bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  integrityBar: {fileID: 0}
-  integrityColorStages:
+  healthBar: {fileID: 0}
+  colorStages:
   - {r: 1, g: 0, b: 0, a: 1}
   - {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   - {r: 0, g: 1, b: 0, a: 1}

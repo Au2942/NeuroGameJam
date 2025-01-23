@@ -144,7 +144,7 @@ Shader "CustomEffects/Glitch_Effect_Shader"
                 float2 screenUV = input.screenPos.xy / input.screenPos.w;
                 float2 targetScreenSize = float2(_TargetScreenBounds.z-_TargetScreenBounds.x, _TargetScreenBounds.w-_TargetScreenBounds.y);
                 float3 cameraPos = _WorldSpaceCameraPos;
-                float2 cameraBottomLeft = float2(cameraPos.x - _ScreenSize.x/2  , cameraPos.y - _ScreenSize.y/2   );
+                float2 cameraBottomLeft = float2(cameraPos.x - _ScreenSize.x/2  , cameraPos.y - _ScreenSize.y/2);
                 float4 targetUVBound = 
                 float4((_MeshBound.x - cameraBottomLeft.x)/_ScreenSize.x, 
                     (_MeshBound.y - cameraBottomLeft.y)/_ScreenSize.y, 
@@ -234,7 +234,9 @@ Shader "CustomEffects/Glitch_Effect_Shader"
                 // suv1.x = wrap(suv1.x + finalNoise, targetUVBound.x, targetUVBound.z);
                 // suv2.x = wrap(suv2.x + finalNoise, targetUVBound.x, targetUVBound.z);
                 suv1.x = wrap(suv1.x , targetUVBound.x, targetUVBound.z);
+                suv1.y = wrap(suv1.y , targetUVBound.y, targetUVBound.w);
                 suv2.x = wrap(suv2.x , targetUVBound.x, targetUVBound.z);
+                suv2.y = wrap(suv2.y , targetUVBound.y, targetUVBound.w);
                 
 
                 float4 c1 = SAMPLE_TEXTURE2D(_CameraSortingLayerTexture, sampler_CameraSortingLayerTexture , suv1);// + uint2(sx1, sy));
@@ -253,9 +255,12 @@ Shader "CustomEffects/Glitch_Effect_Shader"
                     float3 hsv = RgbToHsv(c.rgb);
                     hsv = hsv * float3(-1, 1, 0) + float3(0.5, 0, 0.9);
                     c.rgb = HsvToRgb(hsv);
+                    c.rgb *= step(_BlockStrength , frac(rand*5678));
                 }
                 //apply scanline
                 //c.rgb *= remappedScanline;
+                
+                
 
                 return c;
             }

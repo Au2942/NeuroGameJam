@@ -7,7 +7,7 @@ public class GlitchOverlay : MonoBehaviour
 {
     [SerializeField] private Image glitchEffect;
     [SerializeField] Material glitchMaterial;
-
+    [SerializeField] private float blockSize = 32f;
     [SerializeField] private float maxBlock = 0.02f;
     [SerializeField] private float maxDrift = 0.1f;
     [SerializeField] private float maxJitter = 0.1f;
@@ -19,9 +19,7 @@ public class GlitchOverlay : MonoBehaviour
     [SerializeField] private float jump = 0;
     [SerializeField] private float shake = 0;
     [SerializeField] private float blockShuffleRate = 60f;
-    // [SerializeField] private float flickerStrength = 1f;
-    // [SerializeField] private float flickerIntensity = 1f;
-    // [SerializeField] private float scanlineStrength = 1f;
+
     [SerializeField] private bool manageValue = true;
     [SerializeField] private bool show = false;
     float _prevTime;
@@ -32,14 +30,22 @@ public class GlitchOverlay : MonoBehaviour
     private int _blockStride = 1;
     [SerializeField] private Material material;
     
+        private static readonly int blockSizeID = Shader.PropertyToID("_BlockSize");
+        private static readonly int blockStrengthID = Shader.PropertyToID("_BlockStrength");
+        private static readonly int blockStrideID = Shader.PropertyToID("_BlockStride");
+        private static readonly int blockSeed1ID = Shader.PropertyToID("_BlockSeed1");
+        private static readonly int blockSeed2ID = Shader.PropertyToID("_BlockSeed2");
+        private static readonly int driftID = Shader.PropertyToID("_Drift");
+        private static readonly int jitterID = Shader.PropertyToID("_Jitter");
+        private static readonly int jumpID = Shader.PropertyToID("_Jump");
+        private static readonly int shakeID = Shader.PropertyToID("_Shake");
+
     void Start()
     {
         material = new Material(glitchMaterial);
         glitchEffect.material = material;
-        //FlickerAndScanline(false);
         UpdateBounds();
         glitchEffect.gameObject.SetActive(show);
-        //ChannelNavigationManager.Instance.OnUpdateChannelLayout += UpdateBounds;
     }
 
     public void UpdateBounds()
@@ -53,7 +59,7 @@ public class GlitchOverlay : MonoBehaviour
     
     void Update()
     {
-        if(!GameManager.Instance.isStreaming || !show)
+        if(!show || GameManager.Instance.isPause || PlayerManager.Instance.state == PlayerManager.PlayerState.sleep)
         {
             return;
         }
@@ -124,6 +130,7 @@ public class GlitchOverlay : MonoBehaviour
         {
             return;
         }
+        UpdateBounds();
         var time = Time.time;
         var delta = time - _prevTime;
         _jumpTime += delta * jump * 11.3f;
@@ -156,17 +163,17 @@ public class GlitchOverlay : MonoBehaviour
 
         var vjump = new Vector2(_jumpTime, jump);
 
-
-        glitchEffect.material.SetFloat("_BlockStrength", block3);
-        glitchEffect.material.SetInt("_BlockStride", _blockStride);
-        glitchEffect.material.SetInt("_BlockSeed1", _blockSeed1);
-        glitchEffect.material.SetInt("_BlockSeed2", _blockSeed2);
-        glitchEffect.material.SetVector("_Drift", vdrift);
-        glitchEffect.material.SetVector("_Jitter", vjitter);
-        glitchEffect.material.SetVector("_Jump", vjump);
-        glitchEffect.material.SetFloat("_Shake", shake);
+        glitchEffect.material.SetFloat(blockSizeID, blockSize);
+        glitchEffect.material.SetFloat(blockStrengthID, block3);
+        glitchEffect.material.SetInt(blockStrideID, _blockStride);
+        glitchEffect.material.SetInt(blockSeed1ID, _blockSeed1);
+        glitchEffect.material.SetInt(blockSeed2ID, _blockSeed2);
+        glitchEffect.material.SetVector(driftID, vdrift);
+        glitchEffect.material.SetVector(jitterID, vjitter);
+        glitchEffect.material.SetVector(jumpID, vjump);
+        glitchEffect.material.SetFloat(shakeID, shake);
         
-        UpdateBounds();
+        
     }
 
     void OnDestroy()

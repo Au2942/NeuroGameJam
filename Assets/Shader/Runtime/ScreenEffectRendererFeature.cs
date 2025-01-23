@@ -103,19 +103,17 @@ public class ScreenEffectRendererFeature : ScriptableRendererFeature
     // This method is called when setting up the renderer once per-camera.
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
+        if(renderingData.cameraData.camera != Camera.main)
+            return;
         if(material == null)
         {
             Debug.LogError("ScreenEffectRendererFeature material is null and will be skipped.");
             return;
         }
-
-        if(renderingData.cameraData.camera == Camera.main)
-        {
-            m_ScriptablePass.Setup(tempMaterial, settings);
-            renderer.EnqueuePass(m_ScriptablePass);
-        }
-
         
+        m_ScriptablePass.Setup(tempMaterial, settings);
+        renderer.EnqueuePass(m_ScriptablePass);
+
     }
 
     protected override void Dispose(bool disposing)

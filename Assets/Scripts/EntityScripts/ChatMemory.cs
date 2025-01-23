@@ -10,9 +10,9 @@ public class ChatMemory : MemoryEntity
     private float spawnTimer = 0f;
 
 
-    protected override void CorruptBehavior()
+    protected override void GlitchBehavior()
     {
-        base.CorruptBehavior();
+        base.GlitchBehavior();
 
         if (!wordSpawner.isActive)
         {
@@ -26,15 +26,15 @@ public class ChatMemory : MemoryEntity
             {
                 wordSpawner.StopSpawningInteractables();
                 spawnTimer = 0f;
-                ExitCorruptState();
+                ExitGlitchState();
             }
             else spawnTimer += Time.deltaTime;
         }
     }
 
-    public override void ExitCorruptState()
+    public override void ExitGlitchState()
     {
-        base.ExitCorruptState();
+        base.ExitGlitchState();
         ClearSpawner();
     }
     private void ClearSpawner()

@@ -61,7 +61,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -225,7 +225,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: neuro_mouth_close
+      name: neuro_mouth_smile
       rect:
         serializedVersion: 2
         x: 2282
@@ -242,6 +242,28 @@ TextureImporter:
       bones: []
       spriteID: c9d8914702ecd49f0800000000000000
       internalID: -482502946276668004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: neuro_mouth_close
+      rect:
+        serializedVersion: 2
+        x: 2282
+        y: 1613
+        width: 54
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c81c5ac64326aae42895cb53693ecd12
+      internalID: 314156692
       vertices: []
       indices: 
       edges: []
@@ -263,8 +285,9 @@ TextureImporter:
       neuro_base_0: -7894517667983053385
       neuro_eyes_close: -6105240171175777179
       neuro_eyes_open: -8312490480886871069
-      neuro_mouth_close: -482502946276668004
+      neuro_mouth_close: 314156692
       neuro_mouth_open: -8732790358315709044
+      neuro_mouth_smile: -482502946276668004
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

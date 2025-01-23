@@ -13,14 +13,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private StreamSO defaultStream;
     [SerializeField] private LivefeedRenderer LivefeedRenderer;
     [SerializeField] public ScreenEffectController ScreenEffectController;
-
     public int ChannelCount => ChannelData.GetChannelCount();
     public int CurrentChannelIndex => ChannelNavigationManager.Instance.CurrentChannelIndex;
     public List<Entity> Entities => ChannelData.GetChannelEntities();
 
     public StreamSO CurrentStream { get; private set; }
-    public bool isStreaming { get; set; } = false;
-
+    public bool isPause { get; set; } = false;
 
 
 
@@ -48,26 +46,21 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (isStreaming)
+        if (isPause)
         { 
-            PlayerManager.Instance.ProgressStream();
-            PlayerManager.Instance.CheckPlayerInput();
-            if(ChannelData.GetChannelEntity(CurrentChannelIndex).corrupted)
-            {
-                ScreenEffectController.Show();
-            }
-            else
-            {
-                ScreenEffectController.Hide();
-            }
+            return;
         }
-        if(StreamSelector.Instance.isOpen)
+
+        PlayerManager.Instance.ProgressStream();
+        
+        if(PlayerManager.Instance.state == PlayerManager.PlayerState.sleep)
         {
-            if(InputManager.Instance.Cancel.triggered || InputManager.Instance.RightClick.triggered)
-            {
-                StreamSelector.Instance.CloseUI();
-            }
+            return;
         }
+
+        ChannelNavigationManager.Instance.CheckNavigationInput();
+        PlayerManager.Instance.CheckPlayerInput();
+
     }
 
     private void SetChannelIndex(int index)
@@ -81,6 +74,14 @@ public class GameManager : MonoBehaviour
             {
                 entity.SetInFocus(true);
                 roomText.text = LivefeedManager.Instance.Livefeeds[i].LivefeedName;
+                if(entity.Glitched)
+                {
+                    ScreenEffectController.Show();
+                }
+                else
+                {
+                    ScreenEffectController.Hide();
+                }
             }
             else
             {
@@ -96,18 +97,17 @@ public class GameManager : MonoBehaviour
         GameObject stream = ChannelNavigationManager.Instance.SetUpStream(CurrentStream);
         SetPlayerStream(CurrentStream);
         ChannelNavigationManager.Instance.SetChannelIndex(ChannelCount-1);
-        isStreaming = true;
         OnStartStream?.Invoke();
     }
     private void SetPlayerStream(StreamSO stream)
     {
         PlayerManager.Instance.TargetHype = PlayerManager.Instance.CurrentHype + stream.hypePotential;
         PlayerManager.Instance.CurrentHype += stream.impactHype;
+        PlayerManager.Instance.CurrentStreamTimer = 0;
     }
     public void ContinueStream()
     {
         ChannelData.GetChannelEntity(CurrentChannelIndex).SetInFocus(true);
-        isStreaming = true;
     }
 
     public void StopStream()
@@ -115,7 +115,6 @@ public class GameManager : MonoBehaviour
         List<Entity> Entities = ChannelData.GetChannelEntities();   
         Entities.ForEach(entity => entity.SetInFocus(false));
         Entities.ForEach(entity => entity.ShutUp());
-        isStreaming = false;
     }
 
     public void EndStream()

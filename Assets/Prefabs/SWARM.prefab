@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6816021588467933377}
   - component: {fileID: 1464964040369975404}
   m_Layer: 5
-  m_Name: RepairBot
+  m_Name: SWARM
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

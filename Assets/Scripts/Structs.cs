@@ -37,18 +37,7 @@ public struct ClipLayerPair
         this.layer = layer;
     }
 }
-[System.Serializable]
-public struct AnimatorClipPair
-{
-    public Animator animator;
-    public ClipLayerPair clipLayerPair;
 
-    public AnimatorClipPair(Animator animator, ClipLayerPair clipLayerPair)
-    {
-        this.animator = animator;
-        this.clipLayerPair = clipLayerPair;
-    }
-}
 [System.Serializable]
 public struct AnimatorStateInfosPair
 {

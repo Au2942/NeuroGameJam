@@ -2,15 +2,14 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Video;
-
 public class ChannelNavigationManager : MonoBehaviour 
 {
     public static ChannelNavigationManager Instance;
-    [SerializeField] private Transform channelTransform;
+    [SerializeField] private RectTransform channelTransform;
     [SerializeField] private RectTransform entityContainer;
-    [SerializeField] private GameObject entityLayout;
-    [SerializeField] public float spacing = 1216;
+    [SerializeField] private RectTransform entityLayout;
+    [SerializeField] public float spacing = 896;
+    [SerializeField] private float cooldownBetweenNavigation = 0.2f;
 
     private int _channelCount => GameManager.Instance.ChannelCount;
     public int CurrentChannelIndex {get; set; } = 0;
@@ -22,7 +21,6 @@ public class ChannelNavigationManager : MonoBehaviour
     public event Action OnNewStream;
     private Vector2 originalAnchorPosition;
 
-    private float cooldownBetweenNavigation = 0.5f;
     private float cooldownTimer = 0f;
 
     void Awake()
@@ -40,15 +38,7 @@ public class ChannelNavigationManager : MonoBehaviour
     void Start()
     {
         originalAnchorPosition = entityContainer.anchoredPosition;
-        cooldownTimer = cooldownBetweenNavigation;
-    }
-
-    void Update()
-    {
-        if(GameManager.Instance.isStreaming)
-        {
-            CheckNavigationInput();
-        }    
+        spacing = entityContainer.rect.width + entityLayout.GetComponent<HorizontalLayoutGroup>().spacing;
     }
 
     public Entity GetCurrentEntity()
@@ -56,18 +46,18 @@ public class ChannelNavigationManager : MonoBehaviour
         return GameManager.Instance.ChannelData.GetChannelEntity(CurrentChannelIndex);
     }
 
-    private void CheckNavigationInput()
+    public void CheckNavigationInput()
     {
         float horizontalInput = InputManager.Instance.Navigate.ReadValue<Vector2>().x;
         if(horizontalInput != 0)
         {
-            cooldownTimer += Time.deltaTime;
-            int tempIndex = CurrentChannelIndex;
-            if(cooldownTimer < cooldownBetweenNavigation)
+            if(cooldownTimer > Time.time)
             {
                 return;
             }
-            cooldownTimer = 0f;
+
+            int tempIndex = CurrentChannelIndex;
+            
             if(horizontalInput > 0)
             {
                 tempIndex--;
@@ -89,11 +79,13 @@ public class ChannelNavigationManager : MonoBehaviour
             {
                 SetChannelIndex(tempIndex);
             }
+            cooldownTimer = Time.time + cooldownBetweenNavigation;
         }
         else
         {
-            cooldownTimer = cooldownBetweenNavigation;
+            cooldownTimer = 0;
         }
+        
     }
 
     public void SetChannelIndex(int index)

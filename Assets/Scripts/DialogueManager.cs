@@ -27,9 +27,13 @@ public class DialogueManager : MonoBehaviour
     public bool IsTyping {get; private set;} = false;
     public bool IsDialoguePlaying {get; private set;} = false;
 
-    void Start()
+
+    void Awake()
     {
         currentDialogueInfo = defaultDialogueInfo;
+    }
+    void Start()
+    {
         dialoguePanel.SetActive(false);
     }
 

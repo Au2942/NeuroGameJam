@@ -1,15 +1,15 @@
 fileFormatVersion: 2
-guid: 745e3f285b4235745a478a9145e8a6bd
+guid: c0c4cff702f27d14fbe1b9a8284a3b46
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -824144167490311413
-    second: shadow_sing2_0
+      213: -8615130865758192348
+    second: viewers128_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
     mipMapMode: 0
-    enableMipMap: 0
+    enableMipMap: 1
     sRGBTexture: 1
     linearTexture: 0
     fadeOut: 0
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: shadow_sing2_0
+      name: viewers128_0
       rect:
         serializedVersion: 2
-        x: 122
-        y: 102
-        width: 782
-        height: 1590
+        x: 18
+        y: 10
+        width: 92
+        height: 108
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b0ba7050f3d0094f0800000000000000
-      internalID: -824144167490311413
+      spriteID: 42dbafc5f18e07880800000000000000
+      internalID: -8615130865758192348
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 1eb8be8401c4d5146b834bafa83801e0
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      shadow_sing2_0: -824144167490311413
+      viewers128_0: -8615130865758192348
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -13,9 +13,9 @@ public class HeartMemory : MemoryEntity
     private float damageTimer = 0f;
 
     
-    public override void ExitCorruptState()
+    public override void ExitGlitchState()
     {
-        base.ExitCorruptState();
+        base.ExitGlitchState();
         ClearSpawner();
     }
 
@@ -25,9 +25,9 @@ public class HeartMemory : MemoryEntity
         heartSpawner.ClearFallenObjects();    
     }
 
-    protected override void CorruptBehavior()
+    protected override void GlitchBehavior()
     {
-        base.CorruptBehavior();
+        base.GlitchBehavior();
         if(heartSpawner.isActive)
         {
             if(damageTimer >= damageCooldown)
@@ -38,7 +38,7 @@ public class HeartMemory : MemoryEntity
             damageTimer += Time.deltaTime;
             if(heartSpawner.objectInUse.Count == 0)
             {
-                ExitCorruptState();
+                ExitGlitchState();
             }
         }
         else heartSpawner.StartSpawningInteractables(minX, maxX, minY, maxY);

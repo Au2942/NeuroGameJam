@@ -76,6 +76,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 88e0dc1ef97418e4781be3950ee1aeb4, type: 3}
+    - target: {fileID: 3912631305385984544, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: speaker
+      value: 
+      objectReference: {fileID: 1984728692587858539}
     - target: {fileID: 3965885866100376687, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
@@ -209,11 +213,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 9fe3efee6dca44a40b8b6546a6b409c2, type: 2}
     - {fileID: 11400000, guid: 73a4c94543a15ce4a8e6528358ce7f42, type: 2}
     - {fileID: 11400000, guid: 49e5df4dc0cf4c84ea43e67127769118, type: 2}
-  Integrity: 100
-  MaxIntegrity: 100
-  decayInterval: 2
-  InFocusDecayMultiplier: 0.5
-  IntegrityDecay: 1
+  Health: 100
+  MaxHealth: 100
   InFocus: 0
   Interactable: 1
   IsBeingRepaired: 0
@@ -221,10 +222,10 @@ MonoBehaviour:
   talkRepeatable: 1
   talkRollInterval: 2
   talkChance: 0.25
-  corruptRollInterval: 1
-  minCorruptRoll: 0.3
-  maxCorruptRoll: 0.7
-  corruptCD: 30
+  glitchRollInterval: 1
+  minGlitchRoll: 0.3
+  maxGlitchRoll: 0.7
+  glitchCD: 30
   defaultAnimatorClips: []
   idleAnimatorClips:
   - animator: {fileID: 2794483609510162486}
@@ -235,15 +236,14 @@ MonoBehaviour:
   dialogueTypingAnimation: []
   normalAnimatorClips:
   - animator: {fileID: 2794483609510162486}
-    clipLayerPair:
-      clip: {fileID: 7400000, guid: 91b5f5c4178606643b3eeeb62d5277cf, type: 2}
+    clipLayerPairs:
+    - clip: {fileID: 7400000, guid: 91b5f5c4178606643b3eeeb62d5277cf, type: 2}
       layer: 1
-  corruptAnimatorClips:
+  glitchAnimatorClips:
   - animator: {fileID: 2794483609510162486}
-    clipLayerPair:
-      clip: {fileID: 7400000, guid: fec654fd4fd91274c9526dfb571cb432, type: 2}
+    clipLayerPairs:
+    - clip: {fileID: 7400000, guid: fec654fd4fd91274c9526dfb571cb432, type: 2}
       layer: 1
-  extraAnimatorClipsPairs: []
   CurrentAnimationState: 0
   timeToShutup: 2
   glitchEffect: {fileID: 7362587985674339196}
