@@ -39,7 +39,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 96, y: 96}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &268074223792740855
 CanvasRenderer:
@@ -66,9 +66,13 @@ MonoBehaviour:
   NameText: {fileID: 4727190403798215564}
   ClickHandler: {fileID: 1464964040369975404}
   CooldownIcon: {fileID: 8355236452841577328}
+  MaxAttribute: 5
+  Level: 1
+  health: 5
   RepairSpeed: 5
+  RepairCooldown: 5
+  RepairSuccessChance: 60
   RepairAmount: 30
-  Cooldown: 5
   IsAvailable: 1
 --- !u!114 &1464964040369975404
 MonoBehaviour:
@@ -174,8 +178,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 24
+  m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -325,10 +329,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 7387747199814086362}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8745627144899134698
 CanvasRenderer:

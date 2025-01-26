@@ -14,7 +14,6 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] public float Performance = 0.1f; //average of all memory entities integrity
     [SerializeField] public float MaxPerformance = 2f;
     [SerializeField] public float ResetTime = 5f;
-    [SerializeField] public float SleepTime = 480f; //should be 2 hour per stats u wanna raise for swarmbot / swarmbot level 
     [SerializeField] public float RemainingStreamTime = 60f; //~1 hour
     [SerializeField] public float StreamTimeIncrease = 0.03f; //3 seconds per subscription
     [SerializeField] public float NewStreamCD = 60f; //60 seconds before you can start a new stream
@@ -106,24 +105,30 @@ public class PlayerManager : MonoBehaviour
         currentStreamEntity.ExitGlitchState();
     }
 
-    public bool TrySleep()
+    public bool TryOpenSleepSettingsScreen()
     {
         if(state == PlayerState.sleep)
         {
             return false;
         }
-        if(currentStreamEntity != null) currentStreamEntity.EnterSleepState();
-        CurrentHype = -0.9f; // expected viewers -> 10% of baseline viewers
-        SetState(PlayerState.sleep);
-        GameManager.Instance.StopStream();
-        TimescaleManager.Instance.SetTimescale(50); // 8 times faster
-        StartCoroutine(Sleeping());
+        SleepSettingsScreen.Instance.OpenUI();
         return true;
     }
 
-    private IEnumerator Sleeping()
+    public void Sleep(float sleepTime)
     {
-        yield return new WaitForSeconds(SleepTime);
+        if(currentStreamEntity != null) currentStreamEntity.EnterSleepState();
+        CurrentHype = -0.9f; // expected viewers -> 10% of baseline viewers
+        SetState(PlayerState.sleep);
+        GameManager.Instance.ChannelData.SetChannelName(0,"Snooze Stream");
+        GameManager.Instance.StopStream();
+        TimescaleManager.Instance.SetTimescale(50);
+        StartCoroutine(Sleeping(sleepTime));
+    }
+
+    private IEnumerator Sleeping(float sleepTime)
+    {
+        yield return new WaitForSeconds(sleepTime);
         WakeUp();
     }
 
@@ -149,14 +154,18 @@ public class PlayerManager : MonoBehaviour
 
     public void CheckPlayerInput()
     {
-        if(state == PlayerState.repair)
+        if(WorkerManager.Instance.selectedRepairWorker != null)
         {
             if(InputManager.Instance.Cancel.triggered || InputManager.Instance.RightClick.triggered)
             {
-                SetState(PlayerState.normal);
+                if(state == PlayerState.repair)
+                {
+                    SetState(PlayerState.normal);
+                }
                 WorkerManager.Instance.DeselectRepairWorker();
             }
         }
+
     }
 
     public void SetState(PlayerState newState, bool force = false)

@@ -2,33 +2,26 @@ using UnityEngine;
 
 public class StreamActionsButton : MonoBehaviour
 {
-    [SerializeField] private AudioClip invalidActionSound;
-
-    public void PlayInvalidActionSound()
-    {
-        SFXManager.Instance.PlaySoundFX(invalidActionSound);
-    }
-
     public void StreamSelectorAction()
     {
         if(!PlayerManager.Instance.TryOpenStreamSelector())
         {
-            PlayInvalidActionSound();
+            SFXSoundBank.Instance.PlayInvalidActionSFX();
         }
     }
     public void ResetAction()
     {
         if(!PlayerManager.Instance.TryReset())
         {
-            PlayInvalidActionSound();
+            SFXSoundBank.Instance.PlayInvalidActionSFX();
         }
     }
 
     public void SleepAction()
     {
-        if(!PlayerManager.Instance.TrySleep())
+        if(!PlayerManager.Instance.TryOpenSleepSettingsScreen())
         {
-            PlayInvalidActionSound();
+            SFXSoundBank.Instance.PlayInvalidActionSFX();
         }
     }
 

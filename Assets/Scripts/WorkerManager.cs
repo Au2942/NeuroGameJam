@@ -6,6 +6,8 @@ public class WorkerManager : MonoBehaviour
     public static WorkerManager Instance;
 
     [SerializeField] public WorkerStatsUI WorkerStatUI;
+    [SerializeField] private WorkerScroller WorkerScroller;
+    [SerializeField] private RectTransform WorkerLayout;
     [SerializeField] public List<Worker> RepairWorkers = new List<Worker>();
     [SerializeField] public int MaxLevel = 5;
     public Worker selectedRepairWorker {get; private set;}
@@ -41,15 +43,17 @@ public class WorkerManager : MonoBehaviour
 
     public Worker AddWorker(Worker newWorkerPrefab)
     {
-        Worker newWorker = Instantiate(newWorkerPrefab, transform);
+        Worker newWorker = Instantiate(newWorkerPrefab, WorkerLayout);
         if(newWorker == null)
         {
             Destroy(newWorker);
             return null;
         }
-
         RepairWorkers.Add(newWorker);
         newWorker.OnSelected += SelectRepairWorker;
+        
+        newWorker.Select();
+
         return newWorker;
     }
     public Worker AddWorker()
@@ -59,13 +63,19 @@ public class WorkerManager : MonoBehaviour
 
     public void RemoveWorker(Worker worker)
     {
+        if(worker == null) return;
+        int index = RepairWorkers.IndexOf(worker);
         RepairWorkers.Remove(worker);
         worker.OnSelected -= SelectRepairWorker;
+
+        (RepairWorkers.Count > 0 ? RepairWorkers[Mathf.Clamp(index, 0, RepairWorkers.Count - 1)] : null).Select();
+
         Destroy(worker.gameObject);
     }
 
     public void SelectRepairWorker(Worker repairWorker)
     {
+        DeselectRepairWorker();
         selectedRepairWorker = repairWorker;
         WorkerStatUI.UpdateStatText(selectedRepairWorker);
         OnWorkerSelected?.Invoke(selectedRepairWorker);
@@ -73,8 +83,9 @@ public class WorkerManager : MonoBehaviour
 
     public void DeselectRepairWorker()
     {
+        if(selectedRepairWorker == null) return;
         WorkerStatUI.ResetStatText();
-        selectedRepairWorker.SetAvailability(true);
+        selectedRepairWorker.Deselect();
         selectedRepairWorker = null;
         OnWorkerDeselected?.Invoke();
     }

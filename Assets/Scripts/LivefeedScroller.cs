@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public class LivefeedRenderer : MonoBehaviour
+public class LivefeedScroller : MonoBehaviour
 {
     [SerializeField] private ScrollRect scrollRect;
     [SerializeField] private Camera livefeedCamera;
@@ -65,7 +65,7 @@ public class LivefeedRenderer : MonoBehaviour
     public void SetSelectedFeed(int index)
     {
         if(smoothScrollCoroutine != null) StopCoroutine(smoothScrollCoroutine);
-        
+        LayoutRebuilder.ForceRebuildLayoutImmediate(scrollRect.content);
         RectTransform renderImage = renderImages[index].GetComponent<RectTransform>();
         
         selectBorderInstance.transform.SetParent(renderImage.parent, false);
@@ -104,6 +104,7 @@ public class LivefeedRenderer : MonoBehaviour
         float contentWidth = scrollRect.content.rect.width; // Total width of content
         float viewportWidth = scrollRect.viewport.rect.width; // Visible width of viewport
 
+        
         // Calculate normalized position
         float targetNormalizedPosition = Mathf.Clamp01(
             (targetLocalX - (viewportWidth / 2)) / (contentWidth - viewportWidth)
@@ -111,7 +112,7 @@ public class LivefeedRenderer : MonoBehaviour
 
         while (elapsedTime < duration)
         {
-            elapsedTime += Time.deltaTime;
+            elapsedTime += Time.unscaledDeltaTime;
             float newPosition = Mathf.Lerp(startNormalizedPosition, targetNormalizedPosition, elapsedTime / duration);
             scrollRect.horizontalNormalizedPosition = newPosition;
             yield return null;

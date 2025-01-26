@@ -294,16 +294,16 @@ public abstract class Entity : MonoBehaviour
     public virtual void RollChanceToGlitch()
     {
         if(glitchCDTimer < Time.time) return;
-        if (IntegrityRatio() < glitchRollThreshold)
+        if (IntegrityPercentage() < glitchRollThreshold)
         {
-            if (Random.Range(0f, 1f) >= IntegrityRatio())
+            if (Random.Range(0f, 1f) >= IntegrityPercentage())
             {
                 EnterGlitchState();
             }
         }
     }
 
-    public float IntegrityRatio()
+    public float IntegrityPercentage()
     {
         return Health / MaxHealth;
     }

@@ -62,7 +62,7 @@ public class PlayerStatsUI : MonoBehaviour
         int hours = Mathf.FloorToInt(timeInSeconds / 3600F);
         int minutes = Mathf.FloorToInt((timeInSeconds - hours * 3600) / 60F);
         int seconds = Mathf.FloorToInt(timeInSeconds - hours * 3600 - minutes * 60);
-        return string.Format("{0:00}:{1:00}:{2:00}", hours, minutes, seconds); 
+        return hours.ToString("00") + ":" + minutes.ToString("00") + ":" + seconds.ToString("00"); 
     }
     private void UpdateIntegrityBarEntity()
     {

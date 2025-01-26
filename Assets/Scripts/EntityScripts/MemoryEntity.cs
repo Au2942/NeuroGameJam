@@ -32,9 +32,28 @@ public abstract class MemoryEntity : Entity
         
     }
 
+    public virtual void OnRepairSuccess(Worker worker)
+    {
+        AddIntegrity(worker.RepairAmount);
+        RollChanceToRecall();
+    }
+
+    public virtual void OnRepairFail(Worker worker)
+    {
+        RollChanceToGlitch();
+    }
+
+    public virtual void RollChanceToRecall()
+    {
+        if(Random.Range(0, 100) < IntegrityPercentage())
+        {
+            Recall();
+        }
+    }
+
     public virtual void Recall()
     {
-        //when work success
+
     }
 
     protected override void OnIntegrityChanged()
@@ -42,7 +61,7 @@ public abstract class MemoryEntity : Entity
         base.OnIntegrityChanged();
         if(glitchEffect != null)
         {
-            if(Health/MaxHealth <= glitchRollThreshold)
+            if(IntegrityPercentage() <= glitchRollThreshold)
             {
                 glitchEffect.Show();
                 float t = 1 - (Health / MaxHealth);

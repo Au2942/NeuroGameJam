@@ -56,7 +56,7 @@ public class StreamSelector : MonoBehaviour
 
     public void Update()
     {
-        if(!forcedSelect)
+        if(isOpen && !forcedSelect)
         {
             if(InputManager.Instance.Cancel.triggered || InputManager.Instance.RightClick.triggered)
             {

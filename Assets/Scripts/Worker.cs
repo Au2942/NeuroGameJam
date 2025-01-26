@@ -3,31 +3,31 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 
-public struct WorkerStats
+public struct WorkerAttributes
 {
     public int Robustness; //health, health regen
     public float RobustnessScore;
     public int Latency; //repair speed, repair cooldown
     public float LatencyScore;
-    public int Reliability; //repair success chance
-    public float ReliabilityScore;
+    public int Accuracy; //repair success chance
+    public float AccuracyScore;
     public int Fitness; //repair amount
     public float FitnessScore;
 
-    public WorkerStats(int robustness, int latency, int reliability, int fitness)
+    public WorkerAttributes(int robustness, int latency, int accuracy, int fitness)
     {
         Robustness = robustness;
         Latency = latency;
-        Reliability = reliability;
+        Accuracy = accuracy;
         Fitness = fitness;
         RobustnessScore = 0;
         LatencyScore = 0;
-        ReliabilityScore = 0;
+        AccuracyScore = 0;
         FitnessScore = 0;
     }
-    public float AverageStat()
+    public float AverageAttributes()
     {
-        return (Robustness + Latency + Reliability + Fitness) / 4;
+        return (Robustness + Latency + Accuracy + Fitness) / 4;
     }
 
 }
@@ -40,14 +40,14 @@ public class Worker : MonoBehaviour
     [SerializeField] public TextMeshProUGUI NameText;
     [SerializeField] public UIEventHandler ClickHandler; //can be put into its own class later maybe?
     [SerializeField] public Image CooldownIcon;
-    [SerializeField] public WorkerStats Stats = new WorkerStats(1,1,1,1);
-    [SerializeField] public WorkerStats AllocStats = new WorkerStats(0,0,0,0);
-    [SerializeField] public int MaxStat = 5;
+    [SerializeField] public WorkerAttributes Attributes = new WorkerAttributes(1,1,1,1);
+    [SerializeField] public WorkerAttributes AllocAttributes = new WorkerAttributes(0,0,0,0);
+    [SerializeField] public int MaxAttribute = 5;
     [SerializeField] public int Level = 1;
     [SerializeField] public int health = 5;
     [SerializeField] public float RepairSpeed = 5f;
-    [SerializeField] public float RepairSuccessChance = 60f;
     [SerializeField] public float RepairCooldown = 5f;
+    [SerializeField] public float RepairSuccessChance = 60f;
     [SerializeField] public float RepairAmount = 30f;
     [SerializeField] public bool IsAvailable = true;
 
@@ -55,64 +55,99 @@ public class Worker : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        Level = Mathf.RoundToInt(Stats.AverageStat());
-        ClickHandler.OnLeftClickEvent += (eventData) => Selected();
+        Level = Mathf.RoundToInt(Attributes.AverageAttributes());
+        UpdateStats();
+        ClickHandler.OnLeftClickEvent += (eventData) => Select();
     }
 
-    public int IncreaseAllocStats(WorkerStats stats)
+    public int AddAllocAttributes(WorkerAttributes addedAttributes)
     {
-        int allocedStats = 0;
-        if(stats.Robustness > 0)
+        int allocedAttributes = 0;
+        if(addedAttributes.Robustness > 0)
         {
-            int allocedRobustness = Mathf.Min(stats.Robustness, MaxStat - Stats.Robustness);
-            AllocStats.Robustness = allocedRobustness;
-            allocedStats += allocedRobustness;
+            int allocedRobustness = Mathf.Min(addedAttributes.Robustness, MaxAttribute - Attributes.Robustness - AllocAttributes.Robustness);
+            AllocAttributes.Robustness += allocedRobustness;
+            allocedAttributes += allocedRobustness;
         }
-        if(stats.Latency > 0)
+        else
         {
-            int allocedLatency = Mathf.Min(stats.Latency, MaxStat - Stats.Latency);
-            AllocStats.Latency = allocedLatency;
-            allocedStats += allocedLatency;
+            int unallocedRobustness = Mathf.Min(-addedAttributes.Robustness, AllocAttributes.Robustness);
+            AllocAttributes.Robustness -= unallocedRobustness;
+            allocedAttributes -= unallocedRobustness;
         }
-        if(stats.Reliability > 0)
+        if(addedAttributes.Latency > 0)
         {
-            int allocedReliability = Mathf.Min(stats.Reliability, MaxStat - Stats.Reliability);
-            AllocStats.Reliability = allocedReliability;
-            allocedStats += allocedReliability;
+            int allocedLatency = Mathf.Min(addedAttributes.Latency, MaxAttribute - Attributes.Latency - AllocAttributes.Latency);
+            AllocAttributes.Latency += allocedLatency;
+            allocedAttributes += allocedLatency;
         }
-        if(stats.Fitness > 0)
+        else
         {
-            int allocedFitness = Mathf.Min(stats.Fitness, MaxStat - Stats.Fitness);
-            AllocStats.Fitness = allocedFitness;
-            allocedStats += allocedFitness;
+            int unallocedLatency = Mathf.Min(-addedAttributes.Latency, AllocAttributes.Latency);
+            AllocAttributes.Latency -= unallocedLatency;
+            allocedAttributes -= unallocedLatency;
         }
-        return allocedStats;
+        if(addedAttributes.Accuracy > 0)
+        {
+            int allocedAccuracy = Mathf.Min(addedAttributes.Accuracy, MaxAttribute - Attributes.Accuracy - AllocAttributes.Accuracy);
+            AllocAttributes.Accuracy += allocedAccuracy;
+            allocedAttributes += allocedAccuracy;
+        }
+        else
+        {
+            int unallocedAccuracy = Mathf.Min(-addedAttributes.Accuracy, AllocAttributes.Accuracy);
+            AllocAttributes.Accuracy -= unallocedAccuracy;
+            allocedAttributes -= unallocedAccuracy;
+        }
+        if(addedAttributes.Fitness > 0)
+        {
+            int allocedFitness = Mathf.Min(addedAttributes.Fitness, MaxAttribute - Attributes.Fitness - AllocAttributes.Fitness);
+            AllocAttributes.Fitness += allocedFitness;
+            allocedAttributes += allocedFitness;
+        }
+        else
+        {
+            int unallocedFitness = Mathf.Min(-addedAttributes.Fitness, AllocAttributes.Fitness);
+            AllocAttributes.Fitness -= unallocedFitness;
+            allocedAttributes -= unallocedFitness;
+        }
+        return allocedAttributes;
     }
-    public int ResetAllocStats()
+    public int ResetAllocAttributes()
     {
-        int resetStats = AllocStats.Robustness + AllocStats.Latency + AllocStats.Reliability + AllocStats.Fitness;
-        AllocStats.Robustness = 0;
-        AllocStats.Latency = 0;
-        AllocStats.Reliability = 0;
-        AllocStats.Fitness = 0;
-        return resetStats;
+        int resetAttributes = AllocAttributes.Robustness + AllocAttributes.Latency + AllocAttributes.Accuracy + AllocAttributes.Fitness;
+        AllocAttributes.Robustness = 0;
+        AllocAttributes.Latency = 0;
+        AllocAttributes.Accuracy = 0;
+        AllocAttributes.Fitness = 0;
+        return resetAttributes;
     }
 
-    public void ApplyAllocStats()
+    public void ApplyAllocAttributes()
     {
-        Stats.Robustness += AllocStats.Robustness;
-        Stats.Latency += AllocStats.Latency;
-        Stats.Reliability += AllocStats.Reliability;
-        Stats.Fitness += AllocStats.Fitness;
-        Level = Mathf.RoundToInt(Stats.AverageStat());
+        Attributes.Robustness += AllocAttributes.Robustness;
+        Attributes.Latency += AllocAttributes.Latency;
+        Attributes.Accuracy += AllocAttributes.Accuracy;
+        Attributes.Fitness += AllocAttributes.Fitness;
+        AllocAttributes = new WorkerAttributes(0,0,0,0);
+        Level = Mathf.RoundToInt(Attributes.AverageAttributes());
+        UpdateStats();
     }
 
-    public void Selected()
+    public void Select()
     {
         if(PlayerManager.Instance.state == PlayerManager.PlayerState.repair || !IsAvailable) return;
-        PlayerManager.Instance.SetState(PlayerManager.PlayerState.repair);
+        if(!GameManager.Instance.isPause)
+        {
+            PlayerManager.Instance.SetState(PlayerManager.PlayerState.repair);
+        }
         SetAvailability(false);
         OnSelected?.Invoke(this);
+    }
+
+    public void Deselect()
+    {
+        SetAvailability(true);
     }
 
     public void SetAvailability(bool availability)
@@ -147,13 +182,11 @@ public class Worker : MonoBehaviour
         float roll = Random.Range(0, 100);
         if(roll < RepairSuccessChance)
         {
-            entity.AddIntegrity(RepairAmount);
-            entity.Recall();
+            entity.OnRepairSuccess(this);
         }
         else
         {
-
-            entity.RollChanceToGlitch();
+            entity.OnRepairFail(this);
         }
     } 
 
@@ -182,10 +215,16 @@ public class Worker : MonoBehaviour
         SetAvailability(true);
     }
     
-
+    private void UpdateStats()
+    {
+        RepairSpeed = 5f - (Attributes.Latency * 0.5f);
+        RepairCooldown = 5f - (Attributes.Latency * 0.5f);
+        RepairSuccessChance = 60f + (Attributes.Accuracy * 5f);
+        RepairAmount = 30f + (Attributes.Fitness * 5f);
+    }
     
     void OnDestroy()
     {
-        ClickHandler.OnLeftClickEvent -= (eventData) => Selected();
+        ClickHandler.OnLeftClickEvent -= (eventData) => Select();
     }
 }

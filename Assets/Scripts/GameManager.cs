@@ -8,10 +8,10 @@ using System.Collections;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-    [SerializeField] private TextMeshProUGUI roomText;
+    [SerializeField] private TextMeshProUGUI channelText;
     [SerializeField] public ChannelData ChannelData;
     [SerializeField] private StreamSO defaultStream;
-    [SerializeField] private LivefeedRenderer LivefeedRenderer;
+    [SerializeField] private LivefeedScroller LivefeedRenderer;
     [SerializeField] public ScreenEffectController ScreenEffectController;
     public int ChannelCount => ChannelData.GetChannelCount();
     public int CurrentChannelIndex => ChannelNavigationManager.Instance.CurrentChannelIndex;
@@ -46,6 +46,9 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+
+        PlayerManager.Instance.CheckPlayerInput();
+        
         if (isPause)
         { 
             return;
@@ -59,13 +62,11 @@ public class GameManager : MonoBehaviour
         }
 
         ChannelNavigationManager.Instance.CheckNavigationInput();
-        PlayerManager.Instance.CheckPlayerInput();
 
     }
 
     private void SetChannelIndex(int index)
     {
-        
         for(int i = 0; i < ChannelCount; i++)
         {
             ChannelInfo channelInfo = ChannelData.GetChannelInfo(i);
@@ -73,7 +74,7 @@ public class GameManager : MonoBehaviour
             if (i == index)
             {
                 entity.SetInFocus(true);
-                roomText.text = LivefeedManager.Instance.Livefeeds[i].LivefeedName;
+                channelText.text = channelInfo.name;
                 if(entity.Glitched)
                 {
                     ScreenEffectController.Show();

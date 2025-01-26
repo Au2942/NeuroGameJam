@@ -12,6 +12,16 @@ public struct ChannelInfo
         name = channelName;
         entity = channelEntity;
     }
+
+    public void SetChannelName(string newName)
+    {
+        name = newName;
+    }
+
+    public void SetChannelEntity(Entity newEntity)
+    {
+        entity = newEntity;
+    }
 }
 
 public class ChannelData : MonoBehaviour
@@ -42,6 +52,15 @@ public class ChannelData : MonoBehaviour
     public void RemoveChannel(int index)
     {
         ChannelInfos.RemoveAt(index);
+    }
+
+    public void SetChannelName(int index, string newName)
+    {
+        if(index < 0 || index >= ChannelInfos.Count)
+        {
+            return;
+        }
+        ChannelInfos[index].SetChannelName(newName);
     }
 
     public string GetChannelName(int index)
