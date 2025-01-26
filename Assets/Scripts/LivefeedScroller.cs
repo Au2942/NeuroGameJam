@@ -6,9 +6,9 @@ using UnityEngine.UI;
 
 public class LivefeedScroller : MonoBehaviour
 {
-    [SerializeField] private ScrollRect scrollRect;
+    [SerializeField] public ScrollRect scrollRect;
     [SerializeField] private Camera livefeedCamera;
-    [SerializeField] private RectTransform contentUI;
+    [SerializeField] public RectTransform contentUI;
     [SerializeField] private Livefeed livefeedPrefab;
     [SerializeField] private GameObject selectBorderPrefab;
     [SerializeField] private List<RawImage> renderImages = new List<RawImage>();
@@ -20,11 +20,13 @@ public class LivefeedScroller : MonoBehaviour
     private Vector3 initialPosition = new Vector3();
     private Coroutine smoothScrollCoroutine;
 
+    public event System.Action OnScrolling;
+
     void Start()
     {
         initialPosition = livefeedCamera.transform.localPosition;
         ChannelNavigationManager.Instance.OnNewStream += AddLivefeed;
-        ChannelNavigationManager.Instance.OnChangeChannelIndex += t => SetSelectedFeed(t); 
+        ChannelNavigationManager.Instance.OnChangeChannelIndex += t => SelectFeed(t); 
 
         selectBorderInstance = Instantiate(selectBorderPrefab, contentUI);
 
@@ -34,7 +36,9 @@ public class LivefeedScroller : MonoBehaviour
     public void AddLivefeed()
     {
         Livefeed livefeed = Instantiate(livefeedPrefab, contentUI);
+        livefeed.transform.SetSiblingIndex(2 + renderImages.Count); //after 2 buffers
         LivefeedManager.Instance.AddLivefeed(livefeed);
+        scrollRect.onValueChanged.AddListener(delegate {livefeed.OnScroll();});
         RawImage rawImage = livefeed.GetComponentInChildren<RawImage>();
         if(rawImage != null)
         {
@@ -46,23 +50,8 @@ public class LivefeedScroller : MonoBehaviour
             livefeed.SetLivefeed(GameManager.Instance.ChannelData.GetChannelName(livefeedIndex) ,livefeedIndex); 
         }
     }
-    public void AddLivefeed(string name)
-    {
-        Livefeed livefeed = Instantiate(livefeedPrefab, contentUI);
-        LivefeedManager.Instance.AddLivefeed(livefeed);
-        RawImage rawImage = livefeed.GetComponentInChildren<RawImage>();
-        if(rawImage != null)
-        {
-            int livefeedIndex = renderImages.Count;
-            renderImages.Add(rawImage);
-            RenderTexture renderTexture = new RenderTexture(320, 180, 16);
-            renderTextures.Add(renderTexture);
-            rawImage.texture = renderTexture;
-            livefeed.SetLivefeed(name ,livefeedIndex); 
-        }
-    }
 
-    public void SetSelectedFeed(int index)
+    public void SelectFeed(int index)
     {
         if(smoothScrollCoroutine != null) StopCoroutine(smoothScrollCoroutine);
         LayoutRebuilder.ForceRebuildLayoutImmediate(scrollRect.content);
@@ -70,8 +59,9 @@ public class LivefeedScroller : MonoBehaviour
         
         selectBorderInstance.transform.SetParent(renderImage.parent, false);
         selectBorderInstance.transform.SetAsFirstSibling();
+        selectBorderInstance.GetComponent<RectTransform>().sizeDelta = renderImage.sizeDelta;
 
-        smoothScrollCoroutine = StartCoroutine(SmoothScrollTo(renderImage.parent.GetComponent<RectTransform>().anchoredPosition.x));
+        smoothScrollCoroutine = StartCoroutine(SmoothScrollTo(renderImage.parent.GetComponent<RectTransform>()));
     }
 
     IEnumerator RenderLivefeedsRoutine()
@@ -95,29 +85,29 @@ public class LivefeedScroller : MonoBehaviour
         }
     }
     
-    IEnumerator SmoothScrollTo(float targetLocalX)
+    IEnumerator SmoothScrollTo(RectTransform rect)
     {
+        float rectX = rect.anchoredPosition.x;
         float duration = 0.3f; // Duration of the scroll animation
         float elapsedTime = 0f;
-        float startNormalizedPosition = scrollRect.horizontalNormalizedPosition;
 
+        RectTransform content = scrollRect.content;
         float contentWidth = scrollRect.content.rect.width; // Total width of content
-        float viewportWidth = scrollRect.viewport.rect.width; // Visible width of viewport
-
-        
-        // Calculate normalized position
-        float targetNormalizedPosition = Mathf.Clamp01(
-            (targetLocalX - (viewportWidth / 2)) / (contentWidth - viewportWidth)
-        );
+        float contentOffset = scrollRect.content.anchoredPosition.x; // Offset of content
+        float targetX = contentWidth/2 - rectX;
+    
 
         while (elapsedTime < duration)
         {
+            // Calculate normalized position
+
             elapsedTime += Time.unscaledDeltaTime;
-            float newPosition = Mathf.Lerp(startNormalizedPosition, targetNormalizedPosition, elapsedTime / duration);
-            scrollRect.horizontalNormalizedPosition = newPosition;
+            targetX = scrollRect.content.rect.width/2 - rectX;
+            float newPosition = Mathf.Lerp(contentOffset, targetX, elapsedTime / duration);
+            content.localPosition = new Vector2(newPosition, content.anchoredPosition.y);
             yield return null;
         }
 
-        scrollRect.horizontalNormalizedPosition = targetNormalizedPosition;
+        content.localPosition = new Vector2(targetX, content.anchoredPosition.y);
     }
 }

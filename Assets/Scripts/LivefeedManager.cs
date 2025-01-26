@@ -6,7 +6,7 @@ public class LivefeedManager : MonoBehaviour
 {
     public static LivefeedManager Instance;
     [SerializeField] public List<Livefeed> Livefeeds = new List<Livefeed>();
-    [SerializeField] public LivefeedScroller LivefeedRenderer;
+    [SerializeField] public LivefeedScroller LivefeedScroller;
     
     void Awake()
     {

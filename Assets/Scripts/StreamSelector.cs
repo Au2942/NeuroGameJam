@@ -95,7 +95,7 @@ public class StreamSelector : MonoBehaviour
         GameManager.Instance.EndStream();
         previousStream = stream;
         GameManager.Instance.StartNewStream(stream);
-        LivefeedManager.Instance.LivefeedRenderer.RenderLivefeeds(); 
+        LivefeedManager.Instance.LivefeedScroller.RenderLivefeeds(); 
         isCardSet = false;
         CloseUI();
     }
