@@ -8,7 +8,7 @@ public class PlayerSubscriptionsHandler : MonoBehaviour
     [SerializeField] public float massSubAmount = 0.01f; 
     [SerializeField] public float massSubAmountNoise = 0.1f; //10%
     [SerializeField] public float singleSubChance = 0.1f; //10%
-    [SerializeField] public float hypeFactor = 5f; 
+    [SerializeField] public float interestsFactor = 5f; 
     [SerializeField] float minMassSubInterval = 5f;
     [SerializeField] float maxMassSubInterval = 10f;
     [SerializeField] float minSingleSubInterval = 1f;
@@ -75,15 +75,15 @@ public class PlayerSubscriptionsHandler : MonoBehaviour
             }
 
 
-            float hype = PlayerManager.Instance.CurrentHype;
+            float interests = PlayerManager.Instance.CurrentInterests;
             float interval = Random.Range(minSingleSubInterval, maxSingleSubInterval);
-            if(hype > 0)
+            if(interests > 0)
             {
-                interval /= hype * hypeFactor;
+                interval /= interests * interestsFactor;
             }
-            else if(hype < 0)
+            else if(interests < 0)
             {
-                interval *= -hype * hypeFactor;
+                interval *= -interests * interestsFactor;
             }
 
             yield return new WaitForSeconds(interval);
@@ -105,14 +105,14 @@ public class PlayerSubscriptionsHandler : MonoBehaviour
 
             expectedSubs = Mathf.Max(0, expectedSubs);
             StartCoroutine(AddSubscriptionsAfterPopup(expectedSubs));
-            float hype = PlayerManager.Instance.CurrentHype;
+            float interests = PlayerManager.Instance.CurrentInterests;
             float interval = Random.Range(minMassSubInterval, maxMassSubInterval);
-            float modifier = Mathf.Abs(hype * hypeFactor);
-            if(hype > 0)
+            float modifier = Mathf.Abs(interests * interestsFactor);
+            if(interests > 0)
             {
                 interval /= 1+modifier;
             }
-            else if(hype < 0)
+            else if(interests < 0)
             {
                 interval *= 1+modifier;
             }

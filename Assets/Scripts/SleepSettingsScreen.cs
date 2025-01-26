@@ -148,9 +148,9 @@ public class SleepSettingsScreen : MonoBehaviour
     {
         if(addedWorkers.Contains(selectedWorker))
         {
-            WorkerManager.Instance.RemoveWorker(selectedWorker);
             addedWorkers.Remove(selectedWorker);
             trainedWorkers.Remove(selectedWorker);
+            WorkerManager.Instance.RemoveWorker(selectedWorker);
         }
     }
 

@@ -7,13 +7,13 @@ public class StreamSO : ScriptableObject
     public StreamEntity stream;
     public MemoryEntity memory;
 
-    public float hypePotential = 0.2f;
+    public float interestsPotential = 0.2f;
 
-    public float hypePeakDuration = 10f;
+    public float interestsPeakDuration = 10f;
 
-    public float impactHype = 0f;
-    public float hypeGain = 0.1f;
-    public float hypeDrop = 0.1f;
+    public float impactInterests = 0f;
+    public float interestsGain = 0.1f;
+    public float interestsDrop = 0.1f;
     public float viewsBonus = 0f;
     public float subsBonus = 0f;
     

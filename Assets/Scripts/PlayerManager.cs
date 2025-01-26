@@ -20,16 +20,16 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] public int CurrentViewers = 0; //ccv 
     [SerializeField] public int PeakViewers = 0;
     [SerializeField] public int Subscriptions = 0;
-    [SerializeField] public float CurrentHype = 0.5f;
-    [SerializeField] public float TargetHype = -999;
-    [SerializeField] public float MaxHype = 2f;
-    [SerializeField] public float MinHype = -2f;
-    [SerializeField] public float HypeDropBelowZero = 0.1f;
-    [SerializeField] public float HypeUpdateInterval = 5f; 
+    [SerializeField] public float CurrentInterests = 0.5f;
+    [SerializeField] public float TargetInterests = -999;
+    [SerializeField] public float MaxInterests = 2f;
+    [SerializeField] public float MinInterests = -2f;
+    [SerializeField] public float InterestsDropBelowZero = 0.1f;
+    [SerializeField] public float InterestsUpdateInterval = 5f; 
 
     [SerializeField] public PlayerState state = PlayerState.normal;
     [SerializeField] public CustomCursor repairCursor;
-    //public event System.Action<float> OnHypeChanged;
+    //public event System.Action<float> OnInterestsChanged;
     private StreamSO currentStream => GameManager.Instance.CurrentStream;
     private StreamEntity currentStreamEntity => GameManager.Instance.ChannelData.GetStreamEntity();
     public float CurrentStreamTimer {get; set;} = 0f;
@@ -59,7 +59,7 @@ public class PlayerManager : MonoBehaviour
     void Start()
     {
 
-        StartCoroutine(UpdateHype());
+        StartCoroutine(UpdateInterests());
         StartCoroutine(ViewersHandler.SimulateViewers());
         StartCoroutine(ViewersHandler.SimulateViewersMovement());
         StartCoroutine(ViewersHandler.SimulateViewersNoise());
@@ -118,7 +118,7 @@ public class PlayerManager : MonoBehaviour
     public void Sleep(float sleepTime)
     {
         if(currentStreamEntity != null) currentStreamEntity.EnterSleepState();
-        CurrentHype = -0.9f; // expected viewers -> 10% of baseline viewers
+        CurrentInterests = -0.9f; // expected viewers -> 10% of baseline viewers
         SetState(PlayerState.sleep);
         GameManager.Instance.ChannelData.SetChannelName(0,"Snooze Stream");
         GameManager.Instance.StopStream();
@@ -137,7 +137,7 @@ public class PlayerManager : MonoBehaviour
         TimescaleManager.Instance.ResetTimescale();
         StreamSelector.Instance.OpenUI(true);
         SetState(PlayerState.normal);
-        CurrentHype = 0; // reset hype
+        CurrentInterests = 0; // reset interests
         if(currentStreamEntity != null) currentStreamEntity.ExitSleepState();
     }
 
@@ -233,7 +233,7 @@ public class PlayerManager : MonoBehaviour
         
     }
 
-    public IEnumerator UpdateHype()
+    public IEnumerator UpdateInterests()
     {
         while (true)
         {
@@ -242,32 +242,32 @@ public class PlayerManager : MonoBehaviour
                 yield return null;
             }
 
-            if (TargetHype != -999)
+            if (TargetInterests != -999)
             {
-                CurrentHype += currentStream.hypeGain;
+                CurrentInterests += currentStream.interestsGain;
 
-                if (CurrentHype >= TargetHype)
+                if (CurrentInterests >= TargetInterests)
                 {
-                    CurrentHype = TargetHype;
-                    yield return new WaitForSeconds(currentStream.hypePeakDuration);
-                    TargetHype = -999;
+                    CurrentInterests = TargetInterests;
+                    yield return new WaitForSeconds(currentStream.interestsPeakDuration);
+                    TargetInterests = -999;
                 }
             }
             else
             {
-                if (CurrentHype > 0)
+                if (CurrentInterests > 0)
                 {
-                    CurrentHype = Mathf.Max(CurrentHype - currentStream.hypeDrop, 0);
+                    CurrentInterests = Mathf.Max(CurrentInterests - currentStream.interestsDrop, 0);
                 }
                 else
                 {
-                    CurrentHype -= HypeDropBelowZero;
+                    CurrentInterests -= InterestsDropBelowZero;
                 }
             }
 
-            CurrentHype = Mathf.Clamp(CurrentHype, MinHype, MaxHype);
+            CurrentInterests = Mathf.Clamp(CurrentInterests, MinInterests, MaxInterests);
 
-            yield return new WaitForSeconds(HypeUpdateInterval);
+            yield return new WaitForSeconds(InterestsUpdateInterval);
         }
     }
 

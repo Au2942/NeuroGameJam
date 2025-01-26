@@ -43,15 +43,11 @@ public class WorkerManager : MonoBehaviour
 
     public Worker AddWorker(Worker newWorkerPrefab)
     {
+        if(newWorkerPrefab == null) return null;
+
         Worker newWorker = Instantiate(newWorkerPrefab, WorkerLayout);
-        if(newWorker == null)
-        {
-            Destroy(newWorker);
-            return null;
-        }
         RepairWorkers.Add(newWorker);
         newWorker.OnSelected += SelectRepairWorker;
-        
         newWorker.Select();
 
         return newWorker;
@@ -67,10 +63,13 @@ public class WorkerManager : MonoBehaviour
         int index = RepairWorkers.IndexOf(worker);
         RepairWorkers.Remove(worker);
         worker.OnSelected -= SelectRepairWorker;
-
-        (RepairWorkers.Count > 0 ? RepairWorkers[Mathf.Clamp(index, 0, RepairWorkers.Count - 1)] : null).Select();
-
         Destroy(worker.gameObject);
+        Worker nextWorker = RepairWorkers.Count > 0 ? RepairWorkers[Mathf.Clamp(index, 0, RepairWorkers.Count - 1)] : null;
+        if(nextWorker != null)
+        {
+            nextWorker.Select();
+        }
+
     }
 
     public void SelectRepairWorker(Worker repairWorker)

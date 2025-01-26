@@ -102,8 +102,8 @@ public class GameManager : MonoBehaviour
     }
     private void SetPlayerStream(StreamSO stream)
     {
-        PlayerManager.Instance.TargetHype = PlayerManager.Instance.CurrentHype + stream.hypePotential;
-        PlayerManager.Instance.CurrentHype += stream.impactHype;
+        PlayerManager.Instance.TargetInterests = PlayerManager.Instance.CurrentInterests + stream.interestsPotential;
+        PlayerManager.Instance.CurrentInterests += stream.impactInterests;
         PlayerManager.Instance.CurrentStreamTimer = 0;
     }
     public void ContinueStream()
