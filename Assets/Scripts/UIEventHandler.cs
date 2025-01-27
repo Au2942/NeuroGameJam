@@ -3,7 +3,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class UIEventHandler : MonoBehaviour, IPointerDownHandler, IPointerUpHandler,
-    IPointerEnterHandler, IPointerExitHandler, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerClickHandler
+    IPointerEnterHandler, IPointerExitHandler, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerClickHandler, 
+    IScrollHandler
 {
     public event Action<PointerEventData> OnPointerDownEvent;
     public event Action<PointerEventData> OnRightClickEvent;
@@ -16,6 +17,7 @@ public class UIEventHandler : MonoBehaviour, IPointerDownHandler, IPointerUpHand
     public event Action<PointerEventData> OnBeginDragEvent;
     public event Action<PointerEventData> OnDragEvent;
     public event Action<PointerEventData> OnEndDragEvent;
+    public event Action<PointerEventData> OnScrollEvent;
 
 
     public void OnPointerDown(PointerEventData eventData)
@@ -68,5 +70,8 @@ public class UIEventHandler : MonoBehaviour, IPointerDownHandler, IPointerUpHand
         OnEndDragEvent?.Invoke(eventData);
     }
 
-
+    public void OnScroll(PointerEventData eventData)
+    {
+        OnScrollEvent?.Invoke(eventData);
+    }
 }

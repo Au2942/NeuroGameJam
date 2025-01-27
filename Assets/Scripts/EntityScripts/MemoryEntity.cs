@@ -4,14 +4,42 @@ public abstract class MemoryEntity : Entity
 {
 
     [SerializeField] protected float timeToShutup = 5f;
+    [SerializeField] public bool IsBeingRepaired = false;
+    [SerializeField] public bool InFocus = false;
     [SerializeField] GlitchOverlay glitchEffect;
     protected float shutupTimer = 0f;
+
+    protected virtual void SubmitInteract()
+    {
+        if(PlayerManager.Instance.state == PlayerManager.PlayerState.repair)
+        {
+            return;
+        }
+        if(!Interactable) 
+        {
+            return;
+        }
+    }
 
     protected override void Update()
     {
         if(PlayerManager.Instance.state == PlayerManager.PlayerState.sleep) return;
         if(IsBeingRepaired) return;
         base.Update();
+        if(InFocus)
+        {
+            InFocusBehavior();
+        }
+        else
+        {
+            OutOfFocusBehavior();
+        }
+    }
+
+    public virtual void SetInFocus(bool focus)
+    {
+        InFocus = focus;
+        dialogueManager.PlaySound = focus;
     }
 
     protected override void ClickInteract(GameObject clickedObject)
@@ -34,7 +62,7 @@ public abstract class MemoryEntity : Entity
 
     public virtual void OnRepairSuccess(Worker worker)
     {
-        AddIntegrity(worker.RepairAmount);
+        AddHealth(worker.RepairAmount);
         RollChanceToRecall();
     }
 
@@ -45,7 +73,7 @@ public abstract class MemoryEntity : Entity
 
     public virtual void RollChanceToRecall()
     {
-        if(Random.Range(0, 100) < IntegrityPercentage())
+        if(Random.Range(0, 100) < HealthPercentage())
         {
             Recall();
         }
@@ -56,12 +84,12 @@ public abstract class MemoryEntity : Entity
 
     }
 
-    protected override void OnIntegrityChanged()
+    protected override void OnHealthChanged()
     {
-        base.OnIntegrityChanged();
+        base.OnHealthChanged();
         if(glitchEffect != null)
         {
-            if(IntegrityPercentage() <= glitchRollThreshold)
+            if(HealthPercentage() <= glitchRollThreshold)
             {
                 glitchEffect.Show();
                 float t = 1 - (Health / MaxHealth);
@@ -72,15 +100,17 @@ public abstract class MemoryEntity : Entity
         }
     }
 
-    protected override void InFocusBehavior()
+    protected virtual void InFocusBehavior()
     {
-        base.InFocusBehavior();
+        if(InputManager.Instance.Submit.triggered)
+        {
+            SubmitInteract();
+        }
         RollChanceToTalk();
     }
 
-    protected override void OutOfFocusBehavior()
+    protected virtual void OutOfFocusBehavior()
     {
-        base.OutOfFocusBehavior();
         if (dialogueManager.IsDialoguePlaying)
         {
             if (shutupTimer >= timeToShutup)
@@ -92,10 +122,7 @@ public abstract class MemoryEntity : Entity
         }
     }
 
-    protected override void SubmitInteract()
-    {
-        base.SubmitInteract();
-    }
+
 
     protected override void OnEndStream()
     {

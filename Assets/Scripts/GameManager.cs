@@ -8,16 +8,13 @@ using System.Collections;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-    [SerializeField] private TextMeshProUGUI channelText;
-    [SerializeField] public ChannelData ChannelData;
+    //[SerializeField] public MemoryData MemoryData;
     [SerializeField] private StreamSO defaultStream;
-    [SerializeField] private LivefeedScroller LivefeedRenderer;
     [SerializeField] public ScreenEffectController ScreenEffectController;
-    public int ChannelCount => ChannelData.GetChannelCount();
-    public int CurrentChannelIndex => ChannelNavigationManager.Instance.CurrentChannelIndex;
-    public List<Entity> Entities => ChannelData.GetChannelEntities();
+    public int MemoryCount => MemoryManager.Instance.MemoryData.GetMemoryCount();
+    public int CurrentMemoryIndex => MemoryManager.Instance.CurrentMemoryIndex;
+    public List<MemoryEntity> MemoryEntities => MemoryManager.Instance.MemoryData.GetMemoryEntities();
 
-    public StreamSO CurrentStream { get; private set; }
     public bool isPause { get; set; } = false;
 
 
@@ -38,9 +35,7 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
-        ChannelNavigationManager.Instance.OnChangeChannelIndex += SetChannelIndex;
         StartNewStream(defaultStream);
-        SetChannelIndex(0);
     }
 
 
@@ -61,74 +56,42 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        ChannelNavigationManager.Instance.CheckNavigationInput();
+        MemoryManager.Instance.UpdateMemoryManager();
 
-    }
-
-    private void SetChannelIndex(int index)
-    {
-        for(int i = 0; i < ChannelCount; i++)
-        {
-            ChannelInfo channelInfo = ChannelData.GetChannelInfo(i);
-            Entity entity = channelInfo.entity;
-            if (i == index)
-            {
-                entity.SetInFocus(true);
-                channelText.text = channelInfo.name;
-                if(entity.Glitched)
-                {
-                    ScreenEffectController.Show();
-                }
-                else
-                {
-                    ScreenEffectController.Hide();
-                }
-            }
-            else
-            {
-                entity.SetInFocus(false);
-            }
-        }
     }
 
 
     public void StartNewStream(StreamSO newStream)
     {
-        CurrentStream = newStream;
-        GameObject stream = ChannelNavigationManager.Instance.SetUpStream(CurrentStream);
-        SetPlayerStream(CurrentStream);
-        ChannelNavigationManager.Instance.SetChannelIndex(ChannelCount-1);
+        PlayerManager.Instance.SetUpStream(newStream);
+        MemoryManager.Instance.SetCurrentMemoryIndex(MemoryCount-1);
         OnStartStream?.Invoke();
     }
-    private void SetPlayerStream(StreamSO stream)
-    {
-        PlayerManager.Instance.TargetInterests = PlayerManager.Instance.CurrentInterests + stream.interestsPotential;
-        PlayerManager.Instance.CurrentInterests += stream.impactInterests;
-        PlayerManager.Instance.CurrentStreamTimer = 0;
-    }
+
     public void ContinueStream()
     {
-        ChannelData.GetChannelEntity(CurrentChannelIndex).SetInFocus(true);
+        MemoryEntity memoryEntity = MemoryManager.Instance.MemoryData.GetMemoryEntity(CurrentMemoryIndex);
+        if(memoryEntity != null)
+        {
+            memoryEntity.SetInFocus(true);
+        }
     }
 
     public void StopStream()
     {
-        List<Entity> Entities = ChannelData.GetChannelEntities();   
-        Entities.ForEach(entity => entity.SetInFocus(false));
-        Entities.ForEach(entity => entity.ShutUp());
+        foreach(MemoryEntity entity in MemoryEntities)
+        {
+            entity.SetInFocus(false);
+            entity.ShutUp();
+        }
     }
 
     public void EndStream()
     {
         StopStream();
-        GameObject memory = ChannelNavigationManager.Instance.AddStreamMemoryToChannel(CurrentStream);
-        ChannelData.ReplaceChannel(ChannelCount-1, CurrentStream.streamName, memory.GetComponent<MemoryEntity>());
+        MemoryManager.Instance.AddMemoryFromStream(PlayerManager.Instance.CurrentStream);
         OnEndStream?.Invoke();
     }
 
-    public Entity GetCurrentEntity()
-    {
-        return ChannelData.GetChannelEntity(CurrentChannelIndex);
-    }
 
 }

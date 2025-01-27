@@ -7,9 +7,9 @@ public class PlayerStatsUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI viewersText;
     [SerializeField] private TextMeshProUGUI subscribersText;
+    [SerializeField] private TextMeshProUGUI streamNameText;
     [SerializeField] private TextMeshProUGUI remainingStreamTime;
     [SerializeField] private TextMeshProUGUI elapsedStreamTime;
-    [SerializeField] private HealthIndicator integrityIndicator;
     [SerializeField] private float syncRemainingStreamTimeInterval = 10f;
     [SerializeField] private int popupNumberMax = 20;
     [SerializeField] private float popupNumberDuration = 2f;
@@ -20,7 +20,7 @@ public class PlayerStatsUI : MonoBehaviour
 
     void Start()
     {
-        ChannelNavigationManager.Instance.OnChangeChannelIndex += (t) => UpdateIntegrityBarEntity();
+        PlayerManager.Instance.OnChangeStreamName += (t) => UpdateStreamNameText(t);
         DisplayRemainingStreamTime = PlayerManager.Instance.RemainingStreamTime;
         StartCoroutine(PeriodicValueSync());
     }
@@ -41,6 +41,10 @@ public class PlayerStatsUI : MonoBehaviour
 
     }
 
+    private void UpdateStreamNameText(string streamName)
+    {
+        streamNameText.text = streamName;
+    }
    
     private IEnumerator PeriodicValueSync()
     {
@@ -63,10 +67,6 @@ public class PlayerStatsUI : MonoBehaviour
         int minutes = Mathf.FloorToInt((timeInSeconds - hours * 3600) / 60F);
         int seconds = Mathf.FloorToInt(timeInSeconds - hours * 3600 - minutes * 60);
         return hours.ToString("00") + ":" + minutes.ToString("00") + ":" + seconds.ToString("00"); 
-    }
-    private void UpdateIntegrityBarEntity()
-    {
-        integrityIndicator.SetEntityIndex(GameManager.Instance.CurrentChannelIndex);
     }
 
     public IEnumerator SpawnSubPopupNumber(int times)

@@ -44,7 +44,7 @@ public class StreamSelector : MonoBehaviour
         GameManager.Instance.isPause = true;
         GameManager.Instance.StopStream();
         TimescaleManager.Instance.SetTimescale(0);
-        streamNo.text = "Stream #" + GameManager.Instance.ChannelCount;
+        streamNo.text = "Stream #" + GameManager.Instance.MemoryCount;
         isOpen = true;
         forcedSelect = force;
         streamSelectionLayout.SetActive(true);
@@ -95,7 +95,6 @@ public class StreamSelector : MonoBehaviour
         GameManager.Instance.EndStream();
         previousStream = stream;
         GameManager.Instance.StartNewStream(stream);
-        LivefeedManager.Instance.LivefeedScroller.RenderLivefeeds(); 
         isCardSet = false;
         CloseUI();
     }

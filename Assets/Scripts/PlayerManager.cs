@@ -8,7 +8,10 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] public PlayerViewersHandler ViewersHandler;  
     [SerializeField] public PlayerSubscriptionsHandler SubscriptionsHandler;
     [SerializeField] public PlayerStatsUI StatUI;
-
+    [SerializeField] public RectTransform StreamRect;
+    [SerializeField] public StreamEntity StreamEntity;
+    [SerializeField] public string StreamName;
+    [SerializeField] public StreamSO CurrentStream;
     [SerializeField] public float Health = 100; //integrity of self
     [SerializeField] public float MaxHealth = 100;
     [SerializeField] public float Performance = 0.1f; //average of all memory entities integrity
@@ -30,11 +33,12 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] public PlayerState state = PlayerState.normal;
     [SerializeField] public CustomCursor repairCursor;
     //public event System.Action<float> OnInterestsChanged;
-    private StreamSO currentStream => GameManager.Instance.CurrentStream;
-    private StreamEntity currentStreamEntity => GameManager.Instance.ChannelData.GetStreamEntity();
     public float CurrentStreamTimer {get; set;} = 0f;
 
     public event System.Action<float> OnTakeDamage;
+    public event System.Action<StreamEntity> OnNewStream;
+
+    public event System.Action<string> OnChangeStreamName;
 
 
     public enum PlayerState
@@ -68,6 +72,39 @@ public class PlayerManager : MonoBehaviour
         
     }
 
+    public GameObject SetUpStream(StreamSO newStream)
+    {
+        if(StreamRect.transform.childCount > 1)
+        {
+            Destroy(StreamRect.transform.GetChild(0).gameObject);
+        }
+
+        StreamEntity stream = Instantiate(newStream.stream, StreamRect);
+        SetStreamName("Subathon " + newStream.streamName + " stream");
+        //GameManager.Instance.MemoryData.AddMemory("Subathon " + newStream.streamName + " stream", stream);
+
+        
+        SetPlayerStream(newStream);
+
+        OnNewStream?.Invoke(stream);
+        
+        return stream.gameObject;
+    }
+
+    private void SetPlayerStream(StreamSO stream)
+    {
+        TargetInterests = CurrentInterests + stream.interestsPotential;
+        CurrentInterests += stream.impactInterests;
+        CurrentStreamTimer = 0;
+        CurrentStream = stream;
+    }
+
+    public void SetStreamName(string name)
+    {
+        StreamName = name;
+        OnChangeStreamName?.Invoke(name);
+    }
+
     public void ProgressStream()
     {
         CurrentStreamTimer += Time.deltaTime;
@@ -78,13 +115,13 @@ public class PlayerManager : MonoBehaviour
 
     public bool TryReset()
     {
-        if(!currentStreamEntity.Glitched)
+        if(!StreamEntity.Glitched)
         {
             return false;
         }
-        if(currentStreamEntity.Body != null)
+        if(StreamEntity.Body != null)
         {
-            currentStreamEntity.Body.SetActive(false);
+            StreamEntity.Body.SetActive(false);
         }
         StartCoroutine(Resetting());
         return true;
@@ -98,11 +135,11 @@ public class PlayerManager : MonoBehaviour
 
     public void FinishResetting()
     {
-        if(currentStreamEntity.Body != null)
+        if(StreamEntity.Body != null)
         {
-            currentStreamEntity.Body.SetActive(true);
+            StreamEntity.Body.SetActive(true);
         }
-        currentStreamEntity.ExitGlitchState();
+        StreamEntity.ExitGlitchState();
     }
 
     public bool TryOpenSleepSettingsScreen()
@@ -117,10 +154,10 @@ public class PlayerManager : MonoBehaviour
 
     public void Sleep(float sleepTime)
     {
-        if(currentStreamEntity != null) currentStreamEntity.EnterSleepState();
+        if(StreamEntity != null) StreamEntity.EnterSleepState();
         CurrentInterests = -0.9f; // expected viewers -> 10% of baseline viewers
         SetState(PlayerState.sleep);
-        GameManager.Instance.ChannelData.SetChannelName(0,"Snooze Stream");
+        SetStreamName("Snooze Stream");
         GameManager.Instance.StopStream();
         TimescaleManager.Instance.SetTimescale(50);
         StartCoroutine(Sleeping(sleepTime));
@@ -138,7 +175,7 @@ public class PlayerManager : MonoBehaviour
         StreamSelector.Instance.OpenUI(true);
         SetState(PlayerState.normal);
         CurrentInterests = 0; // reset interests
-        if(currentStreamEntity != null) currentStreamEntity.ExitSleepState();
+        if(StreamEntity != null) StreamEntity.ExitSleepState();
     }
 
     public bool TryOpenStreamSelector()
@@ -244,12 +281,12 @@ public class PlayerManager : MonoBehaviour
 
             if (TargetInterests != -999)
             {
-                CurrentInterests += currentStream.interestsGain;
+                CurrentInterests += CurrentStream.interestsGain;
 
                 if (CurrentInterests >= TargetInterests)
                 {
                     CurrentInterests = TargetInterests;
-                    yield return new WaitForSeconds(currentStream.interestsPeakDuration);
+                    yield return new WaitForSeconds(CurrentStream.interestsPeakDuration);
                     TargetInterests = -999;
                 }
             }
@@ -257,7 +294,7 @@ public class PlayerManager : MonoBehaviour
             {
                 if (CurrentInterests > 0)
                 {
-                    CurrentInterests = Mathf.Max(CurrentInterests - currentStream.interestsDrop, 0);
+                    CurrentInterests = Mathf.Max(CurrentInterests - CurrentStream.interestsDrop, 0);
                 }
                 else
                 {

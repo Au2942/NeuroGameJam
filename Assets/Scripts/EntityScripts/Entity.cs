@@ -11,12 +11,7 @@ public abstract class Entity : MonoBehaviour
     [SerializeField] protected List<DialogueSet> dialogueSets;
     [SerializeField] public float Health = 100;
     [SerializeField] public float MaxHealth = 100;
-    // [SerializeField] public float decayInterval = 3f;
-    // [SerializeField] public float InFocusDecayMultiplier = 0.5f;
-    // [SerializeField] public bool IntegrityDecay = true;
-    [SerializeField] public bool InFocus = false;
     [SerializeField] public bool Interactable = true;
-    [SerializeField] public bool IsBeingRepaired = false;
     [SerializeField] protected bool talkInOrder = true;
     [SerializeField] protected bool talkRepeatable = true;
     [SerializeField] protected float talkRollInterval = 2f;
@@ -75,30 +70,11 @@ public abstract class Entity : MonoBehaviour
     {
 
     }
-    protected virtual void SubmitInteract()
-    {
-        if(PlayerManager.Instance.state == PlayerManager.PlayerState.repair)
-        {
-            return;
-        }
-        if(!Interactable) 
-        {
-            return;
-        }
-    }
+
 
     protected virtual void Update()
     {
         if(GameManager.Instance.isPause) return;
-
-        if(InFocus)
-        {
-            InFocusBehavior();
-        }
-        else
-        {
-            OutOfFocusBehavior();
-        }
 
         if(Glitched)
         {
@@ -108,9 +84,6 @@ public abstract class Entity : MonoBehaviour
         {
             NormalBehavior();
         }
-        
-        //Decay();
-
     }
 
     public virtual void SetAnimationState(AnimationState state, bool force = false)
@@ -133,26 +106,8 @@ public abstract class Entity : MonoBehaviour
                 break;
         }
     }
-    protected virtual void InFocusBehavior()
-    {
-        if(InputManager.Instance.Submit.triggered)
-        {
-            SubmitInteract();
-        }
-    }
 
-    protected virtual void OutOfFocusBehavior()
-    {
-
-    }
-
-    public void SetInFocus(bool focus)
-    {
-        InFocus = focus;
-        dialogueManager.PlaySound = focus;
-    }
-
-    public void AddIntegrity(float amount)
+    public void AddHealth(float amount)
     {
         Health += amount;
         if (Health > MaxHealth)
@@ -163,20 +118,14 @@ public abstract class Entity : MonoBehaviour
         {
             Health = 0;
         }
-        OnIntegrityChanged();
+        OnHealthChanged();
     }
 
-    protected virtual void OnIntegrityChanged()
+    protected virtual void OnHealthChanged()
     {
         RollChanceToGlitch();
     }
 
-    // protected virtual void Decay()
-    // {
-    //     if(!IntegrityDecay || decayInterval <= 0) return;
-    //     float decayMultiplier = InFocus ? InFocusDecayMultiplier : 1f;
-    //     AddIntegrity(-1/decayInterval * Time.deltaTime * decayMultiplier);   
-    // }
 
     protected virtual void PlayDefaultAnimation()
     {
@@ -294,16 +243,16 @@ public abstract class Entity : MonoBehaviour
     public virtual void RollChanceToGlitch()
     {
         if(glitchCDTimer < Time.time) return;
-        if (IntegrityPercentage() < glitchRollThreshold)
+        if (HealthPercentage() < glitchRollThreshold)
         {
-            if (Random.Range(0f, 1f) >= IntegrityPercentage())
+            if (Random.Range(0f, 1f) >= HealthPercentage())
             {
                 EnterGlitchState();
             }
         }
     }
 
-    public float IntegrityPercentage()
+    public float HealthPercentage()
     {
         return Health / MaxHealth;
     }

@@ -318,7 +318,7 @@ RectTransform:
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 896, y: 504}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &9023345207242059758
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -400,15 +400,12 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 0e1597600f6d1da43aec464204db6eaa, type: 2}
   Health: 100
   MaxHealth: 100
-  InFocus: 0
   Interactable: 1
-  IsBeingRepaired: 0
   talkInOrder: 1
   talkRepeatable: 1
   talkRollInterval: 2
   talkChance: 0.8
-  minGlitchRoll: 0.3
-  maxGlitchRoll: 0.7
+  glitchRollThreshold: 0.7
   glitchCD: 30
   defaultAnimatorClips:
   - animator: {fileID: 4094313050784987403}

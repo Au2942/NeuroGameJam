@@ -6,7 +6,7 @@ public class HealthIndicator : MonoBehaviour
 {
     [SerializeField] public Image healthBar;
     [SerializeField] public Color[] colorStages = {Color.red, Color.yellow, Color.green};
-    [SerializeField] private int entityIndex; 
+    private Entity entity;
     private float targetHealthBarValue;
 
     void Start()
@@ -14,9 +14,9 @@ public class HealthIndicator : MonoBehaviour
         StartCoroutine(UpdateHealthBar());
     }
 
-    public void SetEntityIndex(int index)
+    public void SetEntity(Entity newEntity)
     {
-        entityIndex = index;
+        entity = newEntity;
     }
 
     private IEnumerator UpdateHealthBar()
@@ -27,8 +27,6 @@ public class HealthIndicator : MonoBehaviour
             {
                 yield break;
             }
-            Entity entity = GameManager.Instance.ChannelData.GetChannelEntity(entityIndex);
-
             if(entity != null)
             {
                 float health = entity.Health;

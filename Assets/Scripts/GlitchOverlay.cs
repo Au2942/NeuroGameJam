@@ -178,7 +178,7 @@ public class GlitchOverlay : MonoBehaviour
 
     void OnDestroy()
     {
-        //ChannelNavigationManager.Instance.OnUpdateChannelLayout -= UpdateBounds;
+        //MemoryNavigationManager.Instance.OnUpdateMemoryLayout -= UpdateBounds;
         Destroy(material);
     }
 }
