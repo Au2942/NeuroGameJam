@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections;
 
-public class PlayerStatsUI : MonoBehaviour
+public class PlayerDetailsUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI viewersText;
     [SerializeField] private TextMeshProUGUI subscribersText;

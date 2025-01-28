@@ -4,14 +4,14 @@ public abstract class MemoryEntity : Entity
 {
 
     [SerializeField] protected float timeToShutup = 5f;
-    [SerializeField] public bool IsBeingRepaired = false;
+    [SerializeField] public bool IsBeingWorkedOn = false;
     [SerializeField] public bool InFocus = false;
     [SerializeField] GlitchOverlay glitchEffect;
     protected float shutupTimer = 0f;
 
     protected virtual void SubmitInteract()
     {
-        if(PlayerManager.Instance.state == PlayerManager.PlayerState.repair)
+        if(PlayerManager.Instance.state == PlayerManager.PlayerState.command)
         {
             return;
         }
@@ -24,7 +24,7 @@ public abstract class MemoryEntity : Entity
     protected override void Update()
     {
         if(PlayerManager.Instance.state == PlayerManager.PlayerState.sleep) return;
-        if(IsBeingRepaired) return;
+        if(IsBeingWorkedOn) return;
         base.Update();
         if(InFocus)
         {
@@ -45,11 +45,21 @@ public abstract class MemoryEntity : Entity
     protected override void ClickInteract(GameObject clickedObject)
     {
         base.ClickInteract(clickedObject);
-        if(PlayerManager.Instance.state == PlayerManager.PlayerState.repair && !IsBeingRepaired && !Glitched)
+        if(PlayerManager.Instance.state == PlayerManager.PlayerState.command && !IsBeingWorkedOn )
         {
-            if(WorkerManager.Instance.TryUseRepairWorker(this))
+            if(!Glitched)
             {
-                PlayerManager.Instance.SetState(PlayerManager.PlayerState.normal);
+                if(WorkerManager.Instance.TryDoMaintainWork(this))
+                {
+                    PlayerManager.Instance.SetState(PlayerManager.PlayerState.normal);
+                }
+            }
+            else
+            {
+                if(WorkerManager.Instance.TryDoRepairWork(this))
+                {
+                    PlayerManager.Instance.SetState(PlayerManager.PlayerState.normal);
+                }
             }
         }
     }
@@ -60,26 +70,42 @@ public abstract class MemoryEntity : Entity
         
     }
 
-    public virtual void OnRepairSuccess(Worker worker)
+/*     public virtual void OnRepairSuccess(Worker worker)
     {
-        AddHealth(worker.RepairAmount);
+        AddHealth(worker.Stats.RepairAmount);
         RollChanceToRecall();
     }
 
     public virtual void OnRepairFail(Worker worker)
     {
         RollChanceToGlitch();
-    }
+    } */
 
-    public virtual void RollChanceToRecall()
+    public virtual void MaintainSuccess(Worker worker)
+    {
+        RollChanceToRecall(worker);
+    }
+    public virtual void RollChanceToRecall(Worker worker)
     {
         if(Random.Range(0, 100) < HealthPercentage())
         {
-            Recall();
+            Recall(worker);
         }
     }
 
-    public virtual void Recall()
+
+    public virtual void Recall(Worker worker)
+    {
+
+    }
+
+    public virtual void MaintainFail(Worker worker)
+    {
+        OnRepairFailEffect(worker);
+        RollChanceToGlitch();
+    }
+
+    public virtual void OnRepairFailEffect(Worker worker)
     {
 
     }

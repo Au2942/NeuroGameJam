@@ -7,7 +7,7 @@ public class PlayerManager : MonoBehaviour
     public static PlayerManager Instance;
     [SerializeField] public PlayerViewersHandler ViewersHandler;  
     [SerializeField] public PlayerSubscriptionsHandler SubscriptionsHandler;
-    [SerializeField] public PlayerStatsUI StatUI;
+    [SerializeField] public PlayerDetailsUI StatUI;
     [SerializeField] public RectTransform StreamRect;
     [SerializeField] public StreamEntity StreamEntity;
     [SerializeField] public string StreamName;
@@ -44,7 +44,7 @@ public class PlayerManager : MonoBehaviour
     public enum PlayerState
     {
         normal,
-        repair,
+        command,
         sleep
     }
     public float ElapsedStreamTime {get; set;} = 0f;
@@ -191,15 +191,15 @@ public class PlayerManager : MonoBehaviour
 
     public void CheckPlayerInput()
     {
-        if(WorkerManager.Instance.selectedRepairWorker != null)
+        if(WorkerManager.Instance.selectedWorker != null)
         {
             if(InputManager.Instance.Cancel.triggered || InputManager.Instance.RightClick.triggered)
             {
-                if(state == PlayerState.repair)
+                if(state == PlayerState.command)
                 {
                     SetState(PlayerState.normal);
                 }
-                WorkerManager.Instance.DeselectRepairWorker();
+                WorkerManager.Instance.DeselectWorker();
             }
         }
 
@@ -212,7 +212,7 @@ public class PlayerManager : MonoBehaviour
             return;
         }
         state = newState;
-        if(state == PlayerState.repair)
+        if(state == PlayerState.command)
         {
             CursorManager.Instance.SetCustomCursor(repairCursor);
         }

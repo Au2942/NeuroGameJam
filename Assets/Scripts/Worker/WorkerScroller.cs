@@ -13,7 +13,7 @@ public class WorkerScroller : MonoBehaviour
     }
     public void SetSelectedWorker(int index)
     {
-        SetSelectedWorker(WorkerManager.Instance.RepairWorkers[index]);
+        SetSelectedWorker(WorkerManager.Instance.Workers[index]);
     }
     public void SetSelectedWorker(Worker worker)
     {

@@ -11,6 +11,8 @@ public abstract class Entity : MonoBehaviour
     [SerializeField] protected List<DialogueSet> dialogueSets;
     [SerializeField] public float Health = 100;
     [SerializeField] public float MaxHealth = 100;
+    [SerializeField] public float Stability = 100; //to use when repairing / resetting
+    [SerializeField] public float MaxStability = 100; 
     [SerializeField] public bool Interactable = true;
     [SerializeField] protected bool talkInOrder = true;
     [SerializeField] protected bool talkRepeatable = true;
@@ -121,9 +123,31 @@ public abstract class Entity : MonoBehaviour
         OnHealthChanged();
     }
 
+    public void AddStability(float amount)
+    {
+        Stability += amount;
+        if (Stability > MaxStability)
+        {
+            Stability = MaxStability;
+        }
+        if (Stability < 0)
+        {
+            Stability = 0;
+        }
+        OnStabilityChanged();
+    }
+
     protected virtual void OnHealthChanged()
     {
         RollChanceToGlitch();
+    }
+
+    protected virtual void OnStabilityChanged()
+    {
+        if(Glitched && Stability >= MaxStability)
+        {
+            ExitGlitchState();
+        }
     }
 
 
@@ -225,6 +249,8 @@ public abstract class Entity : MonoBehaviour
     public virtual void EnterGlitchState()
     {
         Glitched = true;
+        Stability = Health;
+        MaxStability = MaxHealth;
         dialogueSetIndex = 1;
         ShutUp();
         SetGlitchAppearance();
