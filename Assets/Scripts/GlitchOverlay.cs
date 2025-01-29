@@ -8,7 +8,7 @@ public class GlitchOverlay : MonoBehaviour
     [SerializeField] private Image glitchEffect;
     [SerializeField] Material glitchMaterial;
     [SerializeField] private float blockSize = 32f;
-    [SerializeField] private float maxBlock = 0.02f;
+    [SerializeField] private float maxBlock = 1f;
     [SerializeField] private float maxDrift = 0.1f;
     [SerializeField] private float maxJitter = 0.1f;
     [SerializeField] private float maxJump = 0.01f;
@@ -44,7 +44,7 @@ public class GlitchOverlay : MonoBehaviour
     {
         material = new Material(glitchMaterial);
         glitchEffect.material = material;
-        UpdateBounds();
+        MemoryManager.Instance.MemoryNavigator.ScrollRect.onValueChanged.AddListener(delegate {UpdateBounds();});
         glitchEffect.gameObject.SetActive(show);
     }
 
@@ -69,6 +69,7 @@ public class GlitchOverlay : MonoBehaviour
     public void Show()
     {
         show = true;
+        UpdateBounds();
         glitchEffect.gameObject.SetActive(show);
     }
 
@@ -78,18 +79,34 @@ public class GlitchOverlay : MonoBehaviour
         glitchEffect.gameObject.SetActive(show);
     }
 
-    public void SetGlitchIntensity(float value)
+    public void SetGlitchIntensity(float percentage)
     {
         if(!manageValue)
         {
             return;
         }
-        block = Mathf.Lerp(0, maxBlock, value);
-        drift = Mathf.Lerp(0, maxDrift, value);
-        jitter = Mathf.Lerp(0, maxJitter, value);
-        jump = Mathf.Lerp(0, maxJump, value);
-        shake = Mathf.Lerp(0, maxShake, value);
-        blockShuffleRate = Mathf.Lerp(0, 60, value);
+        drift = Mathf.Lerp(0, maxDrift, percentage);
+        jitter = Mathf.Lerp(0, maxJitter, percentage);
+        jump = Mathf.Lerp(0, maxJump, percentage);
+        shake = Mathf.Lerp(0, maxShake, percentage);
+    }
+
+    public void SetBlockIntensity(float percentage)
+    {
+        if(!manageValue)
+        {
+            return;
+        }
+        block = Mathf.Lerp(0, maxBlock, percentage);
+    }
+
+    public void SetBlockShuffleRate(float percentage)
+    {
+        if(!manageValue)
+        {
+            return;
+        }
+        blockShuffleRate = Mathf.Lerp(30, 60, percentage);
     }
 
     // public void Flicker(bool show)
@@ -130,7 +147,6 @@ public class GlitchOverlay : MonoBehaviour
         {
             return;
         }
-        UpdateBounds();
         var time = Time.time;
         var delta = time - _prevTime;
         _jumpTime += delta * jump * 11.3f;

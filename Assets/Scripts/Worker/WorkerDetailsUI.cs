@@ -38,10 +38,10 @@ public class WorkerDetailsUI : MonoBehaviour
         if(worker != null)
         {
 
-            int robustness = worker.Attributes.Robustness + worker.AllocAttributes.Robustness + worker.TempAttributes.Robustness;
-            int latency = worker.Attributes.Latency + worker.AllocAttributes.Latency + worker.TempAttributes.Latency;
-            int accuracy = worker.Attributes.Accuracy + worker.AllocAttributes.Accuracy + worker.TempAttributes.Accuracy;
-            int fitness = worker.Attributes.Fitness + worker.AllocAttributes.Fitness + worker.TempAttributes.Fitness;
+            int robustness = worker.BaseAttributes.Robustness + worker.AllocAttributes.Robustness + worker.TempAttributes.Robustness;
+            int latency = worker.BaseAttributes.Latency + worker.AllocAttributes.Latency + worker.TempAttributes.Latency;
+            int accuracy = worker.BaseAttributes.Accuracy + worker.AllocAttributes.Accuracy + worker.TempAttributes.Accuracy;
+            int fitness = worker.BaseAttributes.Fitness + worker.AllocAttributes.Fitness + worker.TempAttributes.Fitness;
 
             if(worker.AllocAttributes.Robustness > 0)
             {

@@ -20,7 +20,7 @@ public class SleepSettingsScreen : MonoBehaviour
     [SerializeField] private Button confirmButton;
     [SerializeField] private TextMeshProUGUI sleepHoursText; 
 
-    private Worker selectedWorker => WorkerManager.Instance.selectedWorker;
+    private Worker selectedWorker => WorkerManager.Instance.SelectedWorker;
     private List<Worker> addedWorkers = new List<Worker>();
     private HashSet<Worker> trainedWorkers = new HashSet<Worker>();
     private WorkerDetailsUI DetailsUI => WorkerManager.Instance.WorkerStatUI;
@@ -170,7 +170,7 @@ public class SleepSettingsScreen : MonoBehaviour
         {
             worker.ApplyAllocAttributes();
         }
-        PlayerManager.Instance.Heal(restoredHealthChunk*healthPerChunk);
+        PlayerManager.Instance.HealHealth(restoredHealthChunk*healthPerChunk);
         CloseUI();
         PlayerManager.Instance.Sleep(Mathf.Max(4,sleepHours) * (3600/DisplayTimeMultiplier)); //this also change timescale so must be last
     }

@@ -318,12 +318,14 @@ MonoBehaviour:
   CurrentStream: {fileID: 0}
   Health: 100
   MaxHealth: 100
+  StabilityRecoverRate: 5
   Performance: 0.1
   MaxPerformance: 2
-  ResetTime: 5
   RemainingStreamTime: 60
   StreamTimeIncrease: 0.25
   NewStreamCD: 60
+  MemoryCorruptionInterval: 5
+  MemoryCorruptionDegree: 10
   CurrentViewers: 0
   PeakViewers: 0
   Subscriptions: 0
@@ -337,6 +339,55 @@ MonoBehaviour:
   repairCursor:
     texture: {fileID: 2800000, guid: 4cc2c6bc10fd8224688570b66875aa52, type: 3}
     hotspot: {x: 16, y: 16}
+--- !u!1 &105050882
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 105050884}
+  - component: {fileID: 105050883}
+  m_Layer: 0
+  m_Name: ScreenEffect
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &105050883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 105050882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: e5735f8590859fe42a041dfd30004bac, type: 2}
+--- !u!4 &105050884
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 105050882}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -251.20459, y: -544.98865, z: -13.400513}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &125203625
 GameObject:
   m_ObjectHideFlags: 0
@@ -911,8 +962,8 @@ GameObject:
   - component: {fileID: 277287456}
   - component: {fileID: 277287457}
   - component: {fileID: 277287459}
-  - component: {fileID: 277287458}
   - component: {fileID: 277287460}
+  - component: {fileID: 277287461}
   m_Layer: 5
   m_Name: MemoryScroll
   m_TagString: Untagged
@@ -970,19 +1021,6 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &277287458
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 277287455}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1aede6b2108d26469b4ca2c4c72852c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MemoryInfos: []
 --- !u!114 &277287459
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -995,15 +1033,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29d6a56876938ac40aad79f6e991d2fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MemoryData: {fileID: 277287458}
-  ScrollRect: {fileID: 277287457}
-  scrollRectEventHandler: {fileID: 277287460}
-  memoryContent: {fileID: 36319370}
-  healthIndicator: {fileID: 918481223}
-  CurrentMemoryIndex: 0
-  memoryWidth: 320
-  distanceBetweenIndex: 320
-  cooldownBetweenNavigation: 0.2
+  MemoryData:
+    MemoryInfos: []
+  MemoryNavigator: {fileID: 277287461}
 --- !u!114 &277287460
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1016,6 +1048,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a97ff6f1776746d44994a3d39755e472, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &277287461
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277287455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 811fe7fa178d46f458aa773bd62b544f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ScrollRect: {fileID: 277287457}
+  scrollRectEventHandler: {fileID: 277287460}
+  memoryContent: {fileID: 36319370}
+  healthIndicator: {fileID: 918481223}
+  memoryWidth: 320
+  distanceBetweenIndex: 320
+  cooldownBetweenNavigation: 0.2
+  CurrentMemoryIndex: 0
 --- !u!1 &287264333
 GameObject:
   m_ObjectHideFlags: 0
@@ -3367,17 +3419,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
---- !u!114 &892813605 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6816021588467933377, guid: bfb1eb88a84a9c04baf7e416814342b2, type: 3}
-  m_PrefabInstance: {fileID: 600769307}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a57212d1e9c1c43478e531a1f9aea0a5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &904740195
 GameObject:
   m_ObjectHideFlags: 0
@@ -4605,6 +4646,7 @@ GameObject:
   - component: {fileID: 1150544710}
   - component: {fileID: 1150544712}
   - component: {fileID: 1150544711}
+  - component: {fileID: 1150544713}
   m_Layer: 5
   m_Name: NeuroSAMA
   m_TagString: Untagged
@@ -4669,6 +4711,29 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1150544709}
   m_CullTransparentMesh: 1
+--- !u!223 &1150544713
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1150544709}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 0
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: -1906020497
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
 --- !u!1 &1150894933
 GameObject:
   m_ObjectHideFlags: 0
@@ -5088,7 +5153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47aff1ee05254684699ee2e2812a399f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  workerDetailsUI: {fileID: 0}
+  workerDetailsUI: {fileID: 2020324475}
   SideButtonsUI: {fileID: 1582309616}
   ResetButton: {fileID: 581664546}
   DeleteButton: {fileID: 1150894935}
@@ -5122,15 +5187,10 @@ MonoBehaviour:
   WorkerStatUI: {fileID: 1356682141}
   WorkerScroller: {fileID: 1356682143}
   WorkerLayout: {fileID: 1389714919}
-  RepairWorkers:
-  - {fileID: 892813605}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  Workers: []
   MaxLevel: 5
-  RepairWorkerPrefab: {fileID: 6816021588467933377, guid: bfb1eb88a84a9c04baf7e416814342b2, type: 3}
+  WorkerPrefab: {fileID: 6816021588467933377, guid: bfb1eb88a84a9c04baf7e416814342b2, type: 3}
+  SelectedWorker: {fileID: 0}
 --- !u!114 &1356682143
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7081,6 +7141,7 @@ GameObject:
   - component: {fileID: 1919729826}
   - component: {fileID: 1919729828}
   - component: {fileID: 1919729829}
+  - component: {fileID: 1919729830}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -7217,7 +7278,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76b8dca45798622498a3054216671c2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  screenEffectRendererFeature: {fileID: -8603332377010048691, guid: 424799608f7334c24bf367e4bbfa7f9a, type: 2}
+  volumeComponent: {fileID: 105050883}
   noiseStrength: 1
   noiseAmount: 50
   noiseIntensity: 0.1
@@ -7237,6 +7298,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultTimescale: 1
   displayTimeMultiplier: 60
+--- !u!114 &1919729830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1919729811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe6c8aad3b95349448a0b7e901738555, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  activeCombats: []
 --- !u!1 &1925710896
 GameObject:
   m_ObjectHideFlags: 0
@@ -7753,7 +7827,7 @@ GameObject:
   - component: {fileID: 2020324476}
   - component: {fileID: 2020324478}
   m_Layer: 5
-  m_Name: SWARMInfo
+  m_Name: SWARMDetails
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8792,3 +8866,4 @@ SceneRoots:
   - {fileID: 272481058}
   - {fileID: 759369918}
   - {fileID: 875051855}
+  - {fileID: 105050884}

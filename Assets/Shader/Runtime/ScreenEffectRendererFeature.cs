@@ -48,7 +48,17 @@ public class ScreenEffectRendererFeature : ScriptableRendererFeature
         // FrameData is a context container through which URP resources can be accessed and managed.
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
         {
+            var stack = VolumeManager.instance.stack;
+            var customEffect = stack.GetComponent<ScreenEffectVolumeComponent>();
+
+            if(!customEffect.IsActive())
+            {
+                return;
+            }
+
+            ScreenEffectsSettings volumeSettings = new ScreenEffectsSettings(customEffect.noiseStrength.value, customEffect.noiseAmount.value, customEffect.noiseIntensity.value, customEffect.scanlineStrength.value, customEffect.scanlineAmount.value);
            
+
             var resourceData = frameData.Get<UniversalResourceData>();
 
             if(resourceData.isActiveTargetBackBuffer)
@@ -61,7 +71,7 @@ public class ScreenEffectRendererFeature : ScriptableRendererFeature
             destinationDesc.name = $"CameraColor-{m_PassName}";
             destinationDesc.clearBuffer = false;
 
-            UpdateScreenEffectSettings();
+            UpdateScreenEffectSettings(volumeSettings);
             
             TextureHandle destination = renderGraph.CreateTexture(destinationDesc);
             RenderGraphUtils.BlitMaterialParameters para = new(source, destination, m_BlitMaterial, 0);
@@ -70,15 +80,27 @@ public class ScreenEffectRendererFeature : ScriptableRendererFeature
             resourceData.cameraColor = destination;
         }
 
-        private void UpdateScreenEffectSettings()
+        private void UpdateScreenEffectSettings(ScreenEffectsSettings settings = null)
         {
             if (m_BlitMaterial == null) return;
 
-            m_BlitMaterial.SetFloat(noiseStrengthID, defaultSettings.noiseStrength);
-            m_BlitMaterial.SetFloat(noiseAmountID, defaultSettings.noiseAmount);
-            m_BlitMaterial.SetFloat(noiseIntensityID, defaultSettings.noiseIntensity);
-            m_BlitMaterial.SetFloat(scanlineStrengthID, defaultSettings.scanlineStrength);
-            m_BlitMaterial.SetFloat(scanlineAmountID, defaultSettings.scanlineAmount);
+            if(settings != null)
+            {
+                m_BlitMaterial.SetFloat(noiseStrengthID, settings.noiseStrength);
+                m_BlitMaterial.SetFloat(noiseAmountID, settings.noiseAmount);
+                m_BlitMaterial.SetFloat(noiseIntensityID, settings.noiseIntensity);
+                m_BlitMaterial.SetFloat(scanlineStrengthID, settings.scanlineStrength);
+                m_BlitMaterial.SetFloat(scanlineAmountID, settings.scanlineAmount);
+            }
+            else
+            {
+                m_BlitMaterial.SetFloat(noiseStrengthID, defaultSettings.noiseStrength);
+                m_BlitMaterial.SetFloat(noiseAmountID, defaultSettings.noiseAmount);
+                m_BlitMaterial.SetFloat(noiseIntensityID, defaultSettings.noiseIntensity);
+                m_BlitMaterial.SetFloat(scanlineStrengthID, defaultSettings.scanlineStrength);
+                m_BlitMaterial.SetFloat(scanlineAmountID, defaultSettings.scanlineAmount);
+            }
+
         }
 
     }

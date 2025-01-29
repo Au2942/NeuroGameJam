@@ -11,15 +11,15 @@ public abstract class Entity : MonoBehaviour
     [SerializeField] protected List<DialogueSet> dialogueSets;
     [SerializeField] public float Health = 100;
     [SerializeField] public float MaxHealth = 100;
-    [SerializeField] public float Stability = 100; //to use when repairing / resetting
-    [SerializeField] public float MaxStability = 100; 
+    [SerializeField] public float Corruption = 100; //to use when repairing / resetting
+    [SerializeField] public float MaxCorruption = 100;
+    [SerializeField] public float CorruptionCooldown = 10f; //cooldown after glitching out
     [SerializeField] public bool Interactable = true;
     [SerializeField] protected bool talkInOrder = true;
     [SerializeField] protected bool talkRepeatable = true;
     [SerializeField] protected float talkRollInterval = 2f;
     [SerializeField] protected float talkChance = 0.25f;
     [SerializeField] protected float glitchRollThreshold = 0.7f; //start rolling at this integrity
-    [SerializeField] protected float glitchCD = 30f;
     [SerializeField] public List<AnimatorClipsPair> defaultAnimatorClips;
     [SerializeField] public List<AnimatorClipsPair> idleAnimatorClips;
     [SerializeField] public List<AnimatorClipsPair> dialoguePlayingAnimation; //plays while dialogue is playing
@@ -35,10 +35,9 @@ public abstract class Entity : MonoBehaviour
     [SerializeField] public AnimationState CurrentAnimationState = AnimationState.Default;
 
     protected float talkRollTimer = 0f;
-    protected float glitchCDTimer = 0f;
     public bool Glitched {get; set;} = false;
+    public float CorruptionCooldownTimer = 0f;
     protected int dialogueSetIndex = 0;
-
     protected int talkCounter = 0;
 
 
@@ -109,7 +108,7 @@ public abstract class Entity : MonoBehaviour
         }
     }
 
-    public void AddHealth(float amount)
+    public void RestoreHealth(float amount)
     {
         Health += amount;
         if (Health > MaxHealth)
@@ -120,31 +119,44 @@ public abstract class Entity : MonoBehaviour
         {
             Health = 0;
         }
-        OnHealthChanged();
+        OnHealthChanged(amount);
     }
 
-    public void AddStability(float amount)
+    public void DamageHealth(float amount)
     {
-        Stability += amount;
-        if (Stability > MaxStability)
+        RestoreHealth(-amount);
+    }
+
+    public void RestoreCorruption(float amount)
+    {
+        Corruption += amount;
+        if (Corruption > MaxCorruption)
         {
-            Stability = MaxStability;
+            Corruption = MaxCorruption;
         }
-        if (Stability < 0)
+        if (Corruption < 0)
         {
-            Stability = 0;
+            Corruption = 0;
         }
-        OnStabilityChanged();
+        OnStabilityChanged(amount);
     }
 
-    protected virtual void OnHealthChanged()
+    public void DamageCorruption(float amount)
     {
-        RollChanceToGlitch();
+        RestoreCorruption(-amount);
     }
 
-    protected virtual void OnStabilityChanged()
+    protected virtual void OnHealthChanged(float amount)
     {
-        if(Glitched && Stability >= MaxStability)
+        if(!Glitched && amount < 0)
+        {
+            RollChanceToGlitch();
+        }
+    }
+
+    protected virtual void OnStabilityChanged(float amount)
+    {
+        if(Glitched && Corruption <= 0)
         {
             ExitGlitchState();
         }
@@ -249,29 +261,29 @@ public abstract class Entity : MonoBehaviour
     public virtual void EnterGlitchState()
     {
         Glitched = true;
-        Stability = Health;
-        MaxStability = MaxHealth;
+        MaxCorruption = MaxHealth - Health;
+        Corruption = MaxCorruption;
+
         dialogueSetIndex = 1;
         ShutUp();
-        SetGlitchAppearance();
-        
+
+        SetGlitchAppearance();        
     }
 
 
     public virtual void ExitGlitchState()
     {
         Glitched = false;
+        CorruptionCooldownTimer = CorruptionCooldown;
         dialogueSetIndex = 0;
-        glitchCDTimer = Time.time + glitchCD;
         SetNormalAppearance();
     }
 
     public virtual void RollChanceToGlitch()
     {
-        if(glitchCDTimer < Time.time) return;
         if (HealthPercentage() < glitchRollThreshold)
         {
-            if (Random.Range(0f, 1f) >= HealthPercentage())
+            if (Random.Range(0f, 1f) < 1-HealthPercentage())
             {
                 EnterGlitchState();
             }
@@ -355,8 +367,11 @@ public abstract class Entity : MonoBehaviour
 
     protected virtual void OnDestroy()
     {
-        GameManager.Instance.OnStartStream -= OnStartStream;
-        GameManager.Instance.OnEndStream -= OnEndStream;
+        if(GameManager.Instance != null)
+        {
+            GameManager.Instance.OnStartStream -= OnStartStream;
+            GameManager.Instance.OnEndStream -= OnEndStream;
+        }
         foreach(UIEventHandler clickInteract in clickInteractHandlers)
         {
             clickInteract.OnLeftClickEvent -= (t) => ClickInteract(clickInteract.gameObject);

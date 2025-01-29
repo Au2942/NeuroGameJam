@@ -20,7 +20,7 @@ public class HeartStatusEffect : WorkerStatusEffect<HeartStatusEffectData>
             {
                 //guaranteed success chance
                 WorkerStats bonusStats = new WorkerStats();
-                bonusStats.WorkSuccessChance = Mathf.Max(target.GetTotalStats().WorkSuccessChance, 100);
+                bonusStats.WorkSuccessChance = Mathf.Max(target.workerData.TotalStats.WorkSuccessChance, 100);
                 target.AddTempStats(bonusStats);
             }
             else

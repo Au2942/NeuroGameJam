@@ -5,22 +5,23 @@ public class WorkHandler
 {
     public MemoryEntity entity;
     public Worker worker;
-    public bool isMaintaining = false;
-    public bool isRepairing = false;
+    public WorkState workState;
 
-    public bool IsWorking => isMaintaining || isRepairing;
-    public void InitiateMaintenanceWork(MemoryEntity entity, Worker worker)
+    public enum WorkState
     {
-        isMaintaining = true;
-        this.entity = entity;
-        this.worker = worker;
-        StartMaintaining();
+        None,
+        Maintaining,
+        Repairing
     }
 
-    public void StartMaintaining()
+
+    public void StartMaintaining(MemoryEntity entity, Worker worker)
     {
-        if(entity == null) return;
-        entity.IsBeingWorkedOn = true;
+        workState = WorkState.Maintaining;
+        this.entity = entity;
+        this.worker = worker;
+        worker.SetAvailability(false);
+        entity.IsBeingMaintained = true;
         entity.Interactable = false;
 
         foreach(WorkerStatusEffect statusEffect in worker.WorkerStatusEffects)
@@ -34,7 +35,7 @@ public class WorkHandler
 
     private IEnumerator Maintaining()
     {
-        yield return new WaitForSeconds(worker.Stats.WorkSpeed); //implement a system to recall worker before they finish maintaining
+        yield return new WaitForSeconds(worker.TotalStats.WorkTime); //implement a system to recall worker before they finish maintaining
         RollMaintainSuccessChance();
         FinishMaintaining();
     }
@@ -42,7 +43,7 @@ public class WorkHandler
     private void RollMaintainSuccessChance()
     {
         if(entity == null) return;
-        float successChance = worker.Stats.WorkSuccessChance;
+        float successChance = worker.TotalStats.WorkSuccessChance;
         float roll = Random.Range(0, 100);
 
         if(successChance >= 100)
@@ -95,33 +96,25 @@ public class WorkHandler
     public virtual void FinishMaintaining()
     {
         if(entity == null) return;
-        entity.IsBeingWorkedOn = false;
+        entity.IsBeingMaintained = false;
         entity.Interactable = true;
         entity = null;
-        isMaintaining = false;
         foreach(WorkerStatusEffect statusEffect in worker.WorkerStatusEffects)
         {
             statusEffect.OnFinishMaintain();
             statusEffect.OnFinishWork();
         }
-        worker.StartCoroutine(worker.StartCooldown());
+        worker.StartCoroutine(RecallCooldown());
     }
 
 
-    public void InitiateRepairWork(MemoryEntity entity, Worker worker)
+    public void StartRepairing(MemoryEntity entity, Worker worker)
     {
-        isRepairing = true;
+        workState = WorkState.Repairing;
         this.entity = entity;
         this.worker = worker;
-        StartRepairing();
-    }
-
-    public void StartRepairing()
-    {
-        if(entity == null) return;
-        entity.IsBeingWorkedOn = true;
+        worker.SetAvailability(false);
         entity.Interactable = false;
-
         foreach(WorkerStatusEffect statusEffect in worker.WorkerStatusEffects)
         {
             statusEffect.OnStartRepair();
@@ -133,25 +126,39 @@ public class WorkHandler
 
     private IEnumerator Repairing()
     {
-        //heal entity until it's no longer glitched
-        while(entity.Glitched)
+        
+        CombatHandler combatHandler = CombatManager.Instance.EngageInCombat(worker, entity);
+        if(combatHandler == null)
         {
-            if(worker.health <= 0)
-            {
-                //deal with worker death
-                yield break;
-            }
-            yield return new WaitForSeconds(worker.Stats.WorkSpeed); //implement a system to recall worker before they finish repairing
-            RollRepairSuccessChance();
+            Recall(); //entity is not combat ready
+            yield break;
+        }
+
+        while(combatHandler.CheckIsInCombat())
+        {
+            yield return null;
         }
         FinishRepairing();
-
     }
 
-    private void RollRepairSuccessChance()
+    private void FinishRepairing()
     {
         if(entity == null) return;
-        float successChance = worker.Stats.WorkSuccessChance;
+        entity.RestoreHealth(worker.TotalStats.WorkAmount);
+        entity.Interactable = true;
+        entity = null;
+        foreach(WorkerStatusEffect statusEffect in worker.WorkerStatusEffects)
+        {
+            statusEffect.OnFinishRepair();
+            statusEffect.OnFinishWork();
+        }
+        worker.StartCoroutine(RecallCooldown());
+    }
+
+    public void RollRepairSuccessChance()
+    {
+        if(entity == null) return;
+        float successChance = worker.TotalStats.WorkSuccessChance;
         float roll = Random.Range(0, 100);
 
         if(successChance >= 100)
@@ -186,7 +193,7 @@ public class WorkHandler
             statusEffect.OnRepairSuccess();
             statusEffect.OnWorkSuccess();
         }
-        entity.AddStability(worker.Stats.WorkAmount);
+        worker.DealDamage(worker.CombatTargets[0]);
     }
 
     private void OnRepairFail()
@@ -198,19 +205,23 @@ public class WorkHandler
         }
     }
 
-    private void FinishRepairing()
+    public IEnumerator RecallCooldown()
     {
-        if(entity == null) return;
-        entity.IsBeingWorkedOn = false;
-        entity.Interactable = true;
-        entity = null;
-        isRepairing = false;
-        foreach(WorkerStatusEffect statusEffect in worker.WorkerStatusEffects)
+        float elapsedTime = 0f;;
+        while(elapsedTime < worker.TotalStats.RecallCooldown)
         {
-            statusEffect.OnFinishRepair();
-            statusEffect.OnFinishWork();
+            worker.CooldownIcon.fillAmount = 1-(elapsedTime / worker.TotalStats.RecallCooldown);
+            elapsedTime += Time.deltaTime;
+            yield return null;
         }
-        worker.StartCoroutine(worker.StartCooldown());
+        Recall();
     }
+
+    public void Recall()
+    {
+        worker.SetAvailability(true);
+        workState = WorkState.None;
+    }   
+
 
 }

@@ -5,24 +5,19 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-public class MemoryManager : MonoBehaviour 
+
+public class MemoryNavigator : MonoBehaviour
 {
-    public static MemoryManager Instance;
-    [SerializeField] public MemoryData MemoryData;
     [SerializeField] public ScrollRect ScrollRect;
     [SerializeField] private UIEventHandler scrollRectEventHandler;
     [SerializeField] private RectTransform memoryContent;
     [SerializeField] private HealthIndicator healthIndicator;
-
-    [SerializeField] public int CurrentMemoryIndex = 0;
     [SerializeField] private float memoryWidth = 320;
     [SerializeField] public float distanceBetweenIndex = 896;
     [SerializeField] private float cooldownBetweenNavigation = 0.2f;
-
-    private int MemoryCount => MemoryData.MemoryInfos.Count;
-
-    public Dictionary<string, int> MemoryTypesCount {get; set;} = new Dictionary<string, int>();
-
+    [SerializeField] public int CurrentMemoryIndex = 0;
+    public MemoryData MemoryData => MemoryManager.Instance.MemoryData;
+    public int MemoryCount => MemoryManager.Instance.MemoryCount;
     public event Action<int> OnChangeMemoryIndex;
     private int nearestIndex = -1;
     private float cooldownTimer = 0f;
@@ -30,19 +25,7 @@ public class MemoryManager : MonoBehaviour
     private bool isDraggingScroll = false;
     private Coroutine smoothScrollCoroutine;
 
-    void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
-
-    void Start()
+        void Start()
     {
         scrollRectEventHandler.OnBeginDragEvent += (t) => {isDraggingScroll = true;};
         scrollRectEventHandler.OnEndDragEvent += (t) => {isDraggingScroll = false;};
@@ -56,7 +39,7 @@ public class MemoryManager : MonoBehaviour
         CheckNavigationInput();
     }
 
-    private void CheckNavigationInput()
+    public void CheckNavigationInput()
     {
         float horizontalInput = InputManager.Instance.Navigate.ReadValue<Vector2>().x;
         float navigationInput = horizontalInput + scrollDelta;
@@ -67,7 +50,6 @@ public class MemoryManager : MonoBehaviour
     {
         scrollDelta = -eventData.scrollDelta.y;
     }
-
 
     private void Navigate(float input)
     {
@@ -109,10 +91,6 @@ public class MemoryManager : MonoBehaviour
         }
     }
 
-
-
-
-
     public void SetCurrentMemoryIndex(int index)
     {
         if(index < 0 || index >= MemoryCount)
@@ -127,7 +105,7 @@ public class MemoryManager : MonoBehaviour
     }
 
 
-    private void SetFocusMemory(int index)
+    public void SetFocusMemory(int index)
     {
         for(int i = 0; i < MemoryCount; i++)
         {
@@ -163,45 +141,20 @@ public class MemoryManager : MonoBehaviour
         healthIndicator.SetEntity(entity);
     }
 
-
-/* 
-    public GameObject SetUpStream(StreamSO newStream)
+    public void SetupMemoryCell(MemoryEntity memory, MemoryInfo memoryInfo)
     {
-        StreamEntity stream = Instantiate(newStream.stream, entityLayout.transform);
-        GameManager.Instance.MemoryData.AddMemory("Subathon " + newStream.streamName + " stream", stream);
-        stream.name = newStream.streamName;
 
-        if(entityLayout.transform.childCount > 1)
-        {
-            Destroy(entityLayout.transform.GetChild(0).gameObject);
-        }
-       
-        stream.transform.SetAsFirstSibling();
+        memory.transform.SetParent(memoryContent);
 
-        OnNewStream?.Invoke();
-        
-        return stream.gameObject;
-    }
- */
-    public GameObject AddMemoryFromStream(StreamSO stream)
-    {
-        if(!MemoryTypesCount.TryAdd(stream.name, 1))
-        {
-            MemoryTypesCount[stream.name]++;
-        }
-
-        MemoryEntity memory = Instantiate(stream.memory, memoryContent.transform);
-        MemoryInfo memoryInfo = MemoryData.AddMemory("Memory of " + stream.name + "stream #" + MemoryTypesCount[stream.name], memory);
-        
         MemoryCell memoryCell = memory.GetComponent<MemoryCell>();
         memoryCell.SetupMemoryCell(memoryInfo.name, MemoryCount-1);
+
         ScrollRect.onValueChanged.AddListener(delegate {memoryCell.UpdateCellOnScroll();});
-
         memory.transform.SetSiblingIndex(2 + MemoryCount-1);
-        SetCurrentMemoryIndex(MemoryCount-1);
 
-        return memory.gameObject;
     }
+
+    
 
     public void SnapToNearestMemory()
     {   
@@ -212,7 +165,6 @@ public class MemoryManager : MonoBehaviour
     {
         nearestIndex = index;
     }
-
 
     IEnumerator SnapToNearestMemoryRoutine()
     {
@@ -260,5 +212,4 @@ public class MemoryManager : MonoBehaviour
 
         memoryContent.anchoredPosition = new Vector2(targetX, memoryContent.anchoredPosition.y);
     }
-    
 }

@@ -7,6 +7,7 @@ public class MemoryCell : MonoBehaviour, IPointerClickHandler
 {
 
     [SerializeField] public TextMeshProUGUI MemoryDisplayNameText; 
+    public MemoryNavigator MemoryNavigator => MemoryManager.Instance.MemoryNavigator;
     public string MemoryDisplayName {get; set;}
     public int MemoryIndex {get; set;} = -1;
 
@@ -30,14 +31,14 @@ public class MemoryCell : MonoBehaviour, IPointerClickHandler
     public void UpdateCellOnScroll()
     {
         RectTransform rectTransform = GetComponent<RectTransform>();
-        ScrollRect scrollRect = MemoryManager.Instance.ScrollRect;
+        ScrollRect scrollRect = MemoryNavigator.ScrollRect;
         float center = scrollRect.content.anchoredPosition.x;
         float distanceFromCenter = Mathf.Abs(MemoryIndex*320f - center);
         float scale = 0.5f;
         if(distanceFromCenter < 160f)
         {
             scale = 1f - distanceFromCenter / 320f;
-            MemoryManager.Instance.SetNearestIndex(MemoryIndex);
+            MemoryNavigator.SetNearestIndex(MemoryIndex);
         }
         rectTransform.localScale = new Vector3(scale, scale, 1);
         LayoutRebuilder.ForceRebuildLayoutImmediate(scrollRect.content);

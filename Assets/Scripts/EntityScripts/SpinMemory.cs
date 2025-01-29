@@ -69,7 +69,7 @@ public class SpinMemory : MemoryEntity
 
         if (damageTimer >= delayBetweenDamage)
         {
-            PlayerManager.Instance.TakeDamage(1);
+            PlayerManager.Instance.DamageHealth(1);
             damageTimer = 0f;
         }
         else damageTimer += Time.deltaTime;

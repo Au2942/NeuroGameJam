@@ -18,7 +18,7 @@ public class BadNote : Interactable
         lifeTime -= Time.deltaTime;
         if (lifeTime <= 0)
         {
-            PlayerManager.Instance.TakeDamage(3);
+            PlayerManager.Instance.DamageHealth(3);
             InteractableSpawner.ReturnObjectToPool(gameObject);
         }
         ReachEdgeCheck();

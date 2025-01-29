@@ -5,33 +5,35 @@ using UnityEngine;
 public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager Instance;
-    [SerializeField] public PlayerViewersHandler ViewersHandler;  
-    [SerializeField] public PlayerSubscriptionsHandler SubscriptionsHandler;
-    [SerializeField] public PlayerDetailsUI StatUI;
-    [SerializeField] public RectTransform StreamRect;
-    [SerializeField] public StreamEntity StreamEntity;
-    [SerializeField] public string StreamName;
-    [SerializeField] public StreamSO CurrentStream;
-    [SerializeField] public float Health = 100; //integrity of self
-    [SerializeField] public float MaxHealth = 100;
-    [SerializeField] public float Performance = 0.1f; //average of all memory entities integrity
-    [SerializeField] public float MaxPerformance = 2f;
-    [SerializeField] public float ResetTime = 5f;
-    [SerializeField] public float RemainingStreamTime = 60f; //~1 hour
-    [SerializeField] public float StreamTimeIncrease = 0.03f; //3 seconds per subscription
-    [SerializeField] public float NewStreamCD = 60f; //60 seconds before you can start a new stream
-    [SerializeField] public int CurrentViewers = 0; //ccv 
-    [SerializeField] public int PeakViewers = 0;
-    [SerializeField] public int Subscriptions = 0;
-    [SerializeField] public float CurrentInterests = 0.5f;
-    [SerializeField] public float TargetInterests = -999;
-    [SerializeField] public float MaxInterests = 2f;
-    [SerializeField] public float MinInterests = -2f;
-    [SerializeField] public float InterestsDropBelowZero = 0.1f;
-    [SerializeField] public float InterestsUpdateInterval = 5f; 
+    public PlayerViewersHandler ViewersHandler;  
+    public PlayerSubscriptionsHandler SubscriptionsHandler;
+    public PlayerDetailsUI StatUI;
+    public RectTransform StreamRect;
+    public StreamEntity StreamEntity;
+    public string StreamName;
+    public StreamSO CurrentStream;
+    public float Health = 100; //integrity of self
+    public float MaxHealth = 100;
+    public float StabilityRecoverRate = 5f; //5 stability per second
+    public float Performance = 0.1f; //average of all memory entities integrity
+    public float MaxPerformance = 2f;
+    public float RemainingStreamTime = 60f; //~1 hour
+    public float StreamTimeIncrease = 0.03f; //3 seconds per subscription
+    public float NewStreamCD = 60f; //60 seconds before you can start a new stream
+    public float MemoryCorruptionInterval = 5f; //seconds before lower a memory health
+    public float MemoryCorruptionDegree = 10f; //5 health per corruption
+    public int CurrentViewers = 0; //ccv 
+    public int PeakViewers = 0;
+    public int Subscriptions = 0;
+    public float CurrentInterests = 0.5f;
+    public float TargetInterests = -999;
+    public float MaxInterests = 2f;
+    public float MinInterests = -2f;
+    public float InterestsDropBelowZero = 0.1f;
+    public float InterestsUpdateInterval = 5f; 
 
-    [SerializeField] public PlayerState state = PlayerState.normal;
-    [SerializeField] public CustomCursor repairCursor;
+    public PlayerState state = PlayerState.normal;
+    public CustomCursor repairCursor;
     //public event System.Action<float> OnInterestsChanged;
     public float CurrentStreamTimer {get; set;} = 0f;
 
@@ -62,14 +64,13 @@ public class PlayerManager : MonoBehaviour
     }
     void Start()
     {
-
+        StartCoroutine(CorruptMemory());
         StartCoroutine(UpdateInterests());
         StartCoroutine(ViewersHandler.SimulateViewers());
         StartCoroutine(ViewersHandler.SimulateViewersMovement());
         StartCoroutine(ViewersHandler.SimulateViewersNoise());
         StartCoroutine(SubscriptionsHandler.SimulateSingleSubscription());
         StartCoroutine(SubscriptionsHandler.SimulateMassSubscription());
-        
     }
 
     public GameObject SetUpStream(StreamSO newStream)
@@ -82,13 +83,12 @@ public class PlayerManager : MonoBehaviour
         StreamEntity stream = Instantiate(newStream.stream, StreamRect);
         SetStreamName("Subathon " + newStream.streamName + " stream");
         //GameManager.Instance.MemoryData.AddMemory("Subathon " + newStream.streamName + " stream", stream);
-
-        
+        StreamEntity = stream;
         SetPlayerStream(newStream);
 
-        OnNewStream?.Invoke(stream);
+        OnNewStream?.Invoke(StreamEntity);
         
-        return stream.gameObject;
+        return StreamEntity.gameObject;
     }
 
     private void SetPlayerStream(StreamSO stream)
@@ -129,8 +129,21 @@ public class PlayerManager : MonoBehaviour
 
     private IEnumerator Resetting()
     {
-        yield return new WaitForSeconds(ResetTime);
+        while(StreamEntity.Corruption < StreamEntity.MaxCorruption)
+        {
+            StreamEntity.RestoreCorruption(StabilityRecoverRate * Time.deltaTime);
+            yield return null;
+        }
         FinishResetting();
+    }
+
+    private IEnumerator CorruptMemory()
+    {
+        while(true)
+        {
+            yield return new WaitForSeconds(MemoryCorruptionInterval);
+            MemoryManager.Instance.CorruptRandomMemory(MemoryCorruptionDegree);
+        }
     }
 
     public void FinishResetting()
@@ -191,7 +204,7 @@ public class PlayerManager : MonoBehaviour
 
     public void CheckPlayerInput()
     {
-        if(WorkerManager.Instance.selectedWorker != null)
+        if(WorkerManager.Instance.SelectedWorker != null)
         {
             if(InputManager.Instance.Cancel.triggered || InputManager.Instance.RightClick.triggered)
             {
@@ -237,7 +250,7 @@ public class PlayerManager : MonoBehaviour
     }
 
 
-    public void TakeDamage(float value)
+    public void DamageHealth(float value)
     {
         if(value < 0)
         {
@@ -251,11 +264,11 @@ public class PlayerManager : MonoBehaviour
             //to-do game over
             Health = 0;
             StartCoroutine(EndingManager.Instance.EndGame(0));
-        } //should move this somewhere else and trigger it by listening to the OnTakeDamage event instead maybe?
+        } 
 
         OnTakeDamage?.Invoke(value);
     }
-    public void Heal(float value)
+    public void HealHealth(float value)
     {
         if(value < 0)
         {

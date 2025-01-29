@@ -2,17 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 
 [System.Serializable]
-public struct DialogueSet
-{
-    public List<DialogueInfoSO> dialogues;
-
-    public DialogueSet(List<DialogueInfoSO> dialogues)
-    {
-        this.dialogues = dialogues;
-    }
-}
-
-[System.Serializable]
 public struct AnimatorClipsPair
 {
     public Animator animator;
@@ -44,9 +33,9 @@ public struct AnimatorStateInfosPair
     public Animator animator;
     public List<AnimatorStateInfo> stateInfos;
 
-    public AnimatorStateInfosPair(Animator animator, List<AnimatorStateInfo> stateInfo)
+    public AnimatorStateInfosPair(Animator animator, List<AnimatorStateInfo> stateInfos)
     {
         this.animator = animator;
-        this.stateInfos = stateInfo;
+        this.stateInfos = stateInfos;
     }
 }

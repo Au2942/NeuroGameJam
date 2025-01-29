@@ -64,7 +64,6 @@ public class GameManager : MonoBehaviour
     public void StartNewStream(StreamSO newStream)
     {
         PlayerManager.Instance.SetUpStream(newStream);
-        MemoryManager.Instance.SetCurrentMemoryIndex(MemoryCount-1);
         OnStartStream?.Invoke();
     }
 
@@ -79,11 +78,11 @@ public class GameManager : MonoBehaviour
 
     public void StopStream()
     {
-        foreach(MemoryEntity entity in MemoryEntities)
-        {
-            entity.SetInFocus(false);
-            entity.ShutUp();
-        }
+        // foreach(MemoryEntity entity in MemoryEntities)
+        // {
+        //     entity.SetInFocus(false);
+        //     entity.ShutUp();
+        // }
     }
 
     public void EndStream()

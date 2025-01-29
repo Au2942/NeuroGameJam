@@ -4,14 +4,14 @@ public class HeartMemory : MemoryEntity
 {
     [SerializeField] private HeartStatusEffectSO heartStatusEffectSO;
     [SerializeField] private InteractableSpawner heartSpawner;
-    [SerializeField] private float maxX = 600f;
-    [SerializeField] private float minX = -600f;
-    [SerializeField] private float maxY = 300f;
-    [SerializeField] private float minY = -300f;
+    // [SerializeField] private float maxX = 600f;
+    // [SerializeField] private float minX = -600f;
+    // [SerializeField] private float maxY = 300f;
+    // [SerializeField] private float minY = -300f;
 
 
-    private float damageCooldown = 2f;
-    private float damageTimer = 0f;
+    // private float damageCooldown = 2f;
+    // private float damageTimer = 0f;
 
     
     public override void ExitGlitchState()

@@ -9,7 +9,7 @@ public class StreamEntity : Entity
         base.Start();
         Health = PlayerManager.Instance.Health;
         MaxHealth = PlayerManager.Instance.MaxHealth;
-        PlayerManager.Instance.OnTakeDamage += (t) => OnHealthChanged();
+        PlayerManager.Instance.OnTakeDamage += OnHealthChanged;
     }
     protected override void Update()
     {  

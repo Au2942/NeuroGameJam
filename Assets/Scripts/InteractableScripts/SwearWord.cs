@@ -26,7 +26,7 @@ public class SwearWord : Interactable
         if (transform.localPosition.x > 1536 / 2 || transform.localPosition.x < -1536 / 2 ||
             transform.localPosition.y > 864 / 2 || transform.localPosition.y < -864 / 2)
         {
-            PlayerManager.Instance.TakeDamage(2);
+            PlayerManager.Instance.DamageHealth(2);
             InteractableSpawner.ReturnObjectToPool(gameObject);
         }
     }

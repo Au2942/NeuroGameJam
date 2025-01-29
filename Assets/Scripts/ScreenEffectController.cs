@@ -1,39 +1,33 @@
+using UnityEngine.Rendering;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 
 
 public class ScreenEffectController : MonoBehaviour
 {
-    [SerializeField] ScreenEffectRendererFeature screenEffectRendererFeature;
-    [SerializeField][Range(0f,1f)] private float noiseStrength = 1f;
-    [SerializeField][Range(0f,100f)] private float noiseAmount = 50f;
-    [SerializeField][Range(0f,1f)] private float noiseIntensity = 0.1f;
-    [SerializeField][Range(0f,1f)] private float scanlineStrength = 1f;
-    [SerializeField][Range(0f,1000f)] private float scanlineAmount = 600f;
+    [SerializeField] Volume volumeComponent;
 
-
+    private ScreenEffectVolumeComponent screenEffectVolumeComponent;
     void Start()
     {
-        screenEffectRendererFeature.SetActive(false);
+        volumeComponent.profile.TryGet(out screenEffectVolumeComponent);
+        Hide();
     }
     public void Show()
     {
-        screenEffectRendererFeature.SetActive(true);
+        screenEffectVolumeComponent.intensity.value = 1;
     }
     public void Hide()
     {
-        screenEffectRendererFeature.SetActive(false);
+        screenEffectVolumeComponent.intensity.value = 0;
     }
 
-    public void SetSettingsValue()
+    public void SetScreenEffectSettings(float noiseStrength, float noiseAmount, float noiseIntensity, float scanlineStrength, float scanlineAmount)
     {
-        ScreenEffectsSettings settings = new ScreenEffectsSettings(
-            noiseStrength,
-            noiseAmount,
-            noiseIntensity,
-            scanlineStrength,
-            scanlineAmount
-        );
-        screenEffectRendererFeature.settings = settings;
+        screenEffectVolumeComponent.noiseStrength.value = noiseStrength;
+        screenEffectVolumeComponent.noiseAmount.value = noiseAmount;
+        screenEffectVolumeComponent.noiseIntensity.value = noiseIntensity;
+        screenEffectVolumeComponent.scanlineStrength.value = scanlineStrength;
+        screenEffectVolumeComponent.scanlineAmount.value = scanlineAmount;
     }
+
 }

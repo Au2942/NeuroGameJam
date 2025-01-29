@@ -11,8 +11,8 @@ public class WorkerManager : MonoBehaviour
     [SerializeField] private RectTransform WorkerLayout;
     [SerializeField] public List<Worker> Workers = new List<Worker>();
     [SerializeField] public int MaxLevel = 5;
-    public Worker selectedWorker {get; private set;}
     [SerializeField] private Worker WorkerPrefab; 
+    [SerializeField] public Worker SelectedWorker;
 
     public event System.Action<Worker> OnWorkerSelected;
     public event System.Action OnWorkerDeselected;
@@ -33,6 +33,10 @@ public class WorkerManager : MonoBehaviour
 
     void Start()
     {
+        foreach(Worker worker in WorkerLayout.GetComponentsInChildren<Worker>())
+        {
+            Workers.Add(worker);
+        }
         foreach(Worker worker in Workers)
         {
             if(worker != null)
@@ -76,36 +80,34 @@ public class WorkerManager : MonoBehaviour
     public void SelectWorker(Worker worker)
     {
         DeselectWorker();
-        selectedWorker = worker;
-        WorkerStatUI.UpdateAttributesText(selectedWorker);
-        OnWorkerSelected?.Invoke(selectedWorker);
+        SelectedWorker = worker;
+        WorkerStatUI.UpdateAttributesText(SelectedWorker);
+        OnWorkerSelected?.Invoke(SelectedWorker);
     }
 
     public void DeselectWorker()
     {
-        if(selectedWorker == null) return;
+        if(SelectedWorker == null) return;
         WorkerStatUI.ResetAttributesText();
-        selectedWorker.Deselect();
-        selectedWorker = null;
+        SelectedWorker.Deselect();
+        SelectedWorker = null;
         OnWorkerDeselected?.Invoke();
     }
 
     public bool TryDoMaintainWork(MemoryEntity entity)
     {
-        if(selectedWorker != null)
+        if(SelectedWorker != null)
         {
-            selectedWorker.DoMaintenance(entity);
-            selectedWorker = null;
+            SelectedWorker.DoMaintenance(entity);
             return true;
         }
         return false;
     }
     public bool TryDoRepairWork(MemoryEntity entity)
     {
-        if(selectedWorker != null)
+        if(SelectedWorker != null)
         {
-            selectedWorker.DoRepair(entity);
-            selectedWorker = null;
+            SelectedWorker.DoRepair(entity);
             return true;
         }
         return false;

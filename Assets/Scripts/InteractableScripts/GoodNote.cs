@@ -9,7 +9,7 @@ public class GoodNote : Interactable
     public override void ReturnToPool()
     {
         base.ReturnToPool();
-        PlayerManager.Instance.TakeDamage(-3);
+        PlayerManager.Instance.DamageHealth(-3);
     }
     public override void OnSpawn()
     {

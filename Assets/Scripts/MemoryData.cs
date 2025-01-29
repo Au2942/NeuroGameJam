@@ -23,8 +23,8 @@ public struct MemoryInfo
         entity = newEntity;
     }
 }
-
-public class MemoryData : MonoBehaviour
+[System.Serializable]
+public class MemoryData
 {
     [SerializeField] public List<MemoryInfo> MemoryInfos = new List<MemoryInfo>();
 

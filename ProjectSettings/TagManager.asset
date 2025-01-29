@@ -44,5 +44,8 @@ TagManager:
   - name: UIShader
     uniqueID: 1783947641
     locked: 0
+  - name: IgnoreUIShader
+    uniqueID: 2388946799
+    locked: 0
   m_RenderingLayers:
   - Default

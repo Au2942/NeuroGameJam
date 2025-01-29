@@ -4,6 +4,17 @@ using TMPro;
 using System.Collections.Generic;
 using System.Linq;
 
+[System.Serializable]
+public struct DialogueSet
+{
+    public List<DialogueInfoSO> dialogues;
+
+    public DialogueSet(List<DialogueInfoSO> dialogues)
+    {
+        this.dialogues = dialogues;
+    }
+}
+
 public class DialogueManager : MonoBehaviour
 {
     [SerializeField] private GameObject dialoguePanel;

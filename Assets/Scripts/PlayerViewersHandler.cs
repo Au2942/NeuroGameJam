@@ -15,11 +15,6 @@ public class PlayerViewersHandler : MonoBehaviour
     [SerializeField] private float minUpdateNoiseInterval = 1f;
     [SerializeField] private float maxUpdateNoiseInterval = 5f;
 
-
-
-
-
-
     public IEnumerator SimulateViewersMovement()
     {
         while (true)

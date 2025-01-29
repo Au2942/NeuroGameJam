@@ -141,7 +141,7 @@ MonoBehaviour:
   blockShuffleRate: 60
   manageValue: 1
   show: 0
-  material: {fileID: 0}
+  material: {fileID: 2100000, guid: ac140811ffa176042bdac80be7be45fd, type: 2}
 --- !u!223 &2222180644071270922
 Canvas:
   m_ObjectHideFlags: 0
