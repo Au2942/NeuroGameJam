@@ -8,10 +8,13 @@ public class Worker : MonoBehaviour, ICombatUnit
 {
     //seperate into "actual worker" and "icon worker" later
     [SerializeField] public string Identifier;
-    [SerializeField] public Image WorkerIcon;
+    [SerializeField] public WorkerAppearance WorkerAppearance;
+    [SerializeField] public WorkerAppearance IconAppearance;
+    [SerializeField] public RectTransform WorkerIcon;
     [SerializeField] public TextMeshProUGUI NameText;
     [SerializeField] public UIEventHandler ClickHandler; 
-    [SerializeField] public Image CooldownIcon;
+    [SerializeField] public Image CooldownOverlay;
+    [SerializeField] public Image AddedOverlay;
     [SerializeField] public WorkerData workerData = new WorkerData();
     public WorkerAttributes BaseAttributes => workerData.BaseAttributes;
     public WorkerAttributes TempAttributes => workerData.TempAttributes;
@@ -127,12 +130,12 @@ public class Worker : MonoBehaviour, ICombatUnit
         IsAvailable = availability;
         if(IsAvailable)
         {
-            CooldownIcon.gameObject.SetActive(false);
+            CooldownOverlay.gameObject.SetActive(false);
         }
         else
         {
-            CooldownIcon.fillAmount = 1;
-            CooldownIcon.gameObject.SetActive(true);
+            CooldownOverlay.fillAmount = 1;
+            CooldownOverlay.gameObject.SetActive(true);
         }
     }
     public void DoMaintenance(MemoryEntity entity)

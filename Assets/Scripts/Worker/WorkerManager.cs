@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections.Generic;
 
 
@@ -7,8 +8,9 @@ public class WorkerManager : MonoBehaviour
     public static WorkerManager Instance;
 
     [SerializeField] public WorkerDetailsUI WorkerStatUI;
-    [SerializeField] private WorkerScroller WorkerScroller;
-    [SerializeField] private RectTransform WorkerLayout;
+    [SerializeField] public WorkerScroller WorkerScroller;
+    [SerializeField] public WorkerAppearanceGenerator WorkerAppearanceGenerator;
+    [SerializeField] public RectTransform WorkerLayout;
     [SerializeField] public List<Worker> Workers = new List<Worker>();
     [SerializeField] public int MaxLevel = 5;
     [SerializeField] private Worker WorkerPrefab; 
@@ -44,6 +46,7 @@ public class WorkerManager : MonoBehaviour
                 worker.OnSelected += SelectWorker;
             }
         }
+        AddWorker();
     }
 
     public Worker AddWorker(Worker newWorkerPrefab)
@@ -52,6 +55,10 @@ public class WorkerManager : MonoBehaviour
 
         Worker newWorker = Instantiate(newWorkerPrefab, WorkerLayout);
         Workers.Add(newWorker);
+
+        WorkerAppearanceGenerator.GenerateAppearance(newWorker.WorkerAppearance);
+        newWorker.IconAppearance.SetApperance(newWorker.WorkerAppearance.WorkerAppearanceData);
+
         newWorker.OnSelected += SelectWorker;
         newWorker.Select();
 

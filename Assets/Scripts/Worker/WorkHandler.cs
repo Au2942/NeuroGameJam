@@ -210,7 +210,7 @@ public class WorkHandler
         float elapsedTime = 0f;;
         while(elapsedTime < worker.TotalStats.RecallCooldown)
         {
-            worker.CooldownIcon.fillAmount = 1-(elapsedTime / worker.TotalStats.RecallCooldown);
+            worker.CooldownOverlay.fillAmount = 1-(elapsedTime / worker.TotalStats.RecallCooldown);
             elapsedTime += Time.deltaTime;
             yield return null;
         }

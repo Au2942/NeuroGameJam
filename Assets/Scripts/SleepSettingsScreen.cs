@@ -67,6 +67,7 @@ public class SleepSettingsScreen : MonoBehaviour
         workerPanel.SetParent(sleepSettingsLayout);
         WorkerManager.Instance.DeselectWorker();
         WorkerManager.Instance.WorkerStatUI.ShowButtons();
+        DetailsUI.NewButton.transform.SetAsLastSibling();
         sleepSettingsUI.gameObject.SetActive(true);
     }
 
@@ -138,7 +139,7 @@ public class SleepSettingsScreen : MonoBehaviour
     public void AddWorker()
     {
         Worker worker = WorkerManager.Instance.AddWorker();
-        worker.WorkerIcon.color = addedWorkerColor;
+        worker.AddedOverlay.gameObject.SetActive(true);
         addedWorkers.Add(worker);
         DetailsUI.NewButton.transform.SetAsLastSibling();
     }
@@ -170,6 +171,12 @@ public class SleepSettingsScreen : MonoBehaviour
         {
             worker.ApplyAllocAttributes();
         }
+
+        foreach(Worker worker in addedWorkers)
+        {
+            worker.AddedOverlay.gameObject.SetActive(false);
+        }
+
         PlayerManager.Instance.HealHealth(restoredHealthChunk*healthPerChunk);
         CloseUI();
         PlayerManager.Instance.Sleep(Mathf.Max(4,sleepHours) * (3600/DisplayTimeMultiplier)); //this also change timescale so must be last

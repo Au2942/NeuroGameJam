@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: LavaLamp
+  m_Name: LavaLamp 1
   m_Shader: {fileID: -6465566751694194690, guid: 2dc6c4c89093da94a934b3639f6a3993, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -24,7 +24,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _MainTex:
-        m_Texture: {fileID: 10309, guid: 0000000000000000f000000000000000, type: 0}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -42,7 +42,10 @@ Material:
     m_Ints: []
     m_Floats:
     - _ColorMask: 15
-    - _Speed: 1
+    - _CoreSize: 6
+    - _FloorHeight: 0.2
+    - _LinearGradient: 0
+    - _Speed: 0.5
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0
@@ -51,8 +54,15 @@ Material:
     - _UIMaskSoftnessX: 1
     - _UIMaskSoftnessY: 1
     m_Colors:
-    - _BaseColor: {r: 0.25482258, g: 0, b: 0.58431375, a: 1}
+    - _Ball1Movement: {r: -0.251, g: -0.577, b: 30, a: 0}
+    - _Ball1Range: {r: 0.27, g: 0.5, b: 0, a: 0}
+    - _Ball2Movement: {r: 0.251, g: -0.347, b: 45, a: 0}
+    - _Ball2Range: {r: 0.3, g: 0.5, b: 0, a: 0}
+    - _Ball3Movement: {r: -0.311, g: 0.677, b: 0, a: 90}
+    - _Ball3Range: {r: 0.3, g: 0.4, b: 0, a: 0}
+    - _BallSizes: {r: 0.5, g: 0.45, b: 0.34, a: 0}
     - _ClipRect: {r: 0, g: 0, b: 0, a: 0}
-    - _Highlight: {r: 0.105882406, g: 1, b: 0, a: 1}
+    - _CoreColor: {r: 0, g: 1, b: 0.7201431, a: 1}
+    - _GlowColor: {r: 0.06203556, g: 0, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
