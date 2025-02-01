@@ -1,3 +1,5 @@
+//modified from glitch effect in Kino by Keijiro Takahashi https://github.com/keijiro/Kino
+
 Shader "CustomEffects/Glitch_Effect_Shader"
 {
 
@@ -13,13 +15,17 @@ Shader "CustomEffects/Glitch_Effect_Shader"
         _Jitter ("Jitter", Vector) = (0.1, 0.1, 0 ,0)
         _Jump ("Jump", Vector) = (0.1, 0.1, 0, 0)
         _Shake ("Shake", float) = 0.1
-        // _NoiseStrength ("Noise Strength", Range(0, 1)) = 1
-        // _NoiseAmount ("Noise Amount", Range(0, 100)) = 50
-        // _NoiseIntensity ("Noise Intensity", Range(0, 1)) = 0.1
-        // _ScanlineStrength ("Scanline Strength", Range(0, 1)) = 1
-        // _ScanlineAmount ("Scanline Amount", Range(0, 1000)) = 600
         _MeshBound ("Mesh Bound", Vector) = (0, 0, 1920, 1080)
         _TargetScreenBounds ("Screen Bounds", Vector) = (0, 0, 1920, 1080)
+        [HideInInspector]  _StencilComp ("Stencil Comparison", Float) = 8.000000
+        [HideInInspector]  _Stencil ("Stencil ID", Float) = 0.000000
+        [HideInInspector]  _StencilOp ("Stencil Operation", Float) = 0.000000
+        [HideInInspector]  _StencilWriteMask ("Stencil Write Mask", Float) = 255.000000
+        [HideInInspector]  _StencilReadMask ("Stencil Read Mask", Float) = 255.000000
+        [HideInInspector]  _ColorMask ("ColorMask", Float) = 15.000000
+        [HideInInspector]  _ClipRect ("ClipRect", Vector) = (0.000000,0.000000,0.000000,0.000000)
+        [HideInInspector]  _UIMaskSoftnessX ("UIMaskSoftnessX", Float) = 1.000000
+        [HideInInspector]  _UIMaskSoftnessY ("UIMaskSoftnessY", Float) = 1.000000
     }
     SubShader
     {		
@@ -34,6 +40,15 @@ Shader "CustomEffects/Glitch_Effect_Shader"
         {
             ZWrite Off
             Cull Off
+            Stencil {
+            Ref [_Stencil]
+            ReadMask [_StencilReadMask]
+            WriteMask [_StencilWriteMask]
+            CompFront [_StencilComp]
+            PassFront [_StencilOp]
+            CompBack [_StencilComp]
+            PassBack [_StencilOp]
+            }
 
             HLSLPROGRAM
             #pragma vertex vert
@@ -88,45 +103,9 @@ Shader "CustomEffects/Glitch_Effect_Shader"
             float2 _Jump;
             float _Shake;
 
-            // float _NoiseStrength;
-            // float _NoiseAmount;
-            // float _NoiseIntensity;
-            // float _ScanlineStrength;
-            // float _ScanlineAmount;
-
             float4 _MeshBound;
             float4 _TargetScreenBounds;
 
-            float2 unity_gradientNoise_dir(float2 p)
-            {
-                p = p % 289;
-                float x = (34 * p.x + 1) * p.x % 289 + p.y;
-                x = (34 * x + 1) * x % 289;
-                x = frac(x / 41) * 2 - 1;
-                return normalize(float2(x - floor(x + 0.5), abs(x) - 0.5));
-            }
-            
-            float unity_gradientNoise(float2 p)
-            {
-                float2 ip = floor(p);
-                float2 fp = frac(p);
-                float d00 = dot(unity_gradientNoise_dir(ip), fp);
-                float d01 = dot(unity_gradientNoise_dir(ip + float2(0, 1)), fp - float2(0, 1));
-                float d10 = dot(unity_gradientNoise_dir(ip + float2(1, 0)), fp - float2(1, 0));
-                float d11 = dot(unity_gradientNoise_dir(ip + float2(1, 1)), fp - float2(1, 1));
-                fp = fp * fp * fp * (fp * (fp * 6 - 15) + 10);
-                return lerp(lerp(d00, d01, fp.y), lerp(d10, d11, fp.y), fp.x);
-            }
-            
-            void Unity_GradientNoise_float(float2 UV, float Scale, out float Out)
-            {
-                Out = unity_gradientNoise(UV * Scale) + 0.5;
-            }
-
-            void Unity_Remap_float(float In, float2 InMinMax, float2 OutMinMax, out float Out)
-            {
-                Out = OutMinMax.x + (In - InMinMax.x) * (OutMinMax.y - OutMinMax.x) / (InMinMax.y - InMinMax.x);
-            }
 
             float FRandom(uint seed)
             {
@@ -164,7 +143,7 @@ Shader "CustomEffects/Glitch_Effect_Shader"
                 uint block = block_xy.y * columns + block_xy.x;
 
                 uint2 seedBlock_xy = input.uv * targetScreenSize.xy  / block_size;
-                uint2 seedBlock = seedBlock_xy.y * columns + seedBlock_xy.x;
+                uint seedBlock = seedBlock_xy.y * columns + seedBlock_xy.x;
                 
                 // Segment index
                 uint segment = seedBlock / _BlockStride;

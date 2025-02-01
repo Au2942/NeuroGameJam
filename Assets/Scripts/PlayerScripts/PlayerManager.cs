@@ -37,10 +37,11 @@ public class PlayerManager : MonoBehaviour
     //public event System.Action<float> OnInterestsChanged;
     public float CurrentStreamTimer {get; set;} = 0f;
 
-    public event System.Action<float> OnTakeDamage;
-    public event System.Action<StreamEntity> OnNewStream;
+    public event System.Action<float> OnTakeDamageEvent;
+    public event System.Action<float> OnHealthChangedEvent;
+    public event System.Action<StreamEntity> OnNewStreamEvent;
 
-    public event System.Action<string> OnChangeStreamName;
+    public event System.Action<string> OnChangeStreamNameEvent;
 
 
     public enum PlayerState
@@ -75,9 +76,9 @@ public class PlayerManager : MonoBehaviour
 
     public GameObject SetUpStream(StreamSO newStream)
     {
-        if(StreamRect.transform.childCount > 1)
+        if(StreamEntity != null)
         {
-            Destroy(StreamRect.transform.GetChild(0).gameObject);
+            Destroy(StreamEntity.gameObject);
         }
 
         StreamEntity stream = Instantiate(newStream.stream, StreamRect);
@@ -86,7 +87,7 @@ public class PlayerManager : MonoBehaviour
         StreamEntity = stream;
         SetPlayerStream(newStream);
 
-        OnNewStream?.Invoke(StreamEntity);
+        OnNewStreamEvent?.Invoke(StreamEntity);
         
         return StreamEntity.gameObject;
     }
@@ -102,7 +103,7 @@ public class PlayerManager : MonoBehaviour
     public void SetStreamName(string name)
     {
         StreamName = name;
-        OnChangeStreamName?.Invoke(name);
+        OnChangeStreamNameEvent?.Invoke(name);
     }
 
     public void ProgressStream()
@@ -141,6 +142,10 @@ public class PlayerManager : MonoBehaviour
     {
         while(true)
         {
+            while(state == PlayerState.sleep)
+            {
+                yield return null;
+            }
             yield return new WaitForSeconds(MemoryCorruptionInterval);
             MemoryManager.Instance.CorruptRandomMemory(MemoryCorruptionDegree);
         }
@@ -263,10 +268,11 @@ public class PlayerManager : MonoBehaviour
         {
             //to-do game over
             Health = 0;
-            StartCoroutine(EndingManager.Instance.EndGame(0));
+            //StartCoroutine(EndingManager.Instance.EndGame(0));
         } 
 
-        OnTakeDamage?.Invoke(value);
+        OnTakeDamageEvent?.Invoke(value);
+        OnHealthChangedEvent?.Invoke(Health);
     }
     public void HealHealth(float value)
     {
@@ -280,7 +286,7 @@ public class PlayerManager : MonoBehaviour
         {
             Health = MaxHealth;
         }
-        
+        OnHealthChangedEvent?.Invoke(Health);
     }
 
     public IEnumerator UpdateInterests()

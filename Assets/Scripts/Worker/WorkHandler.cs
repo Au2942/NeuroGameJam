@@ -14,6 +14,16 @@ public class WorkHandler
         Repairing
     }
 
+    public void MoveWorkerAppearance()
+    {
+        RectTransform entityRect = entity.GetComponent<RectTransform>();
+        float xOffset = Random.Range(-entityRect.rect.width/2,entityRect.rect.width/2);
+        float yOffset = Random.Range(-entityRect.rect.height/2,entityRect.rect.height/2);
+        worker.WorkerAppearance.transform.position = entity.transform.position + new Vector3(xOffset, yOffset, 0);
+        worker.WorkerAppearance.transform.SetParent(entity.transform);
+        worker.WorkerAppearance.gameObject.SetActive(true);
+    }
+
 
     public void StartMaintaining(MemoryEntity entity, Worker worker)
     {
@@ -21,6 +31,7 @@ public class WorkHandler
         this.entity = entity;
         this.worker = worker;
         worker.SetAvailability(false);
+        MoveWorkerAppearance();
         entity.IsBeingMaintained = true;
         entity.Interactable = false;
 
@@ -96,9 +107,7 @@ public class WorkHandler
     public virtual void FinishMaintaining()
     {
         if(entity == null) return;
-        entity.IsBeingMaintained = false;
         entity.Interactable = true;
-        entity = null;
         foreach(WorkerStatusEffect statusEffect in worker.WorkerStatusEffects)
         {
             statusEffect.OnFinishMaintain();
@@ -114,6 +123,7 @@ public class WorkHandler
         this.entity = entity;
         this.worker = worker;
         worker.SetAvailability(false);
+        MoveWorkerAppearance();
         entity.Interactable = false;
         foreach(WorkerStatusEffect statusEffect in worker.WorkerStatusEffects)
         {
@@ -146,7 +156,6 @@ public class WorkHandler
         if(entity == null) return;
         entity.RestoreHealth(worker.TotalStats.WorkAmount);
         entity.Interactable = true;
-        entity = null;
         foreach(WorkerStatusEffect statusEffect in worker.WorkerStatusEffects)
         {
             statusEffect.OnFinishRepair();
@@ -217,9 +226,21 @@ public class WorkHandler
         Recall();
     }
 
+    public void ReturnWorkerAppearance()
+    {
+        worker.WorkerAppearance.transform.position = worker.transform.position;
+        worker.WorkerAppearance.transform.SetParent(worker.transform);
+        worker.WorkerAppearance.transform.SetAsFirstSibling();
+        worker.WorkerAppearance.gameObject.SetActive(false);
+    }
+
     public void Recall()
     {
+        entity.IsBeingMaintained = false;
+        entity = null;
         worker.SetAvailability(true);
+        ReturnWorkerAppearance();
+        worker.CooldownOverlay.fillAmount = 1;
         workState = WorkState.None;
     }   
 

@@ -14,14 +14,14 @@ public class PlayerSubscriptionsHandler : MonoBehaviour
     [SerializeField] float minSingleSubInterval = 1f;
     [SerializeField] float maxSingleSubInterval = 5f;
 
-    public event System.Action<int> OnGainSubscriptions;
+    public event System.Action<int> OnGainSubscriptionsEvent;
 
 
     public void AddSubscriptions(int value)
     {
         PlayerManager.Instance.Subscriptions += value;
         PlayerManager.Instance.IncreaseStreamTime(value);
-        OnGainSubscriptions?.Invoke(value);
+        OnGainSubscriptionsEvent?.Invoke(value);
     }
     public IEnumerator AddSubscriptionsAfterPopup(int value)
     {
@@ -29,7 +29,7 @@ public class PlayerSubscriptionsHandler : MonoBehaviour
         PlayerManager.Instance.IncreaseStreamTime(value);
         yield return StartCoroutine(PlayerManager.Instance.StatUI.SpawnSubPopupNumber(value));
         PlayerManager.Instance.StatUI.ForceSyncRemainingStreamTime();
-        OnGainSubscriptions?.Invoke(value);
+        OnGainSubscriptionsEvent?.Invoke(value);
     }
 
     public IEnumerator SimulateSingleSubscription()

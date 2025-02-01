@@ -16,8 +16,8 @@ public class WorkerManager : MonoBehaviour
     [SerializeField] private Worker WorkerPrefab; 
     [SerializeField] public Worker SelectedWorker;
 
-    public event System.Action<Worker> OnWorkerSelected;
-    public event System.Action OnWorkerDeselected;
+    public event System.Action<Worker> OnWorkerSelectedEvent;
+    public event System.Action OnWorkerDeselectedEvent;
 
 
     void Awake()
@@ -43,7 +43,7 @@ public class WorkerManager : MonoBehaviour
         {
             if(worker != null)
             {
-                worker.OnSelected += SelectWorker;
+                worker.OnSelectedEvent += SelectWorker;
             }
         }
         AddWorker();
@@ -59,8 +59,7 @@ public class WorkerManager : MonoBehaviour
         WorkerAppearanceGenerator.GenerateAppearance(newWorker.WorkerAppearance);
         newWorker.IconAppearance.SetApperance(newWorker.WorkerAppearance.WorkerAppearanceData);
 
-        newWorker.OnSelected += SelectWorker;
-        newWorker.Select();
+        newWorker.OnSelectedEvent += SelectWorker;
 
         return newWorker;
     }
@@ -74,7 +73,7 @@ public class WorkerManager : MonoBehaviour
         if(worker == null) return;
         int index = Workers.IndexOf(worker);
         Workers.Remove(worker);
-        worker.OnSelected -= SelectWorker;
+        worker.OnSelectedEvent -= SelectWorker;
         Destroy(worker.gameObject);
         Worker nextWorker = Workers.Count > 0 ? Workers[Mathf.Clamp(index, 0, Workers.Count - 1)] : null;
         if(nextWorker != null)
@@ -89,7 +88,7 @@ public class WorkerManager : MonoBehaviour
         DeselectWorker();
         SelectedWorker = worker;
         WorkerStatUI.UpdateAttributesText(SelectedWorker);
-        OnWorkerSelected?.Invoke(SelectedWorker);
+        OnWorkerSelectedEvent?.Invoke(SelectedWorker);
     }
 
     public void DeselectWorker()
@@ -98,7 +97,7 @@ public class WorkerManager : MonoBehaviour
         WorkerStatUI.ResetAttributesText();
         SelectedWorker.Deselect();
         SelectedWorker = null;
-        OnWorkerDeselected?.Invoke();
+        OnWorkerDeselectedEvent?.Invoke();
     }
 
     public bool TryDoMaintainWork(MemoryEntity entity)
@@ -125,7 +124,7 @@ public class WorkerManager : MonoBehaviour
         foreach(Worker worker in Workers)
         {
             if(worker == null) continue;
-            worker.OnSelected -= SelectWorker;
+            worker.OnSelectedEvent -= SelectWorker;
         }
     }
 }

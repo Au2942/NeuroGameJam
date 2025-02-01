@@ -72,6 +72,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1720570254821474638, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: m_Color.b
+      value: 0.32894266
+      objectReference: {fileID: 0}
+    - target: {fileID: 1720570254821474638, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: m_Color.g
+      value: 0.9056604
+      objectReference: {fileID: 0}
+    - target: {fileID: 1720570254821474638, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: m_Color.r
+      value: 0.71021456
+      objectReference: {fileID: 0}
     - target: {fileID: 3463067011576850379, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -202,8 +214,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Body: {fileID: 3307095262580148909}
-  clickInteractHandlers:
-  - {fileID: 2801697774110562176}
+  clickInteractDetectors:
+  - {fileID: 8971802649041212430}
   dialogueManager: {fileID: 5453847031325940863}
   dialogueSets:
   - dialogues:
@@ -215,17 +227,15 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 49e5df4dc0cf4c84ea43e67127769118, type: 2}
   Health: 100
   MaxHealth: 100
-  InFocus: 0
+  Corruption: 100
+  MaxCorruption: 100
+  CorruptionCooldown: 10
   Interactable: 1
-  IsBeingRepaired: 0
   talkInOrder: 1
   talkRepeatable: 1
   talkRollInterval: 2
   talkChance: 0.25
-  glitchRollInterval: 1
-  minGlitchRoll: 0.3
-  maxGlitchRoll: 0.7
-  glitchCD: 30
+  glitchRollThreshold: 0.7
   defaultAnimatorClips: []
   idleAnimatorClips:
   - animator: {fileID: 2794483609510162486}
@@ -245,7 +255,13 @@ MonoBehaviour:
     - clip: {fileID: 7400000, guid: fec654fd4fd91274c9526dfb571cb432, type: 2}
       layer: 1
   CurrentAnimationState: 0
+  CorruptionCooldownTimer: 0
+  AttackDamage: 1
+  AttackRate: 1
   timeToShutup: 2
+  IsBeingMaintained: 0
+  InFocus: 0
+  dealAOEDamage: 0
   glitchEffect: {fileID: 7362587985674339196}
   currentSpeed: 1
   maxAccerelation: 20
@@ -255,17 +271,6 @@ MonoBehaviour:
   delayBetweenDamage: 4
   holdDetectors:
   - {fileID: 2054218996402966334}
---- !u!114 &2801697774110562176 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6557840031825152479, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
-  m_PrefabInstance: {fileID: 9071236510721416799}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2786027055462242103}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a97ff6f1776746d44994a3d39755e472, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &3307095262580148909 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5766481181502412018, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
@@ -325,5 +330,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 56ec4e3cb42fb704e838d1dee44d2c47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8971802649041212430 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 99571163194722897, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+  m_PrefabInstance: {fileID: 9071236510721416799}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a97ff6f1776746d44994a3d39755e472, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

@@ -18,12 +18,6 @@ public class SpinMemory : MemoryEntity
     protected override void Start()
     {
         base.Start();
-        foreach(UIEventHandler holdDetector in holdDetectors)
-        {
-            holdDetector.OnPointerDownEvent += (eventData) => isHolding = true;
-            holdDetector.OnPointerUpEvent += (eventData) => isHolding = false;
-            holdDetector.OnPointerExitEvent += (eventData) => isHolding = false;
-        }
 
     }
 
@@ -87,15 +81,9 @@ public class SpinMemory : MemoryEntity
         currentSpeed = 0f;
     }
 
-    protected override void OnDestroy()
+    protected override void OnDisable()
     {
-        base.OnDestroy();
-        foreach(UIEventHandler holdDetector in holdDetectors)
-        {
-            holdDetector.OnPointerDownEvent -= (eventData) => isHolding = true;
-            holdDetector.OnPointerUpEvent -= (eventData) => isHolding = false;
-            holdDetector.OnPointerExitEvent -= (eventData) => isHolding = false;
-        }
+        base.OnDisable();
     }
 
 

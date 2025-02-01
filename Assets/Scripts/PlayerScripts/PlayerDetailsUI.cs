@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System.Collections;
+using System.Text;
 
 public class PlayerDetailsUI : MonoBehaviour
 {
@@ -17,20 +18,26 @@ public class PlayerDetailsUI : MonoBehaviour
     private float timeMultiplier => TimescaleManager.Instance.displayTimeMultiplier;
 
     private float DisplayRemainingStreamTime = 0f;
+    private StringBuilder sb = new StringBuilder();
 
+    private System.Action<string> OnChangeStreamNameEventHandler;
     void Start()
     {
-        PlayerManager.Instance.OnChangeStreamName += (t) => UpdateStreamNameText(t);
+        OnChangeStreamNameEventHandler = (t) => UpdateStreamNameText(t);
+        PlayerManager.Instance.OnChangeStreamNameEvent += OnChangeStreamNameEventHandler;
         DisplayRemainingStreamTime = PlayerManager.Instance.RemainingStreamTime;
         StartCoroutine(PeriodicValueSync());
     }
-
-
     
     void Update()
     {
-        viewersText.text = "<sprite name=\"viewers\">" + PlayerManager.Instance.CurrentViewers.ToString();
-        subscribersText.text = "SUBS: " + PlayerManager.Instance.Subscriptions.ToString();
+        sb.Clear();
+        sb.Append("<sprite name=\"viewers\">").Append(PlayerManager.Instance.CurrentViewers.ToString());
+        viewersText.text = sb.ToString();
+
+        sb.Clear();
+        sb.Append("SUBS: ").Append(PlayerManager.Instance.Subscriptions.ToString());
+        subscribersText.text = sb.ToString();
         DisplayRemainingStreamTime -= Time.deltaTime;
         if(DisplayRemainingStreamTime <= 0)
         {
@@ -66,7 +73,9 @@ public class PlayerDetailsUI : MonoBehaviour
         int hours = Mathf.FloorToInt(timeInSeconds / 3600F);
         int minutes = Mathf.FloorToInt((timeInSeconds - hours * 3600) / 60F);
         int seconds = Mathf.FloorToInt(timeInSeconds - hours * 3600 - minutes * 60);
-        return hours.ToString("00") + ":" + minutes.ToString("00") + ":" + seconds.ToString("00"); 
+        sb.Clear();
+        sb.Append(hours.ToString("00")).Append(":").Append(minutes.ToString("00")).Append(":").Append(seconds.ToString("00"));
+        return sb.ToString(); 
     }
 
     public IEnumerator SpawnSubPopupNumber(int times)
@@ -78,8 +87,16 @@ public class PlayerDetailsUI : MonoBehaviour
         {
             Vector3 randomOffset = new Vector3(Random.Range(rangeMin.x, rangeMax.x), Random.Range(rangeMin.y, rangeMax.y), 0);
             Vector3 worldPosition = remainingStreamTime.rectTransform.TransformPoint(randomOffset);
-            PopupTextSpawner.Instance.SpawnPopupText(remainingStreamTime.transform ,worldPosition, "+" + Mathf.FloorToInt(PlayerManager.Instance.StreamTimeIncrease*timeMultiplier));
+            PopupTextSpawner.Instance.SpawnPopupText(
+                remainingStreamTime.transform ,worldPosition, 
+                "+" + Mathf.FloorToInt(PlayerManager.Instance.StreamTimeIncrease*timeMultiplier),
+                0.5f);
             yield return new WaitForSeconds(popupNumberDuration/amount);
         }
+    }
+
+    void OnDestroy()
+    {
+        PlayerManager.Instance.OnChangeStreamNameEvent -= OnChangeStreamNameEventHandler;
     }
 }

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
+using System.Text;
 
 
 public class SleepSettingsScreen : MonoBehaviour
@@ -11,14 +12,14 @@ public class SleepSettingsScreen : MonoBehaviour
     [SerializeField] private RectTransform sleepSettingsLayout;
     [SerializeField] private RectTransform actionsPanel;
     [SerializeField] private RectTransform workerPanel;
-    [SerializeField] private float healthPerChunk = 20f;
-    [SerializeField] private float hourPerRestoreHealthChunk = 1f;
-    [SerializeField] private float hourPerTrainedAttribute = 0.5f;
-    [SerializeField] private Color addedWorkerColor;
-    [SerializeField] private float hourPerAddedWorker = 1f;
-    [SerializeField] private Slider restoreHealthSlider;
+    [SerializeField] private float healthPerHours = 20f;
+    [SerializeField] private float hoursPerRestoreHealthChunk = 1f;
+    [SerializeField] private float hoursPerTrainedAttribute = 0.5f;
+    [SerializeField] private float hoursPerAddedWorker = 1f;
+    [SerializeField] private Slider sleepHourSlider;
     [SerializeField] private Button confirmButton;
     [SerializeField] private TextMeshProUGUI sleepHoursText; 
+    [SerializeField] private TextMeshProUGUI sleepPointsText; 
 
     private Worker selectedWorker => WorkerManager.Instance.SelectedWorker;
     private List<Worker> addedWorkers = new List<Worker>();
@@ -26,9 +27,11 @@ public class SleepSettingsScreen : MonoBehaviour
     private WorkerDetailsUI DetailsUI => WorkerManager.Instance.WorkerStatUI;
     private float DisplayTimeMultiplier => TimescaleManager.Instance.displayTimeMultiplier;
     private int allocedAttributes = 0;
-    private int restoredHealthChunk = 0;
     private float sleepHours = 0;
     public bool IsOpen {get; private set;} = false;
+    private StringBuilder sb1 = new StringBuilder();
+    private StringBuilder sb3 = new StringBuilder();
+    private StringBuilder sb2 = new StringBuilder();
 
     void Awake()
     {
@@ -44,7 +47,7 @@ public class SleepSettingsScreen : MonoBehaviour
 
     void Start()
     {
-        restoreHealthSlider.onValueChanged.AddListener(delegate {SetRestoreHealthChunk((int)restoreHealthSlider.value);});
+        sleepHourSlider.onValueChanged.AddListener(delegate {SetSleepHours((int)sleepHourSlider.value);});
         confirmButton.onClick.AddListener(ConfirmSleep);
         DetailsUI.AddRobustnessButton.onClick.AddListener(delegate {AddRobustness(1);});
         DetailsUI.SubtractRobustnessButton.onClick.AddListener(delegate {AddRobustness(-1);});
@@ -69,62 +72,67 @@ public class SleepSettingsScreen : MonoBehaviour
         WorkerManager.Instance.WorkerStatUI.ShowButtons();
         DetailsUI.NewButton.transform.SetAsLastSibling();
         sleepSettingsUI.gameObject.SetActive(true);
-    }
-
-    public void Update()
-    {
-       UpdateSleepHoursText(); 
+        sleepHourSlider.maxValue = Mathf.FloorToInt(PlayerManager.Instance.RemainingStreamTime*DisplayTimeMultiplier/3600);
     }
 
     private void UpdateSleepHoursText()
     {
-        CalculateSleepHours();
-        string hours;
-        string remainingHrs = " (remaining: " + (PlayerManager.Instance.RemainingStreamTime*DisplayTimeMultiplier/3600 - Mathf.Max(4,sleepHours)).ToString("0.0")  + " hrs)";
-        if(sleepHours < 4)
+        sb1.Clear();
+        sb2.Clear();
+        if (sleepHours < 4)
         {
-            hours = "4 hrs (" + sleepHours + " hrs)"; 
+            sb2.Append("4 hrs (").Append(sleepHours).Append(" hrs)");
         }
         else
         {
-            hours = sleepHours + " hrs";
+            sb2.Append(sleepHours).Append(" hrs");
         }
-        if(!ValidSleepHours())
+
+        sb3.Clear();
+        sb3.Append(" (remaining: ").Append((PlayerManager.Instance.RemainingStreamTime*DisplayTimeMultiplier/3600 - Mathf.Max(4,sleepHours)).ToString("0.0")).Append(" hrs)");
+
+        if (!ValidSleepHours())
         {
-            sleepHoursText.text = "<color=red> Sleep Hours: " + hours + remainingHrs + "</color>";
+            sb1.Append("<color=red> Sleep Hours: ").Append(sb2).Append(sb3).Append("</color>");
         }
-        else 
+        else
         {
-            sleepHoursText.text = "Sleep Hours: " + hours + remainingHrs;
+            sb1.Append("Sleep Hours: ").Append(sb2).Append(sb3);
         }
+        sleepHoursText.text = sb1.ToString();
+        sb1.Clear();
+        sb1.Append("\nSleep Points: ").Append(GetRemainingSleepPoints()).Append(" (unspend points will restore Neuro's integrity)");
+        sleepPointsText.text = sb1.ToString();
     }
 
     public void AddRobustness(int value)
     {
-        AddSelectedAllocAttributes(new WorkerAttributes(value, 0, 0, 0));
+        AllocateAttributes(new WorkerAttributes(value, 0, 0, 0));
     }
 
     public void AddLatency(int value)
     {
-        AddSelectedAllocAttributes(new WorkerAttributes(0, value, 0, 0));
+        AllocateAttributes(new WorkerAttributes(0, value, 0, 0));
     }
 
     public void AddAccuracy(int value)
     {
-        AddSelectedAllocAttributes(new WorkerAttributes(0, 0, value, 0));
+        AllocateAttributes(new WorkerAttributes(0, 0, value, 0));
     }
 
     public void AddFitness(int value)
     {
-        AddSelectedAllocAttributes(new WorkerAttributes(0, 0, 0, value));
+        AllocateAttributes(new WorkerAttributes(0, 0, 0, value));
     }
 
-    private void AddSelectedAllocAttributes(WorkerAttributes attributes)
+    private void AllocateAttributes(WorkerAttributes attributes)
     {
         if(selectedWorker == null) return;
-        allocedAttributes += selectedWorker.AddAllocAttributes(attributes);
+        if(GetRemainingSleepPoints() < attributes.Sum()*hoursPerTrainedAttribute) return;
+        allocedAttributes += selectedWorker.AllocateAttributes(attributes);
         trainedWorkers.Add(selectedWorker);
         DetailsUI.UpdateAttributesText(selectedWorker);
+        UpdateSleepHoursText();
     }
 
     public void ResetSelectedAllocAttributes()
@@ -134,14 +142,18 @@ public class SleepSettingsScreen : MonoBehaviour
         allocedAttributes -= selectedWorker.ResetAllocAttributes();
         trainedWorkers.Remove(selectedWorker);
         DetailsUI.UpdateAttributesText(selectedWorker);
+        UpdateSleepHoursText();
     }
 
     public void AddWorker()
     {
+        if(GetRemainingSleepPoints() < hoursPerAddedWorker) return;
         Worker worker = WorkerManager.Instance.AddWorker();
         worker.AddedOverlay.gameObject.SetActive(true);
+        worker.Select();
         addedWorkers.Add(worker);
         DetailsUI.NewButton.transform.SetAsLastSibling();
+        UpdateSleepHoursText();
     }
 
     public void DeleteAddedWorker()
@@ -152,11 +164,18 @@ public class SleepSettingsScreen : MonoBehaviour
             trainedWorkers.Remove(selectedWorker);
             WorkerManager.Instance.RemoveWorker(selectedWorker);
         }
+        UpdateSleepHoursText();
     }
 
-    public void SetRestoreHealthChunk(int value)
+    public void SetSleepHours(int value)
     {
-        restoredHealthChunk = value;
+        if(GetRemainingSleepPoints() < sleepHours - value)
+        {
+            sleepHourSlider.value = sleepHours;
+            return;
+        }
+        sleepHours = value;
+        UpdateSleepHoursText();
     }
 
     public void ConfirmSleep()
@@ -177,32 +196,30 @@ public class SleepSettingsScreen : MonoBehaviour
             worker.AddedOverlay.gameObject.SetActive(false);
         }
 
-        PlayerManager.Instance.HealHealth(restoredHealthChunk*healthPerChunk);
+        PlayerManager.Instance.HealHealth(GetRemainingSleepPoints()*healthPerHours/hoursPerRestoreHealthChunk);
         CloseUI();
         PlayerManager.Instance.Sleep(Mathf.Max(4,sleepHours) * (3600/DisplayTimeMultiplier)); //this also change timescale so must be last
     }
 
-    private void CalculateSleepHours()
+    private float GetRemainingSleepPoints()
     {
-        sleepHours = 0;
-        sleepHours += restoredHealthChunk * hourPerRestoreHealthChunk;
-        sleepHours += allocedAttributes * hourPerTrainedAttribute;
-        sleepHours += addedWorkers.Count * hourPerAddedWorker;
+        float sleepPoints = sleepHours;
+        sleepPoints -= allocedAttributes * hoursPerTrainedAttribute;
+        sleepPoints -= addedWorkers.Count * hoursPerAddedWorker;
+        return sleepPoints;
     }
 
     private bool ValidSleepHours()
     {
-        CalculateSleepHours();
-        return PlayerManager.Instance.RemainingStreamTime*DisplayTimeMultiplier/3600 - Mathf.Max(4,sleepHours) >= 1;
+        return PlayerManager.Instance.RemainingStreamTime*DisplayTimeMultiplier/3600 - Mathf.Max(4,sleepHours) >= 0;
     }
 
     public void CloseUI()
     {
         allocedAttributes = 0;
-        restoredHealthChunk = 0;
         sleepHours = 0;
         addedWorkers.Clear();
-        sleepSettingsUI.gameObject.SetActive(false);
+        trainedWorkers.Clear();
         workerPanel.SetParent(actionsPanel);
         WorkerManager.Instance.DeselectWorker();
         WorkerManager.Instance.WorkerStatUI.HideButtons();
@@ -210,6 +227,7 @@ public class SleepSettingsScreen : MonoBehaviour
         GameManager.Instance.ContinueStream();
         GameManager.Instance.isPause = false;
         IsOpen = false;
+        sleepSettingsUI.gameObject.SetActive(false);
     }
 
 

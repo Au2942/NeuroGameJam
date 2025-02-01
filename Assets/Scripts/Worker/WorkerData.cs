@@ -14,7 +14,7 @@ public class WorkerData
     [SerializeField] public WorkerStats TempStats = new WorkerStats();
     [SerializeField] public WorkerStats TotalStats;
 
-    public int AddAllocAttributes(WorkerAttributes addedAttributes)
+    public int AllocateAttributes(WorkerAttributes addedAttributes)
     {
         int allocedAttributes = 0;
         if(addedAttributes.Robustness > 0)
@@ -84,7 +84,7 @@ public class WorkerData
         BaseAttributes.Accuracy += AllocAttributes.Accuracy;
         BaseAttributes.Fitness += AllocAttributes.Fitness;
         AllocAttributes = new WorkerAttributes(0,0,0,0);
-        Level = Mathf.RoundToInt(BaseAttributes.AverageAttributes());
+        Level = Mathf.RoundToInt(BaseAttributes.Average());
         UpdateTotalAttribute();
 
     }
@@ -114,7 +114,7 @@ public class WorkerData
     public void UpdateTotalAttribute()
     {
         TotalAttributes = BaseAttributes + TempAttributes;
-        Level = Mathf.RoundToInt(TotalAttributes.AverageAttributes());
+        Level = Mathf.RoundToInt(TotalAttributes.Average());
         UpdateBaseStats();
     }
     
@@ -158,7 +158,12 @@ public struct WorkerAttributes
         AccuracyScore = 0;
         FitnessScore = 0;
     }
-    public float AverageAttributes()
+
+    public float Sum()
+    {
+        return Robustness + Latency + Accuracy + Fitness;
+    }
+    public float Average()
     {
         return (Robustness + Latency + Accuracy + Fitness) / 4;
     }

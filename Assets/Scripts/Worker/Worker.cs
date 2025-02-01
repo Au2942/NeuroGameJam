@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
-using System.Collections;
 using System.Collections.Generic;
 
 public class Worker : MonoBehaviour, ICombatUnit
@@ -10,9 +10,8 @@ public class Worker : MonoBehaviour, ICombatUnit
     [SerializeField] public string Identifier;
     [SerializeField] public WorkerAppearance WorkerAppearance;
     [SerializeField] public WorkerAppearance IconAppearance;
-    [SerializeField] public RectTransform WorkerIcon;
+    [SerializeField] public UIEventHandler iconClickDetector; 
     [SerializeField] public TextMeshProUGUI NameText;
-    [SerializeField] public UIEventHandler ClickHandler; 
     [SerializeField] public Image CooldownOverlay;
     [SerializeField] public Image AddedOverlay;
     [SerializeField] public WorkerData workerData = new WorkerData();
@@ -36,14 +35,18 @@ public class Worker : MonoBehaviour, ICombatUnit
     public float AttackRate { get => workerData.TotalStats.WorkTime; set => workerData.TotalStats.WorkTime = value;}
 
     List<ICombatUnit> ICombatUnit.CombatTargets { get => CombatTargets; set => CombatTargets = value; }
+    public event System.Action<Worker> OnSelectedEvent; 
+    private System.Action<PointerEventData> OnClickEventHandler;
 
-
-    public event System.Action<Worker> OnSelected; 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
+    {
+        OnClickEventHandler = (eventData) => Select();
+    }
+    
+    void OnEnable()
     {
         workerData.UpdateTotalAttribute();
-        ClickHandler.OnLeftClickEvent += (eventData) => Select();
+        iconClickDetector.OnLeftClickEvent += OnClickEventHandler;
     }
 
     void Update()
@@ -72,9 +75,9 @@ public class Worker : MonoBehaviour, ICombatUnit
         }
     }
 
-    public int AddAllocAttributes(WorkerAttributes attributes)
+    public int AllocateAttributes(WorkerAttributes attributes)
     {
-        return workerData.AddAllocAttributes(attributes);
+        return workerData.AllocateAttributes(attributes);
     }
 
     public int ResetAllocAttributes()
@@ -110,19 +113,25 @@ public class Worker : MonoBehaviour, ICombatUnit
 
     public void Select()
     {
-        if(PlayerManager.Instance.state == PlayerManager.PlayerState.command || !IsAvailable) return;
+        if(PlayerManager.Instance.state == PlayerManager.PlayerState.command) return;
         if(!GameManager.Instance.isPause)
         {
-            PlayerManager.Instance.SetState(PlayerManager.PlayerState.command);
+            if(IsAvailable)
+            {
+                PlayerManager.Instance.SetState(PlayerManager.PlayerState.command);
+            }
+            SetAvailability(false);
         }
-        //logic for showing selection border
-        OnSelected?.Invoke(this);
+        OnSelectedEvent?.Invoke(this);
     }
 
 
     public void Deselect()
     {
-        //logic for hiding selection border
+        if(WorkHandler.workState == WorkHandler.WorkState.None)
+        {
+            SetAvailability(true);
+        }
     }
 
     public void SetAvailability(bool availability)
@@ -134,7 +143,6 @@ public class Worker : MonoBehaviour, ICombatUnit
         }
         else
         {
-            CooldownOverlay.fillAmount = 1;
             CooldownOverlay.gameObject.SetActive(true);
         }
     }
@@ -150,7 +158,7 @@ public class Worker : MonoBehaviour, ICombatUnit
 
     void OnDestroy()
     {
-        ClickHandler.OnLeftClickEvent -= (eventData) => Select();
+        iconClickDetector.OnLeftClickEvent -= (eventData) => Select();
     }
 
     public void Attack()
@@ -191,6 +199,11 @@ public class Worker : MonoBehaviour, ICombatUnit
     {
         WorkerManager.Instance.RemoveWorker(this);
         Destroy(gameObject);
+    }
+
+    void OnDisable()
+    {
+        iconClickDetector.OnLeftClickEvent -= OnClickEventHandler;
     }
 
 }

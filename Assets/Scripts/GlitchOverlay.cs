@@ -28,7 +28,7 @@ public class GlitchOverlay : MonoBehaviour
     private int _blockSeed1 = 71;
     private int _blockSeed2 = 113;
     private int _blockStride = 1;
-    [SerializeField] private Material material;
+    [SerializeField] private Material tempMaterial;
     
         private static readonly int blockSizeID = Shader.PropertyToID("_BlockSize");
         private static readonly int blockStrengthID = Shader.PropertyToID("_BlockStrength");
@@ -42,8 +42,8 @@ public class GlitchOverlay : MonoBehaviour
 
     void Start()
     {
-        material = new Material(glitchMaterial);
-        glitchEffect.material = material;
+        tempMaterial = new Material(glitchMaterial);
+        glitchEffect.material = tempMaterial;
         MemoryManager.Instance.MemoryNavigator.ScrollRect.onValueChanged.AddListener(delegate {UpdateBounds();});
         glitchEffect.gameObject.SetActive(show);
     }
@@ -52,7 +52,7 @@ public class GlitchOverlay : MonoBehaviour
     {
         Vector3[] corners = new Vector3[4];
         glitchEffect.rectTransform.GetWorldCorners(corners);
-        glitchEffect.material.SetVector("_MeshBound", 
+        glitchEffect.materialForRendering.SetVector("_MeshBound", 
             new Vector4(corners[0].x, corners[0].y, corners[2].x, corners[2].y));
     }
 
@@ -179,15 +179,15 @@ public class GlitchOverlay : MonoBehaviour
 
         var vjump = new Vector2(_jumpTime, jump);
 
-        glitchEffect.material.SetFloat(blockSizeID, blockSize);
-        glitchEffect.material.SetFloat(blockStrengthID, block3);
-        glitchEffect.material.SetInt(blockStrideID, _blockStride);
-        glitchEffect.material.SetInt(blockSeed1ID, _blockSeed1);
-        glitchEffect.material.SetInt(blockSeed2ID, _blockSeed2);
-        glitchEffect.material.SetVector(driftID, vdrift);
-        glitchEffect.material.SetVector(jitterID, vjitter);
-        glitchEffect.material.SetVector(jumpID, vjump);
-        glitchEffect.material.SetFloat(shakeID, shake);
+        glitchEffect.materialForRendering.SetFloat(blockSizeID, blockSize);
+        glitchEffect.materialForRendering.SetFloat(blockStrengthID, block3);
+        glitchEffect.materialForRendering.SetInt(blockStrideID, _blockStride);
+        glitchEffect.materialForRendering.SetInt(blockSeed1ID, _blockSeed1);
+        glitchEffect.materialForRendering.SetInt(blockSeed2ID, _blockSeed2);
+        glitchEffect.materialForRendering.SetVector(driftID, vdrift);
+        glitchEffect.materialForRendering.SetVector(jitterID, vjitter);
+        glitchEffect.materialForRendering.SetVector(jumpID, vjump);
+        glitchEffect.materialForRendering.SetFloat(shakeID, shake);
         
         
     }
@@ -195,6 +195,6 @@ public class GlitchOverlay : MonoBehaviour
     void OnDestroy()
     {
         //MemoryNavigationManager.Instance.OnUpdateMemoryLayout -= UpdateBounds;
-        Destroy(material);
+        DestroyImmediate(tempMaterial,true);
     }
 }

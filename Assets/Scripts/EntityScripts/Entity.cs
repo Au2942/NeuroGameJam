@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using System.Collections;
 
@@ -6,9 +7,9 @@ public abstract class Entity : MonoBehaviour
 {
 
     [SerializeField] public GameObject Body;
-    [SerializeField] protected UIEventHandler[] clickInteractHandlers;
+    [SerializeField] protected List<UIEventHandler> clickInteractDetectors = new();
     [SerializeField] protected DialogueManager dialogueManager;
-    [SerializeField] protected List<DialogueSet> dialogueSets;
+    [SerializeField] protected List<DialogueSet> dialogueSets = new();
     [SerializeField] public float Health = 100;
     [SerializeField] public float MaxHealth = 100;
     [SerializeField] public float Corruption = 100; //to use when repairing / resetting
@@ -20,12 +21,12 @@ public abstract class Entity : MonoBehaviour
     [SerializeField] protected float talkRollInterval = 2f;
     [SerializeField] protected float talkChance = 0.25f;
     [SerializeField] protected float glitchRollThreshold = 0.7f; //start rolling at this integrity
-    [SerializeField] public List<AnimatorClipsPair> defaultAnimatorClips;
-    [SerializeField] public List<AnimatorClipsPair> idleAnimatorClips;
-    [SerializeField] public List<AnimatorClipsPair> dialoguePlayingAnimation; //plays while dialogue is playing
-    [SerializeField] public List<AnimatorClipsPair> dialogueTypingAnimation; //plays when playing a typing sound
-    [SerializeField] public List<AnimatorClipsPair> normalAnimatorClips;
-    [SerializeField] public List<AnimatorClipsPair> glitchAnimatorClips;
+    [SerializeField] public List<AnimatorClipsPair> defaultAnimatorClips = new();
+    [SerializeField] public List<AnimatorClipsPair> idleAnimatorClips = new();
+    [SerializeField] public List<AnimatorClipsPair> dialoguePlayingAnimation = new(); //plays while dialogue is playing
+    [SerializeField] public List<AnimatorClipsPair> dialogueTypingAnimation = new(); //plays when playing a typing sound
+    [SerializeField] public List<AnimatorClipsPair> normalAnimatorClips = new();
+    [SerializeField] public List<AnimatorClipsPair> glitchAnimatorClips = new();
 
     public enum AnimationState
     {
@@ -40,24 +41,34 @@ public abstract class Entity : MonoBehaviour
     protected int dialogueSetIndex = 0;
     protected int talkCounter = 0;
 
-
+    public event System.Action<float> OnHealthChangedEvent;
+    public event System.Action<float> OnCorruptionChangedEvent;
+    public event System.Action OnEnterGlitchEvent;
+    public event System.Action OnExitGlitchEvent;
+    private List<System.Action<PointerEventData>> OnClickInteractHandlers = new List<System.Action<PointerEventData>>();
 
 
     protected virtual void Awake()
     {
-        GameManager.Instance.OnStartStream += OnStartStream;
-        GameManager.Instance.OnEndStream += OnEndStream;
-
-        foreach(UIEventHandler clickInteract in clickInteractHandlers)
-        {
-            clickInteract.OnLeftClickEvent += (t) => ClickInteract(clickInteract.gameObject);
-        }
+        
     }
     protected virtual void Start()
     {
         PlayDefaultAnimation();
         SetNormalAppearance();
         PlayIdleAnimation();
+    }
+    protected virtual void OnEnable()
+    {
+        OnClickInteractHandlers.Clear();
+        for(int i = 0; i < clickInteractDetectors.Count; i++)
+        {
+            int index = i;
+            OnClickInteractHandlers.Add((t) => ClickInteract(clickInteractDetectors[index].gameObject));
+            clickInteractDetectors[index].OnLeftClickEvent += OnClickInteractHandlers[index];
+        }
+        GameManager.Instance.OnStartStream += OnStartStream;
+        GameManager.Instance.OnEndStream += OnEndStream;
     }
     protected virtual void OnStartStream()
     {
@@ -138,7 +149,7 @@ public abstract class Entity : MonoBehaviour
         {
             Corruption = 0;
         }
-        OnStabilityChanged(amount);
+        OnCorruptionChanged(amount);
     }
 
     public void DamageCorruption(float amount)
@@ -152,14 +163,16 @@ public abstract class Entity : MonoBehaviour
         {
             RollChanceToGlitch();
         }
+        OnHealthChangedEvent?.Invoke(Health);
     }
 
-    protected virtual void OnStabilityChanged(float amount)
+    protected virtual void OnCorruptionChanged(float amount)
     {
         if(Glitched && Corruption <= 0)
         {
             ExitGlitchState();
         }
+        OnCorruptionChangedEvent?.Invoke(Corruption);
     }
 
 
@@ -244,6 +257,7 @@ public abstract class Entity : MonoBehaviour
     protected virtual void NormalBehavior()
     {
         SharedBehavior();
+        CorruptionCooldownTimer -= Time.deltaTime;
     }
 
     protected virtual void GlitchBehavior()
@@ -267,7 +281,8 @@ public abstract class Entity : MonoBehaviour
         dialogueSetIndex = 1;
         ShutUp();
 
-        SetGlitchAppearance();        
+        SetGlitchAppearance();
+        OnEnterGlitchEvent?.Invoke();
     }
 
 
@@ -277,6 +292,7 @@ public abstract class Entity : MonoBehaviour
         CorruptionCooldownTimer = CorruptionCooldown;
         dialogueSetIndex = 0;
         SetNormalAppearance();
+        OnExitGlitchEvent?.Invoke();
     }
 
     public virtual void RollChanceToGlitch()
@@ -293,6 +309,11 @@ public abstract class Entity : MonoBehaviour
     public float HealthPercentage()
     {
         return Health / MaxHealth;
+    }
+
+    public float CorruptionPercentage()
+    {
+        return Corruption / MaxCorruption;
     }
 
     public virtual void Converse()
@@ -365,16 +386,21 @@ public abstract class Entity : MonoBehaviour
         dialogueManager.EndDialogue();
     }
 
-    protected virtual void OnDestroy()
+    protected virtual void OnDisable()
     {
+        for(int i = 0; i < clickInteractDetectors.Count; i++)
+        {
+            clickInteractDetectors[i].OnLeftClickEvent -= OnClickInteractHandlers[i];
+        }
         if(GameManager.Instance != null)
         {
             GameManager.Instance.OnStartStream -= OnStartStream;
             GameManager.Instance.OnEndStream -= OnEndStream;
         }
-        foreach(UIEventHandler clickInteract in clickInteractHandlers)
-        {
-            clickInteract.OnLeftClickEvent -= (t) => ClickInteract(clickInteract.gameObject);
-        }
+    }
+    protected virtual void OnDestroy()
+    {
+
+
     }
 }

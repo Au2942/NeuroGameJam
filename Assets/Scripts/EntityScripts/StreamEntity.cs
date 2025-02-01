@@ -9,7 +9,12 @@ public class StreamEntity : Entity
         base.Start();
         Health = PlayerManager.Instance.Health;
         MaxHealth = PlayerManager.Instance.MaxHealth;
-        PlayerManager.Instance.OnTakeDamage += OnHealthChanged;
+        PlayerManager.Instance.OnTakeDamageEvent += DamageHealth;
+    }
+
+    protected override void OnEnable()
+    {
+        base.OnEnable();
     }
     protected override void Update()
     {  
@@ -50,6 +55,12 @@ public class StreamEntity : Entity
     public void ExitSleepState()
     {
         SetNormalAppearance();
+    }
+
+    protected override void OnDestroy()
+    {
+        base.OnDisable();
+        PlayerManager.Instance.OnTakeDamageEvent -= DamageHealth;
     }
 
 }

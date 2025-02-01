@@ -1,7 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -18,18 +15,28 @@ public class MemoryNavigator : MonoBehaviour
     [SerializeField] public int CurrentMemoryIndex = 0;
     public MemoryData MemoryData => MemoryManager.Instance.MemoryData;
     public int MemoryCount => MemoryManager.Instance.MemoryCount;
-    public event Action<int> OnChangeMemoryIndex;
+    public event System.Action<int> OnChangeMemoryIndex;
     private int nearestIndex = -1;
     private float cooldownTimer = 0f;
     private float scrollDelta = 0f;
     private bool isDraggingScroll = false;
     private Coroutine smoothScrollCoroutine;
 
-        void Start()
+    private System.Action<PointerEventData> BeginDragEventHandler;
+    private System.Action<PointerEventData> EndDragEventHandler;
+    private System.Action<PointerEventData> ScrollEventHandler;
+
+    void Awake()
     {
-        scrollRectEventHandler.OnBeginDragEvent += (t) => {isDraggingScroll = true;};
-        scrollRectEventHandler.OnEndDragEvent += (t) => {isDraggingScroll = false;};
-        scrollRectEventHandler.OnScrollEvent += UpdateScrollingInput;
+        BeginDragEventHandler = (t) => {isDraggingScroll = true;};
+        EndDragEventHandler = (t) => {isDraggingScroll = false;};
+        ScrollEventHandler = (t) => {UpdateScrollingInput(t);};
+    }
+    void Start()
+    {
+        scrollRectEventHandler.OnBeginDragEvent += BeginDragEventHandler;
+        scrollRectEventHandler.OnEndDragEvent += EndDragEventHandler;
+        scrollRectEventHandler.OnScrollEvent += ScrollEventHandler;
         distanceBetweenIndex = memoryWidth + memoryContent.GetComponent<HorizontalLayoutGroup>().spacing;
         StartCoroutine(SnapToNearestMemoryRoutine());
     }
@@ -138,18 +145,19 @@ public class MemoryNavigator : MonoBehaviour
 
     private void SetIntegrityBarEntity(MemoryEntity entity)
     {
+        if(healthIndicator == null) return;
         healthIndicator.SetEntity(entity);
     }
 
-    public void SetupMemoryCell(MemoryEntity memory, MemoryInfo memoryInfo)
+    public void SetupMemoryBlock(MemoryEntity memory, MemoryInfo memoryInfo)
     {
 
         memory.transform.SetParent(memoryContent);
 
-        MemoryCell memoryCell = memory.GetComponent<MemoryCell>();
-        memoryCell.SetupMemoryCell(memoryInfo.name, MemoryCount-1);
+        MemoryBlock memoryBlock = memory.GetComponent<MemoryBlock>();
+        memoryBlock.SetupMemoryBlock(memoryInfo.name, MemoryCount-1);
 
-        ScrollRect.onValueChanged.AddListener(delegate {memoryCell.UpdateCellOnScroll();});
+        ScrollRect.onValueChanged.AddListener(delegate {memoryBlock.UpdateBlockOnScroll();});
         memory.transform.SetSiblingIndex(2 + MemoryCount-1);
 
     }
@@ -211,5 +219,12 @@ public class MemoryNavigator : MonoBehaviour
         }
 
         memoryContent.anchoredPosition = new Vector2(targetX, memoryContent.anchoredPosition.y);
+    }
+
+    void OnDestroy()
+    {
+        scrollRectEventHandler.OnBeginDragEvent -= BeginDragEventHandler;
+        scrollRectEventHandler.OnEndDragEvent -= EndDragEventHandler;
+        scrollRectEventHandler.OnScrollEvent -= ScrollEventHandler;
     }
 }

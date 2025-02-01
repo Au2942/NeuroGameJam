@@ -1,6 +1,6 @@
-using System;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 
 public class StreamCard : MonoBehaviour
@@ -14,17 +14,32 @@ public class StreamCard : MonoBehaviour
     private Color originalColor;
     private Color transparentColor;
 
-    public event Action<StreamSO> OnSelect;
+    public event System.Action<StreamSO> OnSelect;
+    public System.Action<PointerEventData> OnPointerUpEventHandler;
+    public System.Action<PointerEventData> OnPointerEnterHandler;
+    public System.Action<PointerEventData> OnPointerExitHandler;
 
+    void Awake()
+    {
+        OnPointerUpEventHandler = (t) => Select();
+        OnPointerEnterHandler = (t) => outline.color = originalColor;
+        OnPointerExitHandler = (t) => outline.color = transparentColor;
+    }
+    void OnEnable()
+    {
+        cardEventHandler.OnPointerUpEvent += OnPointerUpEventHandler;
+        cardEventHandler.OnPointerEnterEvent += OnPointerEnterHandler;
+        cardEventHandler.OnPointerExitEvent += OnPointerExitHandler;
+    }
     void Start()
     {
         originalColor = outline.color;
         transparentColor = new Color(originalColor.r, originalColor.g, originalColor.b, 0);
-        cardEventHandler.OnPointerDownEvent += (t) => Select();
-        cardEventHandler.OnPointerEnterEvent += (t) => outline.color = originalColor;
-        cardEventHandler.OnPointerExitEvent += (t) => outline.color = transparentColor;
         outline.color = transparentColor;
+
     }
+
+
 
     public void Setup(StreamCardSO streamCardSO)
     {
@@ -40,10 +55,10 @@ public class StreamCard : MonoBehaviour
         OnSelect?.Invoke(stream);
     }
 
-    void OnDestroy()
+    void OnDisable()
     {
-        cardEventHandler.OnPointerDownEvent -= (t) => Select();
-        cardEventHandler.OnPointerEnterEvent -= (t) => outline.color = originalColor;
-        cardEventHandler.OnPointerExitEvent -= (t) => outline.color = transparentColor;
+        cardEventHandler.OnPointerUpEvent -= OnPointerUpEventHandler;
+        cardEventHandler.OnPointerEnterEvent -= OnPointerEnterHandler;
+        cardEventHandler.OnPointerExitEvent -= OnPointerExitHandler;
     }
 }

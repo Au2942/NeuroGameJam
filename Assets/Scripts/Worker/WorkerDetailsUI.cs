@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Text;
 
 public class WorkerDetailsUI : MonoBehaviour
 {
@@ -22,10 +23,10 @@ public class WorkerDetailsUI : MonoBehaviour
     [SerializeField] public Button AddFitnessButton;
     [SerializeField] private TextMeshProUGUI fitnessText;
     [SerializeField] public Button SubtractFitnessButton;
-    [SerializeField] private Color allocColor;
-    [SerializeField] private Color modifyColor;
+    [SerializeField] private Color allocColor = new Color(1,1,1);
+    [SerializeField] private Color modifyColor = new Color(1,1,1);
 
-
+    private StringBuilder sb = new StringBuilder();
     void Start()
     {
         ResetAttributesText();
@@ -35,77 +36,72 @@ public class WorkerDetailsUI : MonoBehaviour
 
     public void UpdateAttributesText(Worker worker)
     {
-        if(worker != null)
+        if (worker != null)
         {
-
             int robustness = worker.BaseAttributes.Robustness + worker.AllocAttributes.Robustness + worker.TempAttributes.Robustness;
             int latency = worker.BaseAttributes.Latency + worker.AllocAttributes.Latency + worker.TempAttributes.Latency;
             int accuracy = worker.BaseAttributes.Accuracy + worker.AllocAttributes.Accuracy + worker.TempAttributes.Accuracy;
             int fitness = worker.BaseAttributes.Fitness + worker.AllocAttributes.Fitness + worker.TempAttributes.Fitness;
 
-            if(worker.AllocAttributes.Robustness > 0)
+            sb.Clear();
+            if (worker.AllocAttributes.Robustness > 0)
             {
-                robustnessText.text = "<color=#" + ColorUtility.ToHtmlStringRGB(allocColor) + ">" + NumberToTier(robustness) + "</color>";
+                sb.Append("<color=#").Append(ColorUtility.ToHtmlStringRGB(allocColor)).Append(">").Append(NumberToTier(robustness)).Append("</color>");
+            }
+            else if (worker.TempAttributes.Robustness > 0)
+            {
+                sb.Append("<color=#").Append(ColorUtility.ToHtmlStringRGB(modifyColor)).Append(">").Append(NumberToTier(robustness)).Append("</color>");
             }
             else
             {
-                if(worker.TempAttributes.Robustness > 0)
-                {
-                    robustnessText.text = "<color=#" + ColorUtility.ToHtmlStringRGB(modifyColor) + ">" + NumberToTier(robustness) + "</color>";
-                }
-                else
-                {
-                    robustnessText.text = NumberToTier(robustness);
-                }
+                sb.Append(NumberToTier(robustness));
             }
+            robustnessText.text = sb.ToString();
 
-            if(worker.AllocAttributes.Latency > 0)
+            sb.Clear();
+            if (worker.AllocAttributes.Latency > 0)
             {
-                latencyText.text = "<color=#" + ColorUtility.ToHtmlStringRGB(allocColor) + ">" + NumberToTier(latency) + "</color>";
+                sb.Append("<color=#").Append(ColorUtility.ToHtmlStringRGB(allocColor)).Append(">").Append(NumberToTier(latency)).Append("</color>");
+            }
+            else if (worker.TempAttributes.Latency > 0)
+            {
+                sb.Append("<color=#").Append(ColorUtility.ToHtmlStringRGB(modifyColor)).Append(">").Append(NumberToTier(latency)).Append("</color>");
             }
             else
             {
-                if(worker.TempAttributes.Latency > 0)
-                {
-                    latencyText.text = "<color=#" + ColorUtility.ToHtmlStringRGB(modifyColor) + ">" + NumberToTier(latency) + "</color>";
-                }
-                else
-                {
-                    latencyText.text = NumberToTier(latency);
-                }
+                sb.Append(NumberToTier(latency));
             }
+            latencyText.text = sb.ToString();
 
-            if(worker.AllocAttributes.Accuracy > 0)
+            sb.Clear();
+            if (worker.AllocAttributes.Accuracy > 0)
             {
-                accuracyText.text = "<color=#" + ColorUtility.ToHtmlStringRGB(allocColor) + ">" + NumberToTier(accuracy) + "</color>";
+                sb.Append("<color=#").Append(ColorUtility.ToHtmlStringRGB(allocColor)).Append(">").Append(NumberToTier(accuracy)).Append("</color>");
+            }
+            else if (worker.TempAttributes.Accuracy > 0)
+            {
+                sb.Append("<color=#").Append(ColorUtility.ToHtmlStringRGB(modifyColor)).Append(">").Append(NumberToTier(accuracy)).Append("</color>");
             }
             else
             {
-                if(worker.TempAttributes.Accuracy > 0)
-                {
-                    accuracyText.text = "<color=#" + ColorUtility.ToHtmlStringRGB(modifyColor) + ">" + NumberToTier(accuracy) + "</color>";
-                }
-                else
-                {
-                    accuracyText.text = NumberToTier(accuracy);
-                }
+                sb.Append(NumberToTier(accuracy));
             }
+            accuracyText.text = sb.ToString();
 
-            if(worker.AllocAttributes.Fitness > 0)
+            sb.Clear();
+            if (worker.AllocAttributes.Fitness > 0)
             {
-                fitnessText.text = "<color=#" + ColorUtility.ToHtmlStringRGB(allocColor) + ">" + NumberToTier(fitness) + "</color>";
+                sb.Append("<color=#").Append(ColorUtility.ToHtmlStringRGB(allocColor)).Append(">").Append(NumberToTier(fitness)).Append("</color>");
+            }
+            else if (worker.TempAttributes.Fitness > 0)
+            {
+                sb.Append("<color=#").Append(ColorUtility.ToHtmlStringRGB(modifyColor)).Append(">").Append(NumberToTier(fitness)).Append("</color>");
             }
             else
             {
-                if(worker.TempAttributes.Fitness > 0)
-                {
-                    fitnessText.text = "<color=#" + ColorUtility.ToHtmlStringRGB(modifyColor) + ">" + NumberToTier(fitness) + "</color>";
-                }
-                else
-                {
-                    fitnessText.text = NumberToTier(fitness);
-                }
+                sb.Append(NumberToTier(fitness));
             }
+            fitnessText.text = sb.ToString();
         }
     }
 

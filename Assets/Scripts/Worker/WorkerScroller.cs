@@ -9,7 +9,7 @@ public class WorkerScroller : MonoBehaviour
 
     void Start()
     {
-        WorkerManager.Instance.OnWorkerSelected += SetSelectedWorker;
+        WorkerManager.Instance.OnWorkerSelectedEvent += SetSelectedWorker;
     }
     public void SetSelectedWorker(int index)
     {
@@ -47,5 +47,10 @@ public class WorkerScroller : MonoBehaviour
         }
 
         scrollRect.verticalNormalizedPosition = targetNormalizedPosition;
+    }
+
+    void OnDestroy()
+    {
+        WorkerManager.Instance.OnWorkerSelectedEvent -= SetSelectedWorker;
     }
 }
