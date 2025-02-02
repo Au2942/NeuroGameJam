@@ -32,7 +32,7 @@ public class PlayerDetailsUI : MonoBehaviour
     void Update()
     {
         sb.Clear();
-        sb.Append("<sprite name=\"viewers\">").Append(PlayerManager.Instance.CurrentViewers.ToString());
+        sb.Append(PlayerManager.Instance.CurrentViewers.ToString());
         viewersText.text = sb.ToString();
 
         sb.Clear();

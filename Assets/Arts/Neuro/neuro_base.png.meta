@@ -185,7 +185,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 2114
-        y: 2036
+        y: 2034
         width: 390
         height: 164
       alignment: 0
@@ -229,7 +229,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 2282
-        y: 1926
+        y: 1924
         width: 54
         height: 32
       alignment: 0
@@ -251,7 +251,29 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 2282
-        y: 1613
+        y: 1611
+        width: 54
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c81c5ac64326aae42895cb53693ecd12
+      internalID: 314156692
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: neuro_mouth_w
+      rect:
+        serializedVersion: 2
+        x: 2282
+        y: 1298
         width: 54
         height: 32
       alignment: 0
@@ -262,8 +284,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c81c5ac64326aae42895cb53693ecd12
-      internalID: 314156692
+      spriteID: 07c916c4549c62846bcc0fc1223cbfff
+      internalID: 1055083065
       vertices: []
       indices: 
       edges: []
@@ -288,6 +310,7 @@ TextureImporter:
       neuro_mouth_close: 314156692
       neuro_mouth_open: -8732790358315709044
       neuro_mouth_smile: -482502946276668004
+      neuro_mouth_w: 1055083065
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

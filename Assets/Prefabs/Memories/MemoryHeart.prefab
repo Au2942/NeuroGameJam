@@ -144,6 +144,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 2989844170749626017}
   m_SourcePrefab: {fileID: 100100000, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+--- !u!224 &462880307284160908 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8989402965477147130, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+  m_PrefabInstance: {fileID: 8839648463347642486}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2442859898082900254 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6578199205212244328, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
@@ -161,7 +166,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 197dc50e8a086144c950e2b6d84d21fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Body: {fileID: 3074293216993141892}
+  EntityBody: {fileID: 5594901612956890137}
+  EntityCell: {fileID: 462880307284160908}
   clickInteractDetectors:
   - {fileID: 8920788650429643303}
   dialogueManager: {fileID: 5539647445395518038}
@@ -267,6 +273,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 584513c97eb7815409c5bf06e15191d4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!224 &5594901612956890137 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3965885866100376687, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+  m_PrefabInstance: {fileID: 8839648463347642486}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &7017195604734307669 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2003727210736196899, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}

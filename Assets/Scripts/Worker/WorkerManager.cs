@@ -85,6 +85,12 @@ public class WorkerManager : MonoBehaviour
 
     public void SelectWorker(Worker worker)
     {
+        if(SelectedWorker == worker) 
+        {
+            DeselectWorker();
+            return;
+        }
+        
         DeselectWorker();
         SelectedWorker = worker;
         WorkerStatUI.UpdateAttributesText(SelectedWorker);

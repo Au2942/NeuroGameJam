@@ -5,35 +5,36 @@ using System.Collections;
 
 public abstract class Entity : MonoBehaviour
 {
+    [SerializeField] public EntityData entityData;
+    public RectTransform EntityBody;
+    public RectTransform EntityCell;
+    protected List<UIEventHandler> clickInteractDetectors = new();
+    protected DialogueManager dialogueManager;
+    protected List<DialogueSet> dialogueSets = new();
+    public float Health = 100;
+    public float MaxHealth = 100;
+    public float Corruption = 100; //to use when repairing / resetting
+    public float MaxCorruption = 100;
+    public float CorruptionCooldown = 10f; //cooldown after glitching out
+    public bool Interactable = true;
+    protected bool talkInOrder = true;
+    protected bool talkRepeatable = true;
+    protected float talkRollInterval = 2f;
+    protected float talkChance = 0.25f;
+    protected float glitchRollThreshold = 0.7f; //start rolling at this integrity
+    public List<AnimatorClipsPair> defaultAnimatorClips = new();
+    public List<AnimatorClipsPair> idleAnimatorClips = new();
+    public List<AnimatorClipsPair> dialoguePlayingAnimation = new(); //plays while dialogue is playing
+    public List<AnimatorClipsPair> dialogueTypingAnimation = new(); //plays when playing a typing sound
+    public List<AnimatorClipsPair> normalAnimatorClips = new();
+    public List<AnimatorClipsPair> glitchAnimatorClips = new();
 
-    [SerializeField] public GameObject Body;
-    [SerializeField] protected List<UIEventHandler> clickInteractDetectors = new();
-    [SerializeField] protected DialogueManager dialogueManager;
-    [SerializeField] protected List<DialogueSet> dialogueSets = new();
-    [SerializeField] public float Health = 100;
-    [SerializeField] public float MaxHealth = 100;
-    [SerializeField] public float Corruption = 100; //to use when repairing / resetting
-    [SerializeField] public float MaxCorruption = 100;
-    [SerializeField] public float CorruptionCooldown = 10f; //cooldown after glitching out
-    [SerializeField] public bool Interactable = true;
-    [SerializeField] protected bool talkInOrder = true;
-    [SerializeField] protected bool talkRepeatable = true;
-    [SerializeField] protected float talkRollInterval = 2f;
-    [SerializeField] protected float talkChance = 0.25f;
-    [SerializeField] protected float glitchRollThreshold = 0.7f; //start rolling at this integrity
-    [SerializeField] public List<AnimatorClipsPair> defaultAnimatorClips = new();
-    [SerializeField] public List<AnimatorClipsPair> idleAnimatorClips = new();
-    [SerializeField] public List<AnimatorClipsPair> dialoguePlayingAnimation = new(); //plays while dialogue is playing
-    [SerializeField] public List<AnimatorClipsPair> dialogueTypingAnimation = new(); //plays when playing a typing sound
-    [SerializeField] public List<AnimatorClipsPair> normalAnimatorClips = new();
-    [SerializeField] public List<AnimatorClipsPair> glitchAnimatorClips = new();
-
+    [SerializeField] public AnimationState CurrentAnimationState = AnimationState.Default;
     public enum AnimationState
     {
         Default,
         Idle,
     }
-    [SerializeField] public AnimationState CurrentAnimationState = AnimationState.Default;
 
     protected float talkRollTimer = 0f;
     public bool Glitched {get; set;} = false;

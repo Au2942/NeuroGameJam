@@ -196,6 +196,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 2794483609510162486}
   m_SourcePrefab: {fileID: 100100000, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+--- !u!224 &81988198426828709 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8989402965477147130, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+  m_PrefabInstance: {fileID: 9071236510721416799}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2786027055462242103 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6578199205212244328, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
@@ -213,7 +218,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84acc0e008e902542963f8c6d7dfd7ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Body: {fileID: 3307095262580148909}
+  EntityBody: {fileID: 5398172893542439472}
+  EntityCell: {fileID: 81988198426828709}
   clickInteractDetectors:
   - {fileID: 8971802649041212430}
   dialogueManager: {fileID: 5453847031325940863}
@@ -310,6 +316,11 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!224 &5398172893542439472 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3965885866100376687, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+  m_PrefabInstance: {fileID: 9071236510721416799}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &5453847031325940863 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3912631305385984544, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}

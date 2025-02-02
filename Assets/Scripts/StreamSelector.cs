@@ -44,10 +44,10 @@ public class StreamSelector : MonoBehaviour
         GameManager.Instance.isPause = true;
         GameManager.Instance.StopStream();
         TimescaleManager.Instance.SetTimescale(0);
+        streamSelectionLayout.SetActive(true);
         streamNo.text = "Stream #" + GameManager.Instance.MemoryCount;
         isOpen = true;
         forcedSelect = force;
-        streamSelectionLayout.SetActive(true);
         if(!isCardSet)
         {
             Setup();
@@ -103,11 +103,11 @@ public class StreamSelector : MonoBehaviour
 
     public void CloseUI()
     {
+        isOpen = false;
+        streamSelectionLayout.SetActive(false);
         GameManager.Instance.isPause = false;
         GameManager.Instance.ContinueStream();
         TimescaleManager.Instance.ResetTimescale();
-        isOpen = false;
-        streamSelectionLayout.SetActive(false);
     }
 
     void OnDestroy()

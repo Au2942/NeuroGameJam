@@ -184,6 +184,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 4109815530127144689}
   m_SourcePrefab: {fileID: 100100000, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+--- !u!224 &662482185331265926 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8989402965477147130, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+  m_PrefabInstance: {fileID: 8498673301980844156}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2735921663962449038 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5766481181502412018, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
@@ -228,7 +233,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02fe5db2eb826b64c9a73cea5dc70cb1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Body: {fileID: 2735921663962449038}
+  EntityBody: {fileID: 4825873605555246099}
+  EntityCell: {fileID: 662482185331265926}
   clickInteractDetectors:
   - {fileID: 8399465252637514285}
   dialogueManager: {fileID: 4881109412136145500}
@@ -301,6 +307,11 @@ MonoBehaviour:
   spawnTimer: 2
   poolSize: 20
   reuseObjectsInUse: 0
+--- !u!224 &4825873605555246099 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3965885866100376687, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+  m_PrefabInstance: {fileID: 8498673301980844156}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &4881109412136145500 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3912631305385984544, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}

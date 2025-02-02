@@ -389,7 +389,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e8915024e4ddac409226fd0319b4bad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Body: {fileID: 8103139294843887501}
+  EntityBody: {fileID: 0}
+  EntityCell: {fileID: 0}
   clickInteractDetectors: []
   dialogueManager: {fileID: 3912631305385984544}
   dialogueSets:
@@ -691,16 +692,43 @@ PrefabInstance:
       propertyPath: m_Name
       value: LavaLamp
       objectReference: {fileID: 0}
+    - target: {fileID: 2274196346644699971, guid: 8f3c2c68350178b45ba3fd28f985496b, type: 3}
+      propertyPath: tooltipTrigger
+      value: 
+      objectReference: {fileID: 3965019217799618806}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6288765232243330378, guid: 8f3c2c68350178b45ba3fd28f985496b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3965019217799618806}
   m_SourcePrefab: {fileID: 100100000, guid: 8f3c2c68350178b45ba3fd28f985496b, type: 3}
 --- !u!224 &3289591121840053625 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 474942114030062445, guid: 8f3c2c68350178b45ba3fd28f985496b, type: 3}
   m_PrefabInstance: {fileID: 3112458914255115796}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &8968780448370809694 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6288765232243330378, guid: 8f3c2c68350178b45ba3fd28f985496b, type: 3}
+  m_PrefabInstance: {fileID: 3112458914255115796}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3965019217799618806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8968780448370809694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ee35b18d462d2340aa11f83dca71f60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  header: Lava Lamp
+  content: 
+  delay: 0.5
 --- !u!1001 &6064808768474733946
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -836,10 +864,5 @@ Animator:
 --- !u!95 &4670663820255202524 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 1511802712952983974, guid: 02d15b3868947634b904acc9e78c3734, type: 3}
-  m_PrefabInstance: {fileID: 6064808768474733946}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &8103139294843887501 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2620713661189161719, guid: 02d15b3868947634b904acc9e78c3734, type: 3}
   m_PrefabInstance: {fileID: 6064808768474733946}
   m_PrefabAsset: {fileID: 0}

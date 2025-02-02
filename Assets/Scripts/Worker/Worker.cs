@@ -12,6 +12,7 @@ public class Worker : MonoBehaviour, ICombatUnit
     [SerializeField] public WorkerAppearance IconAppearance;
     [SerializeField] public UIEventHandler iconClickDetector; 
     [SerializeField] public TextMeshProUGUI NameText;
+    [SerializeField] public Image DamageBar;
     [SerializeField] public Image CooldownOverlay;
     [SerializeField] public Image AddedOverlay;
     [SerializeField] public WorkerData workerData = new WorkerData();
@@ -69,6 +70,7 @@ public class Worker : MonoBehaviour, ICombatUnit
         {
             workerData.Health = workerData.TotalStats.MaxHealth;
         }
+        DamageBar.fillAmount = 1 - workerData.Health / workerData.TotalStats.MaxHealth;
         if(workerData.Health <= 0)
         {
             Die();
@@ -113,7 +115,8 @@ public class Worker : MonoBehaviour, ICombatUnit
 
     public void Select()
     {
-        if(PlayerManager.Instance.state == PlayerManager.PlayerState.command) return;
+        if(PlayerManager.Instance.state == PlayerManager.PlayerState.command) {return;}
+
         if(!GameManager.Instance.isPause)
         {
             if(IsAvailable)
@@ -121,8 +124,8 @@ public class Worker : MonoBehaviour, ICombatUnit
                 PlayerManager.Instance.SetState(PlayerManager.PlayerState.command);
             }
             SetAvailability(false);
+            OnSelectedEvent?.Invoke(this);
         }
-        OnSelectedEvent?.Invoke(this);
     }
 
 

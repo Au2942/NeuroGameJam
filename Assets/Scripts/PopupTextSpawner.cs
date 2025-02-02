@@ -49,7 +49,6 @@ public class PopupTextSpawner : MonoBehaviour
     public void SpawnPopupText(Transform parent, Vector3 position, string text, float duration, bool reuseActive = true)
     {
         GameObject popupText;
-        RectTransform popupRectTransform;
         if (popupTextPool.Count == 0)
         {
             if(!reuseActive || activePopupTextPool.Count == 0)
@@ -62,11 +61,10 @@ public class PopupTextSpawner : MonoBehaviour
         {
             popupText = popupTextPool.Dequeue();
         }
-        popupRectTransform = popupText.GetComponent<RectTransform>();
-        popupRectTransform.SetParent(parent);
-        popupRectTransform.position = position;
-        popupText.GetComponent<TextMeshProUGUI>().text = text;
+        popupText.transform.SetParent(parent);
+        popupText.transform.position = position;
         popupText.SetActive(true);
+        popupText.GetComponent<TextMeshProUGUI>().text = text;
 
         Tween.Scale(popupText.transform, Vector3.one*scaleMultiplier, duration, ease: defaultScaleEase);
         Tween.Alpha(popupText.GetComponent<TextMeshProUGUI>(), 1, 0, duration, ease: defaultAlphaEase);

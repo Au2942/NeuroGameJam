@@ -67,7 +67,7 @@ public abstract class MemoryEntity : Entity, ICombatUnit
     protected override void ClickInteract(GameObject clickedObject)
     {
         base.ClickInteract(clickedObject);
-        if(PlayerManager.Instance.state == PlayerManager.PlayerState.command )
+        if(InFocus && PlayerManager.Instance.state == PlayerManager.PlayerState.command)
         {
             if(!Glitched)
             {
@@ -107,13 +107,14 @@ public abstract class MemoryEntity : Entity, ICombatUnit
 
     public virtual void MaintainFail(Worker worker)
     {
+        RestoreHealth(worker.TotalStats.WorkAmount/2);
         OnMaintainFail(worker);
         RollChanceToGlitch();
     }
 
     public virtual void OnMaintainFail(Worker worker)
     {
-
+        DealDamage(worker);
     }
 
     protected override void OnHealthChanged(float amount)

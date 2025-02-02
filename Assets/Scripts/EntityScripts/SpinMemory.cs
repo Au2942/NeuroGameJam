@@ -52,7 +52,7 @@ public class SpinMemory : MemoryEntity
             currentSpeed += currentAcceleration * SpinSpeedIncrement * Time.deltaTime;
         }
 
-            Body.transform.Rotate(Vector3.forward, currentSpeed * Time.deltaTime);
+            EntityBody.transform.Rotate(Vector3.forward, currentSpeed * Time.deltaTime);
 
     }
 

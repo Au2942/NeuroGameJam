@@ -302,7 +302,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7533f4a2c825cd4f8249facd97f7e8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Body: {fileID: 1098759905538314325}
+  EntityBody: {fileID: 7507663769343312072}
+  EntityCell: {fileID: 2592378056957707613}
   clickInteractDetectors:
   - {fileID: 6798327910172757750}
   dialogueManager: {fileID: 7599060434665752199}
@@ -389,6 +390,11 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!224 &2592378056957707613 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8989402965477147130, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+  m_PrefabInstance: {fileID: 6861581774802158759}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &4969606796769991044 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2003727210736196899, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
@@ -416,6 +422,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a97ff6f1776746d44994a3d39755e472, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!224 &7507663769343312072 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3965885866100376687, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+  m_PrefabInstance: {fileID: 6861581774802158759}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &7599060434665752199 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3912631305385984544, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}

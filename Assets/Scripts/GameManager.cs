@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     //[SerializeField] public MemoryData MemoryData;
     [SerializeField] private StreamSO defaultStream;
     [SerializeField] public ScreenEffectController ScreenEffectController;
+    [SerializeField] public Tooltip Tooltip;
     public int MemoryCount => MemoryManager.Instance.MemoryData.GetMemoryCount();
     public int CurrentMemoryIndex => MemoryManager.Instance.CurrentMemoryIndex;
     public List<MemoryEntity> MemoryEntities => MemoryManager.Instance.MemoryData.GetMemoryEntities();

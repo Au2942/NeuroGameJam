@@ -1,11 +1,14 @@
 using UnityEngine;
 using System.Collections;
+using PrimeTween;
 
 public class WorkHandler
 {
     public MemoryEntity entity;
     public Worker worker;
     public WorkState workState;
+    private RectTransform entityCell;
+    private RectTransform workerAppearanceRect;
 
     public enum WorkState
     {
@@ -16,12 +19,16 @@ public class WorkHandler
 
     public void MoveWorkerAppearance()
     {
-        RectTransform entityRect = entity.GetComponent<RectTransform>();
-        float xOffset = Random.Range(-entityRect.rect.width/2,entityRect.rect.width/2);
-        float yOffset = Random.Range(-entityRect.rect.height/2,entityRect.rect.height/2);
-        worker.WorkerAppearance.transform.position = entity.transform.position + new Vector3(xOffset, yOffset, 0);
-        worker.WorkerAppearance.transform.SetParent(entity.transform);
         worker.WorkerAppearance.gameObject.SetActive(true);
+        entityCell = entity.EntityCell != null ? entity.EntityCell : entity.transform as RectTransform;
+        workerAppearanceRect = worker.WorkerAppearance.AppearanceRect;
+
+        Vector2 targetPosition = Camera.main.ScreenToWorldPoint(InputManager.Instance.Point.ReadValue<Vector2>());
+        
+        workerAppearanceRect.position = targetPosition;
+        workerAppearanceRect.SetParent(entityCell);
+        workerAppearanceRect.SetAsFirstSibling();
+        workerAppearanceRect.localScale = Vector3.one;
     }
 
 
@@ -108,6 +115,7 @@ public class WorkHandler
     {
         if(entity == null) return;
         entity.Interactable = true;
+        entity.IsBeingMaintained = false;
         foreach(WorkerStatusEffect statusEffect in worker.WorkerStatusEffects)
         {
             statusEffect.OnFinishMaintain();
@@ -217,6 +225,7 @@ public class WorkHandler
     public IEnumerator RecallCooldown()
     {
         float elapsedTime = 0f;;
+        AnimateReturnWorkerAppearance(worker.TotalStats.RecallCooldown);
         while(elapsedTime < worker.TotalStats.RecallCooldown)
         {
             worker.CooldownOverlay.fillAmount = 1-(elapsedTime / worker.TotalStats.RecallCooldown);
@@ -226,22 +235,32 @@ public class WorkHandler
         Recall();
     }
 
+    public void AnimateReturnWorkerAppearance(float duration)
+    {
+        Vector2 targetPosition = workerAppearanceRect.anchoredPosition + new Vector2(0, entityCell.rect.height + workerAppearanceRect.rect.height);
+        Tween.UIAnchoredPosition(workerAppearanceRect, targetPosition, duration, ease: Ease.InSine);
+    }
+
     public void ReturnWorkerAppearance()
     {
-        worker.WorkerAppearance.transform.position = worker.transform.position;
-        worker.WorkerAppearance.transform.SetParent(worker.transform);
-        worker.WorkerAppearance.transform.SetAsFirstSibling();
+        workerAppearanceRect.SetParent(worker.transform);
+        workerAppearanceRect.SetAsFirstSibling();
+        workerAppearanceRect.position = worker.transform.position;
+        workerAppearanceRect.localScale = Vector3.one;
         worker.WorkerAppearance.gameObject.SetActive(false);
     }
 
     public void Recall()
     {
-        entity.IsBeingMaintained = false;
         entity = null;
         worker.SetAvailability(true);
         ReturnWorkerAppearance();
         worker.CooldownOverlay.fillAmount = 1;
         workState = WorkState.None;
+        if(WorkerManager.Instance.SelectedWorker == worker)
+        {
+            PlayerManager.Instance.SetState(PlayerManager.PlayerState.command);
+        }
     }   
 
 

@@ -120,9 +120,9 @@ public class PlayerManager : MonoBehaviour
         {
             return false;
         }
-        if(StreamEntity.Body != null)
+        if(StreamEntity.EntityBody != null)
         {
-            StreamEntity.Body.SetActive(false);
+            StreamEntity.EntityBody.gameObject.SetActive(false);
         }
         StartCoroutine(Resetting());
         return true;
@@ -153,9 +153,9 @@ public class PlayerManager : MonoBehaviour
 
     public void FinishResetting()
     {
-        if(StreamEntity.Body != null)
+        if(StreamEntity.EntityBody != null)
         {
-            StreamEntity.Body.SetActive(true);
+            StreamEntity.EntityBody.gameObject.SetActive(true);
         }
         StreamEntity.ExitGlitchState();
     }

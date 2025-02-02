@@ -63,15 +63,18 @@ public class SleepSettingsScreen : MonoBehaviour
     }
     public void OpenUI()
     {
-        IsOpen = true;
         GameManager.Instance.isPause = true;
         GameManager.Instance.StopStream();
         TimescaleManager.Instance.SetTimescale(0);
+
+        sleepSettingsUI.gameObject.SetActive(true);
+        IsOpen = true;
+
         workerPanel.SetParent(sleepSettingsLayout);
         WorkerManager.Instance.DeselectWorker();
         WorkerManager.Instance.WorkerStatUI.ShowButtons();
         DetailsUI.NewButton.transform.SetAsLastSibling();
-        sleepSettingsUI.gameObject.SetActive(true);
+
         sleepHourSlider.maxValue = Mathf.FloorToInt(PlayerManager.Instance.RemainingStreamTime*DisplayTimeMultiplier/3600);
     }
 
@@ -198,7 +201,7 @@ public class SleepSettingsScreen : MonoBehaviour
 
         PlayerManager.Instance.HealHealth(GetRemainingSleepPoints()*healthPerHours/hoursPerRestoreHealthChunk);
         CloseUI();
-        PlayerManager.Instance.Sleep(Mathf.Max(4,sleepHours) * (3600/DisplayTimeMultiplier)); //this also change timescale so must be last
+        PlayerManager.Instance.Sleep( Mathf.Max(4,sleepHours) * 3600/DisplayTimeMultiplier); //this also change timescale so must be last
     }
 
     private float GetRemainingSleepPoints()
@@ -220,14 +223,16 @@ public class SleepSettingsScreen : MonoBehaviour
         sleepHours = 0;
         addedWorkers.Clear();
         trainedWorkers.Clear();
+
         workerPanel.SetParent(actionsPanel);
         WorkerManager.Instance.DeselectWorker();
         WorkerManager.Instance.WorkerStatUI.HideButtons();
+        IsOpen = false;
+        sleepSettingsUI.gameObject.SetActive(false);
+
         TimescaleManager.Instance.SetTimescale(1);
         GameManager.Instance.ContinueStream();
         GameManager.Instance.isPause = false;
-        IsOpen = false;
-        sleepSettingsUI.gameObject.SetActive(false);
     }
 
 

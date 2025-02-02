@@ -9,6 +9,7 @@ public class LavaLamp : MonoBehaviour
     [SerializeField] private float lavaLampBaseSpeed = 1;
     [SerializeField] private Color maxLampColor;
     [SerializeField] private Color minLampColor; 
+    [SerializeField] private TooltipTrigger tooltipTrigger;
     private Material tempMaterial;
 
     private System.Action<float> HealthChangedEventHandler;
@@ -25,10 +26,7 @@ public class LavaLamp : MonoBehaviour
     {
         tempMaterial = new Material(lavaLampMaterial);
         lavaLampContent.material = tempMaterial;
-
-        lavaLampContent.materialForRendering.SetFloat("_Speed", lavaLampBaseSpeed);
-        lavaLampContent.materialForRendering.SetColor("_CoreColor", maxLampColor);
-        lavaLampContent.materialForRendering.SetColor("_GlowColor", GetGlowColor(maxLampColor));
+        UpdateLavaLamp();
     }
 
 
@@ -44,6 +42,7 @@ public class LavaLamp : MonoBehaviour
     {
         float healthPercentage = PlayerManager.Instance.Health / PlayerManager.Instance.MaxHealth;
         Color lerpedColor = Color.Lerp(minLampColor, maxLampColor, healthPercentage);
+        tooltipTrigger.SetTooltipContent((PlayerManager.Instance.Health/PlayerManager.Instance.MaxHealth).ToString("P0"));
 
         lavaLampContent.materialForRendering.SetFloat("_Speed", lavaLampBaseSpeed * healthPercentage);
         lavaLampContent.materialForRendering.SetColor("_CoreColor", lerpedColor);

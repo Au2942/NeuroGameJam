@@ -5,6 +5,13 @@ using UnityEngine.UI;
 public class WorkerAppearance : MonoBehaviour
 {
     [SerializeField] public WorkerAppearanceData WorkerAppearanceData = new WorkerAppearanceData();
+    [SerializeField] public RectTransform AppearanceRect;
+
+    void Start()
+    {
+        if(AppearanceRect == null)
+            AppearanceRect = GetComponent<RectTransform>();
+    }
 
     public void SetApperance(WorkerAppearanceData WAD)
     {
