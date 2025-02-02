@@ -290,6 +290,8 @@ GameObject:
   - component: {fileID: 3912631305385984544}
   - component: {fileID: 5054380889592944416}
   - component: {fileID: 2617476193060667712}
+  - component: {fileID: 2738726182086560272}
+  - component: {fileID: 5843238461829573889}
   m_Layer: 5
   m_Name: templateStream
   m_TagString: Untagged
@@ -389,69 +391,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e8915024e4ddac409226fd0319b4bad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EntityBody: {fileID: 0}
-  EntityCell: {fileID: 0}
-  clickInteractDetectors: []
-  dialogueManager: {fileID: 3912631305385984544}
-  dialogueSets:
-  - dialogues:
-    - {fileID: 11400000, guid: 9fbaedf57d1e6994980708b815e79ab4, type: 2}
-  - dialogues:
-    - {fileID: 11400000, guid: 0e1597600f6d1da43aec464204db6eaa, type: 2}
-  Health: 100
-  MaxHealth: 100
-  Corruption: 100
-  MaxCorruption: 100
-  CorruptionCooldown: 10
-  Interactable: 1
-  talkInOrder: 1
-  talkRepeatable: 1
-  talkRollInterval: 2
-  talkChance: 0.8
-  glitchRollThreshold: 0.7
-  defaultAnimatorClips:
-  - animator: {fileID: 4094313050784987403}
-    clipLayerPairs:
-    - clip: {fileID: 7400000, guid: dbab496e2e88305438ac0ea95d1f19be, type: 2}
-      layer: 0
-  - animator: {fileID: 1148648438089197321}
-    clipLayerPairs:
-    - clip: {fileID: 7400000, guid: b50aff7d6d57fee43ba06223678826c6, type: 2}
-      layer: 0
-  - animator: {fileID: 4670663820255202524}
-    clipLayerPairs:
-    - clip: {fileID: 7400000, guid: ae24bf4ce7d21664eb4b3e42c702b7ed, type: 2}
-      layer: 0
-  idleAnimatorClips:
-  - animator: {fileID: 4094313050784987403}
-    clipLayerPairs:
-    - clip: {fileID: 7400000, guid: 6c29165817d13874bbd0ae2acc90d34f, type: 2}
-      layer: 0
-  - animator: {fileID: 1148648438089197321}
-    clipLayerPairs:
-    - clip: {fileID: 7400000, guid: 58fd0ef16d4b997429c1092f907964dc, type: 2}
-      layer: 0
-  dialoguePlayingAnimation: []
-  dialogueTypingAnimation:
-  - animator: {fileID: 4670663820255202524}
-    clipLayerPairs:
-    - clip: {fileID: 7400000, guid: 5a4f33afcc129a34098d25f4fd819d05, type: 2}
-      layer: 0
-  normalAnimatorClips:
-  - animator: {fileID: 4094313050784987403}
-    clipLayerPairs: []
-  glitchAnimatorClips: []
-  CurrentAnimationState: 0
-  CorruptionCooldownTimer: 0
-  sleepAnimatorClips:
-  - animator: {fileID: 1148648438089197321}
-    clipLayerPairs:
-    - clip: {fileID: 7400000, guid: 26255947a7ded4d449a1efbe1262b4da, type: 2}
-      layer: 0
-  - animator: {fileID: 4670663820255202524}
-    clipLayerPairs:
-    - clip: {fileID: 7400000, guid: 951174ab5bcc1cb468d9832274f4af80, type: 2}
-      layer: 0
+  entityData: {fileID: 2738726182086560272}
+  streamEntityData: {fileID: 5843238461829573889}
 --- !u!114 &2617476193060667712
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -464,6 +405,96 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a97ff6f1776746d44994a3d39755e472, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2738726182086560272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6578199205212244328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc259cd7fc7e436488a79ca09660c5d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EntityBody: {fileID: 0}
+  EntityCell: {fileID: 0}
+  ClickInteractDetectors: []
+  DialogueManager: {fileID: 0}
+  DialogueSets: []
+  dialogueSetIndex: 0
+  TalkInOrder: 1
+  TalkRepeatable: 1
+  TalkRollInterval: 2
+  TalkChance: 0.25
+  Health: 100
+  MaxHealth: 100
+  Corruption: 100
+  MaxCorruption: 100
+  CorruptionCooldown: 10
+  Interactable: 1
+  Glitched: 0
+  GlitchRollThreshold: 0.7
+  DefaultAnimatorClips:
+  - animator: {fileID: 4094313050784987403}
+    clipLayerPairs:
+    - clip: {fileID: 7400000, guid: dbab496e2e88305438ac0ea95d1f19be, type: 2}
+      layer: 0
+  - animator: {fileID: 1148648438089197321}
+    clipLayerPairs:
+    - clip: {fileID: 7400000, guid: b50aff7d6d57fee43ba06223678826c6, type: 2}
+      layer: 0
+  - animator: {fileID: 4670663820255202524}
+    clipLayerPairs:
+    - clip: {fileID: 7400000, guid: 951174ab5bcc1cb468d9832274f4af80, type: 2}
+      layer: 0
+  IdleAnimatorClips:
+  - animator: {fileID: 4094313050784987403}
+    clipLayerPairs:
+    - clip: {fileID: 7400000, guid: 6c29165817d13874bbd0ae2acc90d34f, type: 2}
+      layer: 0
+  - animator: {fileID: 1148648438089197321}
+    clipLayerPairs:
+    - clip: {fileID: 7400000, guid: 58fd0ef16d4b997429c1092f907964dc, type: 2}
+      layer: 0
+  - animator: {fileID: 4670663820255202524}
+    clipLayerPairs:
+    - clip: {fileID: 7400000, guid: ae24bf4ce7d21664eb4b3e42c702b7ed, type: 2}
+      layer: 0
+  DialoguePlayingAnimation: []
+  DialogueTypingAnimation: []
+  NormalAnimatorClips:
+  - animator: {fileID: 4094313050784987403}
+    clipLayerPairs:
+    - clip: {fileID: 7400000, guid: cc0f111ccece3d7439a2518b8281946e, type: 2}
+      layer: 1
+  GlitchAnimatorClips:
+  - animator: {fileID: 4094313050784987403}
+    clipLayerPairs:
+    - clip: {fileID: 7400000, guid: 8ecc16e2234e3474789ae0a2ef74a2a4, type: 2}
+      layer: 1
+  CurrentAnimationState: 0
+--- !u!114 &5843238461829573889
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6578199205212244328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b5d05868d2149e43864e2d8eb2c7ca0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SleepAnimatorClips:
+  - animator: {fileID: 1148648438089197321}
+    clipLayerPairs:
+    - clip: {fileID: 7400000, guid: 26255947a7ded4d449a1efbe1262b4da, type: 2}
+      layer: 0
+  - animator: {fileID: 4670663820255202524}
+    clipLayerPairs:
+    - clip: {fileID: 7400000, guid: ad6ec0a6c170f3b488684e240eaf79b3, type: 2}
+      layer: 0
 --- !u!1 &9208837270324004955
 GameObject:
   m_ObjectHideFlags: 0

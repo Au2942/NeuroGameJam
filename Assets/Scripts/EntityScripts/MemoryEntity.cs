@@ -3,16 +3,16 @@ using UnityEngine;
 
 public abstract class MemoryEntity : Entity, ICombatUnit
 {
-    [SerializeField] protected float AttackDamage = 1f;
-    [SerializeField] protected float AttackRate = 1f;
-    [SerializeField] protected float timeToShutup = 5f;
-    [SerializeField] public bool IsBeingMaintained = false;
-    [SerializeField] public bool InFocus = false;
-    [SerializeField] public bool dealAOEDamage = false;
-    [SerializeField] GlitchOverlay glitchEffect;
+    [SerializeField] protected MemoryEntityData memoryEntityData;
+    protected GlitchOverlay GlitchEffect {get => memoryEntityData.GlitchEffect; set => memoryEntityData.GlitchEffect = value;}
+    protected float AttackDamage {get => memoryEntityData.AttackDamage; set => memoryEntityData.AttackDamage = value;}
+    protected float AttackRate {get => memoryEntityData.AttackRate; set => memoryEntityData.AttackRate = value;}
+    protected float TimeToShutup {get => memoryEntityData.TimeToShutup; set => memoryEntityData.TimeToShutup = value;}
+    public bool IsBeingMaintained {get => memoryEntityData.IsBeingMaintained; set => memoryEntityData.IsBeingMaintained = value;}
+    public bool InFocus {get => memoryEntityData.InFocus; set => memoryEntityData.InFocus = value;}
+    public bool DealAOEDamage {get => memoryEntityData.DealAOEDamage; set => memoryEntityData.DealAOEDamage = value;}
 
     protected List<ICombatUnit> combatTargets = new List<ICombatUnit>();
-
     protected float shutupTimer = 0f;
 
     float ICombatUnit.Health { get => Corruption; set => Corruption = value; }
@@ -20,6 +20,19 @@ public abstract class MemoryEntity : Entity, ICombatUnit
     float ICombatUnit.AttackDamage { get => AttackDamage; set => AttackDamage = value; }
     float ICombatUnit.AttackRate { get => AttackRate; set => AttackRate = value; }
     List<ICombatUnit> ICombatUnit.CombatTargets { get => combatTargets; set => combatTargets = value; }
+
+    protected override void Awake()
+    {
+        base.Awake();
+        if(memoryEntityData == null)
+        {
+            memoryEntityData = GetComponent<MemoryEntityData>();
+            if(memoryEntityData == null)
+            {
+                memoryEntityData = gameObject.AddComponent<MemoryEntityData>();
+            }
+        }
+    }
 
     public virtual void AddCombatTarget(ICombatUnit target)
     {
@@ -61,7 +74,7 @@ public abstract class MemoryEntity : Entity, ICombatUnit
     public virtual void SetInFocus(bool focus)
     {
         InFocus = focus;
-        dialogueManager.PlaySound = focus;
+        DialogueManager.PlaySound = focus;
     }
 
     protected override void ClickInteract(GameObject clickedObject)
@@ -120,15 +133,15 @@ public abstract class MemoryEntity : Entity, ICombatUnit
     protected override void OnHealthChanged(float amount)
     {
         base.OnHealthChanged(amount);
-        if(glitchEffect != null)
+        if(GlitchEffect != null)
         {
-            if(HealthPercentage() <= glitchRollThreshold)
+            if(HealthPercentage() <= GlitchRollThreshold)
             {
-                glitchEffect.Show();
-                glitchEffect.SetBlockIntensity(1-HealthPercentage());
-                glitchEffect.SetBlockShuffleRate(1-HealthPercentage());
+                GlitchEffect.Show();
+                GlitchEffect.SetBlockIntensity(1-HealthPercentage());
+                GlitchEffect.SetBlockShuffleRate(1-HealthPercentage());
             }
-            else glitchEffect.Hide();
+            else GlitchEffect.Hide();
         }
     }
 
@@ -143,9 +156,9 @@ public abstract class MemoryEntity : Entity, ICombatUnit
 
     protected virtual void OutOfFocusBehavior()
     {
-        if (dialogueManager.IsDialoguePlaying)
+        if (DialogueManager.IsDialoguePlaying)
         {
-            if (shutupTimer >= timeToShutup)
+            if (shutupTimer >= TimeToShutup)
             {
                 ShutUp();
                 shutupTimer = 0f;
@@ -157,8 +170,8 @@ public abstract class MemoryEntity : Entity, ICombatUnit
     public override void EnterGlitchState()
     {
         base.EnterGlitchState();
-        glitchEffect.Show();
-        glitchEffect.SetGlitchIntensity(1-HealthPercentage());
+        GlitchEffect.Show();
+        GlitchEffect.SetGlitchIntensity(1-HealthPercentage());
         if(InFocus)
         {
             GameManager.Instance.ScreenEffectController.Show();
@@ -169,7 +182,7 @@ public abstract class MemoryEntity : Entity, ICombatUnit
     public override void ExitGlitchState()
     {
         base.ExitGlitchState();
-        glitchEffect.SetGlitchIntensity(0);
+        GlitchEffect.SetGlitchIntensity(0);
         if(InFocus)
         {
             GameManager.Instance.ScreenEffectController.Hide();
@@ -180,7 +193,7 @@ public abstract class MemoryEntity : Entity, ICombatUnit
     public virtual void Attack()
     {
         if(combatTargets.Count == 0) return;
-        if(dealAOEDamage)
+        if(DealAOEDamage)
         {
             foreach(ICombatUnit target in combatTargets)
             {

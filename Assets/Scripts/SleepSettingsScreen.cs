@@ -192,6 +192,7 @@ public class SleepSettingsScreen : MonoBehaviour
         foreach(Worker worker in trainedWorkers)
         {
             worker.ApplyAllocAttributes();
+            worker.workerData.Health = worker.TotalStats.MaxHealth;
         }
 
         foreach(Worker worker in addedWorkers)

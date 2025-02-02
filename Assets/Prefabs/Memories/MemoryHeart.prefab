@@ -72,6 +72,62 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: c775f2151edaac748a78e2e6a6c70d70, type: 3}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: GlitchAnimatorClips.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: NormalAnimatorClips.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: DefaultAnimatorClips.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: GlitchAnimatorClips.Array.data[0].animator
+      value: 
+      objectReference: {fileID: 2989844170749626017}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: NormalAnimatorClips.Array.data[0].animator
+      value: 
+      objectReference: {fileID: 2989844170749626017}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: DefaultAnimatorClips.Array.data[0].animator
+      value: 
+      objectReference: {fileID: 2989844170749626017}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: GlitchAnimatorClips.Array.data[0].clipLayerPairs.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: NormalAnimatorClips.Array.data[0].clipLayerPairs.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: DefaultAnimatorClips.Array.data[0].clipLayerPairs.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: GlitchAnimatorClips.Array.data[0].clipLayerPairs.Array.data[0].clip
+      value: 
+      objectReference: {fileID: 7400000, guid: ab8d71d9bca1a944f899ea65f4172593, type: 2}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: NormalAnimatorClips.Array.data[0].clipLayerPairs.Array.data[0].clip
+      value: 
+      objectReference: {fileID: 7400000, guid: ccc37cdbbc015de43963662f1a641770, type: 2}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: DefaultAnimatorClips.Array.data[0].clipLayerPairs.Array.data[0].clip
+      value: 
+      objectReference: {fileID: 7400000, guid: e2b1f2dbaab4eb84eb01dfcf2983b858, type: 2}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: GlitchAnimatorClips.Array.data[0].clipLayerPairs.Array.data[0].layer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: NormalAnimatorClips.Array.data[0].clipLayerPairs.Array.data[0].layer
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5594260103637325787, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       propertyPath: m_Color.b
       value: 0.6750855
@@ -144,11 +200,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 2989844170749626017}
   m_SourcePrefab: {fileID: 100100000, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
---- !u!224 &462880307284160908 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 8989402965477147130, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
-  m_PrefabInstance: {fileID: 8839648463347642486}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2442859898082900254 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6578199205212244328, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
@@ -166,58 +217,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 197dc50e8a086144c950e2b6d84d21fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EntityBody: {fileID: 5594901612956890137}
-  EntityCell: {fileID: 462880307284160908}
-  clickInteractDetectors:
-  - {fileID: 8920788650429643303}
-  dialogueManager: {fileID: 5539647445395518038}
-  dialogueSets:
-  - dialogues:
-    - {fileID: 11400000, guid: 5661f8ab815c049439f214aa5f35016c, type: 2}
-    - {fileID: 11400000, guid: e0fa14e85a292d84aa014f65a71b3fc6, type: 2}
-    - {fileID: 11400000, guid: 5c422bf63f938f94cb4632f5fc2f5672, type: 2}
-  - dialogues:
-    - {fileID: 11400000, guid: cdf56ef6358a43248b2fb16443945da2, type: 2}
-    - {fileID: 11400000, guid: 544af4d1bb9aca444a8c350241c07e1f, type: 2}
-  Health: 100
-  MaxHealth: 100
-  Corruption: 100
-  MaxCorruption: 100
-  CorruptionCooldown: 10
-  Interactable: 1
-  talkInOrder: 1
-  talkRepeatable: 1
-  talkRollInterval: 2
-  talkChance: 0.25
-  glitchRollThreshold: 0.7
-  defaultAnimatorClips:
-  - animator: {fileID: 2989844170749626017}
-    clipLayerPairs:
-    - clip: {fileID: 7400000, guid: e2b1f2dbaab4eb84eb01dfcf2983b858, type: 2}
-      layer: 0
-  idleAnimatorClips: []
-  dialoguePlayingAnimation: []
-  dialogueTypingAnimation: []
-  normalAnimatorClips:
-  - animator: {fileID: 2989844170749626017}
-    clipLayerPairs:
-    - clip: {fileID: 7400000, guid: ccc37cdbbc015de43963662f1a641770, type: 2}
-      layer: 1
-  glitchAnimatorClips:
-  - animator: {fileID: 2989844170749626017}
-    clipLayerPairs:
-    - clip: {fileID: 7400000, guid: ab8d71d9bca1a944f899ea65f4172593, type: 2}
-      layer: 1
-  CurrentAnimationState: 0
-  CorruptionCooldownTimer: 0
-  AttackDamage: 1
-  AttackRate: 1
-  timeToShutup: 5
-  IsBeingMaintained: 0
-  InFocus: 0
-  dealAOEDamage: 0
-  glitchEffect: {fileID: 7017195604734307669}
-  heartStatusEffectSO: {fileID: 0}
+  entityData: {fileID: 4051947065298648299}
+  memoryEntityData: {fileID: 5513114467754949085}
+  heartStatusEffectSO: {fileID: 11400000, guid: 47b3e425b76ed364bb6357f619c13acc, type: 2}
   heartSpawner: {fileID: 515110213736942597}
 --- !u!114 &515110213736942597
 MonoBehaviour:
@@ -262,41 +264,25 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &5539647445395518038 stripped
+--- !u!114 &4051947065298648299 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3912631305385984544, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+  m_CorrespondingSourceObject: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
   m_PrefabInstance: {fileID: 8839648463347642486}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2442859898082900254}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 584513c97eb7815409c5bf06e15191d4, type: 3}
+  m_Script: {fileID: 11500000, guid: dc259cd7fc7e436488a79ca09660c5d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!224 &5594901612956890137 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 3965885866100376687, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
-  m_PrefabInstance: {fileID: 8839648463347642486}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &7017195604734307669 stripped
+--- !u!114 &5513114467754949085 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2003727210736196899, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+  m_CorrespondingSourceObject: {fileID: 3904120699898317227, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
   m_PrefabInstance: {fileID: 8839648463347642486}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 2442859898082900254}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56ec4e3cb42fb704e838d1dee44d2c47, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &8920788650429643303 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 99571163194722897, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
-  m_PrefabInstance: {fileID: 8839648463347642486}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a97ff6f1776746d44994a3d39755e472, type: 3}
+  m_Script: {fileID: 11500000, guid: 9270608010a2bbc4ebce863bc4ebc2fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

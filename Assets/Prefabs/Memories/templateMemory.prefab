@@ -630,6 +630,8 @@ GameObject:
   - component: {fileID: 9023345207242059758}
   - component: {fileID: 3912631305385984544}
   - component: {fileID: 8955052036569905767}
+  - component: {fileID: 4798538201925291165}
+  - component: {fileID: 3904120699898317227}
   m_Layer: 5
   m_Name: templateMemory
   m_TagString: Untagged
@@ -702,6 +704,63 @@ MonoBehaviour:
   MemoryDisplayNameText: {fileID: 3715998094729534100}
   healthIndicator: {fileID: 1913696449292481469}
   clickBlockDetector: {fileID: 99571163194722897}
+--- !u!114 &4798538201925291165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6578199205212244328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc259cd7fc7e436488a79ca09660c5d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EntityBody: {fileID: 3965885866100376687}
+  EntityCell: {fileID: 8989402965477147130}
+  ClickInteractDetectors:
+  - {fileID: 99571163194722897}
+  DialogueManager: {fileID: 3912631305385984544}
+  DialogueSets: []
+  dialogueSetIndex: 0
+  TalkInOrder: 1
+  TalkRepeatable: 1
+  TalkRollInterval: 2
+  TalkChance: 0.25
+  Health: 100
+  MaxHealth: 100
+  Corruption: 100
+  MaxCorruption: 100
+  CorruptionCooldown: 10
+  Interactable: 1
+  Glitched: 0
+  GlitchRollThreshold: 0.7
+  DefaultAnimatorClips: []
+  IdleAnimatorClips: []
+  DialoguePlayingAnimation: []
+  DialogueTypingAnimation: []
+  NormalAnimatorClips: []
+  GlitchAnimatorClips: []
+  CurrentAnimationState: 0
+--- !u!114 &3904120699898317227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6578199205212244328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9270608010a2bbc4ebce863bc4ebc2fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlitchEffect: {fileID: 2003727210736196899}
+  AttackDamage: 1
+  AttackRate: 1
+  TimeToShutup: 5
+  IsBeingMaintained: 0
+  InFocus: 0
+  DealAOEDamage: 0
 --- !u!1 &8172110294068343992
 GameObject:
   m_ObjectHideFlags: 0
@@ -1052,6 +1111,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5e2e3f27a1a64214fa366a00a67c1a1c, type: 3}
+--- !u!114 &2003727210736196899 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2441865438941780336, guid: 5e2e3f27a1a64214fa366a00a67c1a1c, type: 3}
+  m_PrefabInstance: {fileID: 4192170543511405651}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56ec4e3cb42fb704e838d1dee44d2c47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &7495054899141887317 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5921772116968849670, guid: 5e2e3f27a1a64214fa366a00a67c1a1c, type: 3}

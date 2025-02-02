@@ -17,7 +17,8 @@ public class HealthIndicator : MonoBehaviour
         healthBar.materialForRendering.SetFloat("_Seed", Time.time);
         healthBar.materialForRendering.SetFloat("_Frequency", frequency);
         healthBar.materialForRendering.SetColor("_Color1", colors[0]);
-        healthBar.materialForRendering.SetColor("_Color2", colors[1]);
+        healthBar.materialForRendering.SetColor("_Color2", colors[2]);
+        healthBar.materialForRendering.SetFloat("_Fill", 0);
     }
 
     public void SetEntity(Entity newEntity)

@@ -1,17 +1,18 @@
 using UnityEngine;
 
 
-public class MemoryEntityData : EntityData
+[System.Serializable]
+public class MemoryEntityData : MonoBehaviour
 {
-    [SerializeField] protected float AttackDamage = 1f;
-    [SerializeField] protected float AttackRate = 1f;
-    [SerializeField] protected float timeToShutup = 5f;
+    [SerializeField] public GlitchOverlay GlitchEffect;
+    
+    [Header("Combat")]
+    [SerializeField] public float AttackDamage = 1f;
+    [SerializeField] public float AttackRate = 1f;
+    [SerializeField] public float TimeToShutup = 5f;
     [SerializeField] public bool IsBeingMaintained = false;
     [SerializeField] public bool InFocus = false;
-    [SerializeField] public bool dealAOEDamage = false;
-    [SerializeField] GlitchOverlay glitchEffect;
+    [SerializeField] public bool DealAOEDamage = false;
 
-    protected List<ICombatUnit> combatTargets = new List<ICombatUnit>();
 
-    protected float shutupTimer = 0f;
 }

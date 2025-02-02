@@ -50,6 +50,11 @@ public class Worker : MonoBehaviour, ICombatUnit
         iconClickDetector.OnLeftClickEvent += OnClickEventHandler;
     }
 
+    void Start()
+    {
+        workerData.Health = workerData.TotalStats.MaxHealth;
+    }
+
     void Update()
     {
         foreach(WorkerStatusEffect statusEffect in WorkerStatusEffects)

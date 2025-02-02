@@ -105,7 +105,7 @@ public class DialogueManager : MonoBehaviour
         storedPlayingAnimationAnimatorStateInfosPairs.Clear();
         if(speaker != null)
         {
-            foreach(AnimatorClipsPair animation in speaker.dialoguePlayingAnimation)
+            foreach(AnimatorClipsPair animation in speaker.DialoguePlayingAnimation)
             {
                 if(animation.animator != null)
                 {
@@ -128,9 +128,9 @@ public class DialogueManager : MonoBehaviour
         }
 
         storedTypingAnimationAnimatorStateInfosPairs.Clear();
-        if(speaker != null && speaker.dialogueTypingAnimation.Count != 0)
+        if(speaker != null && speaker.DialogueTypingAnimation.Count != 0)
         {
-            foreach(AnimatorClipsPair animation in speaker.dialogueTypingAnimation)
+            foreach(AnimatorClipsPair animation in speaker.DialogueTypingAnimation)
             {
                 if(animation.animator != null)
                 {
@@ -289,7 +289,7 @@ public class DialogueManager : MonoBehaviour
     private IEnumerator AnimateDialogueTypingAnimation(float duration = -1)
     {
 
-        foreach(AnimatorClipsPair animation in speaker.dialogueTypingAnimation)
+        foreach(AnimatorClipsPair animation in speaker.DialogueTypingAnimation)
         {
             if(animation.animator != null)
             {

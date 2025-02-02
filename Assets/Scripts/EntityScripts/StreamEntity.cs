@@ -3,7 +3,22 @@ using System.Collections.Generic;
 
 public class StreamEntity : Entity
 {
-    [SerializeField] private List<AnimatorClipsPair> sleepAnimatorClips;
+    [SerializeField] protected StreamEntityData streamEntityData;
+    protected List<AnimatorClipsPair> SleepAnimatorClips {get => streamEntityData.SleepAnimatorClips; set => streamEntityData.SleepAnimatorClips = value;}
+
+    protected override void Awake()
+    {
+        base.Awake();
+        if(streamEntityData == null)
+        {
+            streamEntityData = GetComponent<StreamEntityData>();
+            if(streamEntityData == null)
+            {
+                streamEntityData = gameObject.AddComponent<StreamEntityData>();
+            }
+        }
+    }
+
     protected override void Start()
     {
         base.Start();
@@ -41,7 +56,7 @@ public class StreamEntity : Entity
     }
     public void EnterSleepState()
     {
-        foreach(AnimatorClipsPair sleepAnimatorClip in sleepAnimatorClips)
+        foreach(AnimatorClipsPair sleepAnimatorClip in SleepAnimatorClips)
         {
             if(sleepAnimatorClip.animator == null) continue;
             foreach(ClipLayerPair clipInfo in sleepAnimatorClip.clipLayerPairs)

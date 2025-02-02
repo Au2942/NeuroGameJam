@@ -259,7 +259,7 @@ public class WorkHandler
         workState = WorkState.None;
         if(WorkerManager.Instance.SelectedWorker == worker)
         {
-            PlayerManager.Instance.SetState(PlayerManager.PlayerState.command);
+            WorkerManager.Instance.DeselectWorker();
         }
     }   
 

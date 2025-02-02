@@ -116,6 +116,78 @@ PrefabInstance:
       propertyPath: m_sharedMaterial
       value: 
       objectReference: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: IdleAnimatorClips.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: GlitchAnimatorClips.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: NormalAnimatorClips.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: DefaultAnimatorClips.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: IdleAnimatorClips.Array.data[0].animator
+      value: 
+      objectReference: {fileID: 2794483609510162486}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: GlitchAnimatorClips.Array.data[0].animator
+      value: 
+      objectReference: {fileID: 2794483609510162486}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: NormalAnimatorClips.Array.data[0].animator
+      value: 
+      objectReference: {fileID: 2794483609510162486}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: DefaultAnimatorClips.Array.data[0].animator
+      value: 
+      objectReference: {fileID: 2794483609510162486}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: IdleAnimatorClips.Array.data[0].clipLayerPairs.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: GlitchAnimatorClips.Array.data[0].clipLayerPairs.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: NormalAnimatorClips.Array.data[0].clipLayerPairs.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: DefaultAnimatorClips.Array.data[0].clipLayerPairs.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: IdleAnimatorClips.Array.data[0].clipLayerPairs.Array.data[0].clip
+      value: 
+      objectReference: {fileID: 7400000, guid: 53f425be407b0e040bf8f1e14efd766b, type: 2}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: GlitchAnimatorClips.Array.data[0].clipLayerPairs.Array.data[0].clip
+      value: 
+      objectReference: {fileID: 7400000, guid: fec654fd4fd91274c9526dfb571cb432, type: 2}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: NormalAnimatorClips.Array.data[0].clipLayerPairs.Array.data[0].clip
+      value: 
+      objectReference: {fileID: 7400000, guid: 91b5f5c4178606643b3eeeb62d5277cf, type: 2}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: DefaultAnimatorClips.Array.data[0].clipLayerPairs.Array.data[0].clip
+      value: 
+      objectReference: {fileID: 7400000, guid: 53f425be407b0e040bf8f1e14efd766b, type: 2}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: GlitchAnimatorClips.Array.data[0].clipLayerPairs.Array.data[0].layer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+      propertyPath: NormalAnimatorClips.Array.data[0].clipLayerPairs.Array.data[0].layer
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5333794132335929492, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
@@ -196,11 +268,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 2794483609510162486}
   m_SourcePrefab: {fileID: 100100000, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
---- !u!224 &81988198426828709 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 8989402965477147130, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
-  m_PrefabInstance: {fileID: 9071236510721416799}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2786027055462242103 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6578199205212244328, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
@@ -218,57 +285,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84acc0e008e902542963f8c6d7dfd7ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EntityBody: {fileID: 5398172893542439472}
-  EntityCell: {fileID: 81988198426828709}
-  clickInteractDetectors:
-  - {fileID: 8971802649041212430}
-  dialogueManager: {fileID: 5453847031325940863}
-  dialogueSets:
-  - dialogues:
-    - {fileID: 11400000, guid: 1771a09eaff34ed43beaa8a85cb2b021, type: 2}
-    - {fileID: 11400000, guid: 57d2e63533d45a343bf4ace2f3373f0b, type: 2}
-  - dialogues:
-    - {fileID: 11400000, guid: 9fe3efee6dca44a40b8b6546a6b409c2, type: 2}
-    - {fileID: 11400000, guid: 73a4c94543a15ce4a8e6528358ce7f42, type: 2}
-    - {fileID: 11400000, guid: 49e5df4dc0cf4c84ea43e67127769118, type: 2}
-  Health: 100
-  MaxHealth: 100
-  Corruption: 100
-  MaxCorruption: 100
-  CorruptionCooldown: 10
-  Interactable: 1
-  talkInOrder: 1
-  talkRepeatable: 1
-  talkRollInterval: 2
-  talkChance: 0.25
-  glitchRollThreshold: 0.7
-  defaultAnimatorClips: []
-  idleAnimatorClips:
-  - animator: {fileID: 2794483609510162486}
-    clipLayerPairs:
-    - clip: {fileID: 7400000, guid: 53f425be407b0e040bf8f1e14efd766b, type: 2}
-      layer: 0
-  dialoguePlayingAnimation: []
-  dialogueTypingAnimation: []
-  normalAnimatorClips:
-  - animator: {fileID: 2794483609510162486}
-    clipLayerPairs:
-    - clip: {fileID: 7400000, guid: 91b5f5c4178606643b3eeeb62d5277cf, type: 2}
-      layer: 1
-  glitchAnimatorClips:
-  - animator: {fileID: 2794483609510162486}
-    clipLayerPairs:
-    - clip: {fileID: 7400000, guid: fec654fd4fd91274c9526dfb571cb432, type: 2}
-      layer: 1
-  CurrentAnimationState: 0
-  CorruptionCooldownTimer: 0
-  AttackDamage: 1
-  AttackRate: 1
-  timeToShutup: 2
-  IsBeingMaintained: 0
-  InFocus: 0
-  dealAOEDamage: 0
-  glitchEffect: {fileID: 7362587985674339196}
+  entityData: {fileID: 4572372540512309954}
+  memoryEntityData: {fileID: 5462224907295971316}
   currentSpeed: 1
   maxAccerelation: 20
   SpinSpeedIncrement: 0.5
@@ -316,41 +334,25 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!224 &5398172893542439472 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 3965885866100376687, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
-  m_PrefabInstance: {fileID: 9071236510721416799}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &5453847031325940863 stripped
+--- !u!114 &4572372540512309954 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3912631305385984544, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+  m_CorrespondingSourceObject: {fileID: 4798538201925291165, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
   m_PrefabInstance: {fileID: 9071236510721416799}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2786027055462242103}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 584513c97eb7815409c5bf06e15191d4, type: 3}
+  m_Script: {fileID: 11500000, guid: dc259cd7fc7e436488a79ca09660c5d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &7362587985674339196 stripped
+--- !u!114 &5462224907295971316 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2003727210736196899, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
+  m_CorrespondingSourceObject: {fileID: 3904120699898317227, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
   m_PrefabInstance: {fileID: 9071236510721416799}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 2786027055462242103}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56ec4e3cb42fb704e838d1dee44d2c47, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &8971802649041212430 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 99571163194722897, guid: 40d2fa482ff89dc49b9d6f5f8564f898, type: 3}
-  m_PrefabInstance: {fileID: 9071236510721416799}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a97ff6f1776746d44994a3d39755e472, type: 3}
+  m_Script: {fileID: 11500000, guid: 9270608010a2bbc4ebce863bc4ebc2fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
