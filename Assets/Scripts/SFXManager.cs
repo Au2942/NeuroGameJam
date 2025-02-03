@@ -40,8 +40,7 @@ public class SFXManager : MonoBehaviour
         {
             for (int i = 0; i < poolSize; i++)
             {
-                AudioSource audioSource = Instantiate(SoundFXObjectPrefab);
-                audioSource.gameObject.transform.parent = transform;
+                AudioSource audioSource = Instantiate(SoundFXObjectPrefab, transform);
                 audioSource.gameObject.SetActive(false);
                 audioSourcePool.Enqueue(audioSource);
             }
@@ -69,7 +68,7 @@ public class SFXManager : MonoBehaviour
         if (audioSource != null)
         {
             audioSource.Stop();
-            audioSource.gameObject.transform.parent = transform;
+            audioSource.gameObject.transform.SetParent(transform);
             audioSource.gameObject.SetActive(false);
             audioSourcePool.Enqueue(audioSource);
         }

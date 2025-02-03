@@ -7,7 +7,7 @@ public class PlayerManager : MonoBehaviour
     public static PlayerManager Instance;
     public PlayerViewersHandler ViewersHandler;  
     public PlayerSubscriptionsHandler SubscriptionsHandler;
-    public PlayerDetailsUI StatUI;
+    public PlayerDetails StatUI;
     public RectTransform StreamRect;
     public StreamEntity StreamEntity;
     public string StreamName;

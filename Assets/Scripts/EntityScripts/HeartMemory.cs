@@ -48,8 +48,8 @@ public class HeartMemory : MemoryEntity
     public override void MaintainSuccess(Worker worker)
     {
         base.MaintainSuccess(worker);
-        // WorkerStatusEffect heartStatusEffect = heartStatusEffectSO.CreateWorkerStatusEffect();
-        // worker.ApplyStatusEffect(heartStatusEffect, this);
+        WorkerStatusEffect heartStatusEffect = heartStatusEffectSO.CreateWorkerStatusEffect();
+        worker.ApplyStatusEffect(heartStatusEffect, this);
     }
 
 }

@@ -6,8 +6,7 @@ using System.Collections.Generic;
 
 public class Worker : MonoBehaviour, ICombatUnit
 {
-    //seperate into "actual worker" and "icon worker" later
-    [SerializeField] public string Identifier;
+    [SerializeField] public string Name;
     [SerializeField] public WorkerAppearance WorkerAppearance;
     [SerializeField] public WorkerAppearance IconAppearance;
     [SerializeField] public UIEventHandler iconClickDetector; 
@@ -36,7 +35,10 @@ public class Worker : MonoBehaviour, ICombatUnit
     public float AttackRate { get => workerData.TotalStats.WorkTime; set => workerData.TotalStats.WorkTime = value;}
 
     List<ICombatUnit> ICombatUnit.CombatTargets { get => CombatTargets; set => CombatTargets = value; }
-    public event System.Action<Worker> OnSelectedEvent; 
+    public event System.Action<Worker> OnSelectEvent; 
+    public event System.Action<Worker> OnDieEvent; 
+    public event System.Action<WorkerStatusEffect> OnApplyStatusEffectEvent;
+    public event System.Action<WorkerStatusEffect> OnRemoveStatusEffectEvent; 
     private System.Action<PointerEventData> OnClickEventHandler;
 
     void Awake()
@@ -57,8 +59,9 @@ public class Worker : MonoBehaviour, ICombatUnit
 
     void Update()
     {
-        foreach(WorkerStatusEffect statusEffect in WorkerStatusEffects)
+        for(int i = WorkerStatusEffects.Count - 1; i >= 0; i--) //iterate backwards to be able to remove items
         {
+            WorkerStatusEffect statusEffect = WorkerStatusEffects[i];
             statusEffect.OnUpdate(Time.deltaTime);
             if(statusEffect.ShouldExpire())
             {
@@ -66,6 +69,7 @@ public class Worker : MonoBehaviour, ICombatUnit
                 WorkerStatusEffects.Remove(statusEffect);
             }
         }
+        
     }
 
     public void AddHealth(float value)
@@ -109,13 +113,15 @@ public class Worker : MonoBehaviour, ICombatUnit
 
     public void ApplyStatusEffect(WorkerStatusEffect statusEffect, Entity source = null)
     {
-        WorkerStatusEffects.Add(statusEffect);
         statusEffect.Apply(source, this);
+        WorkerStatusEffects.Add(statusEffect);
+        OnApplyStatusEffectEvent?.Invoke(statusEffect);
     }
     
     public void RemoveStatusEffect(WorkerStatusEffect statusEffect)
     {
         WorkerStatusEffects.Remove(statusEffect);
+        OnRemoveStatusEffectEvent?.Invoke(statusEffect);
     }
 
     public void Select()
@@ -129,7 +135,7 @@ public class Worker : MonoBehaviour, ICombatUnit
                 PlayerManager.Instance.SetState(PlayerManager.PlayerState.command);
             }
             SetAvailability(false);
-            OnSelectedEvent?.Invoke(this);
+            OnSelectEvent?.Invoke(this);
         }
     }
 
@@ -205,8 +211,9 @@ public class Worker : MonoBehaviour, ICombatUnit
     }
     public void Die()
     {
+        OnDieEvent?.Invoke(this);
         WorkerManager.Instance.RemoveWorker(this);
-        Destroy(gameObject);
+        Destroy(gameObject,0);
     }
 
     void OnDisable()

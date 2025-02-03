@@ -1,13 +1,14 @@
 using UnityEngine;
-public abstract class WorkerStatusEffectFactory : ScriptableObject
+public abstract class WorkerStatusEffectSO : ScriptableObject
 {
     public abstract WorkerStatusEffect CreateWorkerStatusEffect();
 }
 
-public class WorkerStatusEffectFactory<DataType, StatusEffectType> : WorkerStatusEffectFactory 
-    where StatusEffectType : WorkerStatusEffect<DataType>, new()
+public class WorkerStatusEffectSO<DataType, StatusEffectType> : WorkerStatusEffectSO 
     where DataType : WorkerStatusEffectData, new()
+    where StatusEffectType : WorkerStatusEffect<DataType>, new()
 {
+    
     public DataType data;
     public override WorkerStatusEffect CreateWorkerStatusEffect()
     {

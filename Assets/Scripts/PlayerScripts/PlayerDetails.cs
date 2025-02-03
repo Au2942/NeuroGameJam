@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Text;
 
-public class PlayerDetailsUI : MonoBehaviour
+public class PlayerDetails : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI viewersText;
     [SerializeField] private TextMeshProUGUI subscribersText;

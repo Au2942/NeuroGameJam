@@ -13,22 +13,29 @@ MonoBehaviour:
   m_Name: Heart
   m_EditorClassIdentifier: 
   data:
+    source: {fileID: 0}
+    target: {fileID: 0}
+    ID: heart
+    Icon: {fileID: 21300000, guid: bf16c3ce063cb41468925496b65e68a4, type: 3}
+    Name: Heart
+    Description: Increase your Heart attribute but be ready to devote yourself to
+      the giver...
     BuffAttributes:
-      Robustness: 0
-      RobustnessScore: 0
-      Latency: 0
-      LatencyScore: 0
+      Heart: 3
+      HeartScore: 0
+      Erm: 0
+      ErmScore: 0
       Accuracy: 0
       AccuracyScore: 0
-      Fitness: 0
-      FitnessScore: 0
+      Latency: 0
+      LatencyScore: 0
     BuffStats:
       MaxHealth: 0
-      RegenSpeed: 0
-      WorkSpeed: 0
-      WorkCooldown: 0
-      WorkSuccessChance: 0
+      RegenTime: 0
       WorkAmount: 0
+      WorkSuccessChance: 0
+      WorkTime: 0
+      RecallCooldown: 0
     ExpireAfterLifetime: 0
     ModifierLifetime: 0
     heartBroken: 0

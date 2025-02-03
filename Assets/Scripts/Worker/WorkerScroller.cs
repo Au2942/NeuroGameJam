@@ -9,7 +9,7 @@ public class WorkerScroller : MonoBehaviour
 
     void Start()
     {
-        WorkerManager.Instance.OnWorkerSelectedEvent += SetSelectedWorker;
+        WorkerManager.Instance.OnWorkerSelectEvent += SetSelectedWorker;
     }
     public void SetSelectedWorker(int index)
     {
@@ -51,6 +51,6 @@ public class WorkerScroller : MonoBehaviour
 
     void OnDestroy()
     {
-        WorkerManager.Instance.OnWorkerSelectedEvent -= SetSelectedWorker;
+        WorkerManager.Instance.OnWorkerSelectEvent -= SetSelectedWorker;
     }
 }

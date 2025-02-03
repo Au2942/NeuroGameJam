@@ -1,6 +1,8 @@
 using UnityEngine;
+
 public abstract class WorkerStatusEffect 
 {
+    public abstract WorkerStatusEffectData GetData();
     public abstract void Apply(Entity source,Worker target);
     public abstract void OnUpdate(float deltaTime);
     public abstract bool ShouldExpire();
@@ -20,26 +22,36 @@ public abstract class WorkerStatusEffect
     public abstract void Remove();
 }
 
-[System.Serializable]
 public class WorkerStatusEffectData
 {
+    public Entity source;
+    public Worker target;
+    public string ID;
+    public Sprite Icon;
+    public string Name;
+    public string Description;
     public WorkerAttributes BuffAttributes;
     public WorkerStats BuffStats;
     public bool ExpireAfterLifetime = true;
     public float ModifierLifetime;
+    public bool ExpireNextUpdate = false;
 }
 
-public abstract class WorkerStatusEffect<DataType> : WorkerStatusEffect where DataType : WorkerStatusEffectData
+
+public abstract class WorkerStatusEffect<DataType> : WorkerStatusEffect where DataType : WorkerStatusEffectData, new()
 {
     public DataType data;
-    public Entity source;
-    public Worker target;
+
+    public override WorkerStatusEffectData GetData()
+    {
+        return data;
+    }
 
     public override void Apply(Entity entity, Worker worker)
     {
-        source = entity;
-        target = worker;
-        target.AddTempAttributes(data.BuffAttributes);
+        data.source = entity;
+        data.target = worker;
+        data.target.AddTempAttributes(data.BuffAttributes);
         worker.AddTempStats(data.BuffStats);
     }
 
@@ -50,7 +62,7 @@ public abstract class WorkerStatusEffect<DataType> : WorkerStatusEffect where Da
 
     public override bool ShouldExpire()
     {
-        return data.ExpireAfterLifetime && data.ModifierLifetime <= 0;
+        return (data.ExpireAfterLifetime && data.ModifierLifetime <= 0) || data.ExpireNextUpdate;
     }
 
     public override void OnStartWork() {}
@@ -70,8 +82,12 @@ public abstract class WorkerStatusEffect<DataType> : WorkerStatusEffect where Da
 
     public override void Remove()
     {
-        target.AddTempAttributes(-data.BuffAttributes);
-        target.AddTempStats(-data.BuffStats);
-        target.RemoveStatusEffect(this);
+        data.target.AddTempAttributes(-data.BuffAttributes);
+        data.target.AddTempStats(-data.BuffStats);
+        data.target.RemoveStatusEffect(this);
     } 
 }
+
+
+
+

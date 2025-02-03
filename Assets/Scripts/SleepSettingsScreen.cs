@@ -24,7 +24,7 @@ public class SleepSettingsScreen : MonoBehaviour
     private Worker selectedWorker => WorkerManager.Instance.SelectedWorker;
     private List<Worker> addedWorkers = new List<Worker>();
     private HashSet<Worker> trainedWorkers = new HashSet<Worker>();
-    private WorkerDetailsUI DetailsUI => WorkerManager.Instance.WorkerStatUI;
+    private WorkerDetails WorkerDetails => WorkerManager.Instance.WorkerDetails;
     private float DisplayTimeMultiplier => TimescaleManager.Instance.displayTimeMultiplier;
     private int allocedAttributes = 0;
     private float sleepHours = 0;
@@ -49,17 +49,17 @@ public class SleepSettingsScreen : MonoBehaviour
     {
         sleepHourSlider.onValueChanged.AddListener(delegate {SetSleepHours((int)sleepHourSlider.value);});
         confirmButton.onClick.AddListener(ConfirmSleep);
-        DetailsUI.AddRobustnessButton.onClick.AddListener(delegate {AddRobustness(1);});
-        DetailsUI.SubtractRobustnessButton.onClick.AddListener(delegate {AddRobustness(-1);});
-        DetailsUI.AddLatencyButton.onClick.AddListener(delegate {AddLatency(1);});
-        DetailsUI.SubtractLatencyButton.onClick.AddListener(delegate {AddLatency(-1);});
-        DetailsUI.AddAccuracyButton.onClick.AddListener(delegate {AddAccuracy(1);});
-        DetailsUI.SubtractAccuracyButton.onClick.AddListener(delegate {AddAccuracy(-1);});
-        DetailsUI.AddFitnessButton.onClick.AddListener(delegate {AddFitness(1);});
-        DetailsUI.SubtractFitnessButton.onClick.AddListener(delegate {AddFitness(-1);});
-        DetailsUI.NewButton.onClick.AddListener(AddWorker);
-        DetailsUI.ResetButton.onClick.AddListener(ResetSelectedAllocAttributes);
-        DetailsUI.DeleteButton.onClick.AddListener(DeleteAddedWorker);
+        WorkerDetails.AddHeartButton.onClick.AddListener(delegate {AddHeart(1);});
+        WorkerDetails.SubtractHeartButton.onClick.AddListener(delegate {AddHeart(-1);});
+        WorkerDetails.AddLatencyButton.onClick.AddListener(delegate {AddLatency(1);});
+        WorkerDetails.SubtractLatencyButton.onClick.AddListener(delegate {AddLatency(-1);});
+        WorkerDetails.AddAccuracyButton.onClick.AddListener(delegate {AddAccuracy(1);});
+        WorkerDetails.SubtractAccuracyButton.onClick.AddListener(delegate {AddAccuracy(-1);});
+        WorkerDetails.AddErmButton.onClick.AddListener(delegate {AddErm(1);});
+        WorkerDetails.SubtractErmButton.onClick.AddListener(delegate {AddErm(-1);});
+        WorkerDetails.NewButton.onClick.AddListener(AddWorker);
+        WorkerDetails.ResetButton.onClick.AddListener(ResetSelectedAllocAttributes);
+        WorkerDetails.DeleteButton.onClick.AddListener(DeleteAddedWorker);
     }
     public void OpenUI()
     {
@@ -72,8 +72,8 @@ public class SleepSettingsScreen : MonoBehaviour
 
         workerPanel.SetParent(sleepSettingsLayout);
         WorkerManager.Instance.DeselectWorker();
-        WorkerManager.Instance.WorkerStatUI.ShowButtons();
-        DetailsUI.NewButton.transform.SetAsLastSibling();
+        WorkerManager.Instance.WorkerDetails.ShowButtons();
+        WorkerDetails.NewButton.transform.SetAsLastSibling();
 
         sleepHourSlider.maxValue = Mathf.FloorToInt(PlayerManager.Instance.RemainingStreamTime*DisplayTimeMultiplier/3600);
     }
@@ -108,25 +108,25 @@ public class SleepSettingsScreen : MonoBehaviour
         sleepPointsText.text = sb1.ToString();
     }
 
-    public void AddRobustness(int value)
+    public void AddHeart(int value)
     {
         AllocateAttributes(new WorkerAttributes(value, 0, 0, 0));
     }
 
-    public void AddLatency(int value)
+
+    public void AddErm(int value)
     {
         AllocateAttributes(new WorkerAttributes(0, value, 0, 0));
     }
-
     public void AddAccuracy(int value)
     {
         AllocateAttributes(new WorkerAttributes(0, 0, value, 0));
     }
-
-    public void AddFitness(int value)
+    public void AddLatency(int value)
     {
         AllocateAttributes(new WorkerAttributes(0, 0, 0, value));
     }
+
 
     private void AllocateAttributes(WorkerAttributes attributes)
     {
@@ -134,7 +134,7 @@ public class SleepSettingsScreen : MonoBehaviour
         if(GetRemainingSleepPoints() < attributes.Sum()*hoursPerTrainedAttribute) return;
         allocedAttributes += selectedWorker.AllocateAttributes(attributes);
         trainedWorkers.Add(selectedWorker);
-        DetailsUI.UpdateAttributesText(selectedWorker);
+        WorkerDetails.UpdateDisplayDetails(selectedWorker);
         UpdateSleepHoursText();
     }
 
@@ -144,7 +144,7 @@ public class SleepSettingsScreen : MonoBehaviour
         if(!trainedWorkers.Contains(selectedWorker)) return;
         allocedAttributes -= selectedWorker.ResetAllocAttributes();
         trainedWorkers.Remove(selectedWorker);
-        DetailsUI.UpdateAttributesText(selectedWorker);
+        WorkerDetails.UpdateDisplayDetails(selectedWorker);
         UpdateSleepHoursText();
     }
 
@@ -155,7 +155,7 @@ public class SleepSettingsScreen : MonoBehaviour
         worker.AddedOverlay.gameObject.SetActive(true);
         worker.Select();
         addedWorkers.Add(worker);
-        DetailsUI.NewButton.transform.SetAsLastSibling();
+        WorkerDetails.NewButton.transform.SetAsLastSibling();
         UpdateSleepHoursText();
     }
 
@@ -227,7 +227,7 @@ public class SleepSettingsScreen : MonoBehaviour
 
         workerPanel.SetParent(actionsPanel);
         WorkerManager.Instance.DeselectWorker();
-        WorkerManager.Instance.WorkerStatUI.HideButtons();
+        WorkerManager.Instance.WorkerDetails.HideButtons();
         IsOpen = false;
         sleepSettingsUI.gameObject.SetActive(false);
 

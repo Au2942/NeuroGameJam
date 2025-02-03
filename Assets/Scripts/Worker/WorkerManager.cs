@@ -7,7 +7,7 @@ public class WorkerManager : MonoBehaviour
 {
     public static WorkerManager Instance;
 
-    [SerializeField] public WorkerDetailsUI WorkerStatUI;
+    [SerializeField] public WorkerDetails WorkerDetails;
     [SerializeField] public WorkerScroller WorkerScroller;
     [SerializeField] public WorkerAppearanceGenerator WorkerAppearanceGenerator;
     [SerializeField] public RectTransform WorkerLayout;
@@ -16,9 +16,10 @@ public class WorkerManager : MonoBehaviour
     [SerializeField] private Worker WorkerPrefab; 
     [SerializeField] public Worker SelectedWorker;
 
-    public event System.Action<Worker> OnWorkerSelectedEvent;
+    public event System.Action<Worker> OnWorkerSelectEvent;
     public event System.Action OnWorkerDeselectedEvent;
-
+    public System.Action<WorkerStatusEffect> OnSelectedWorkerApplyStatusEffectEventHandler;
+    public System.Action<WorkerStatusEffect> OnSelectedWorkerRemoveStatusEffectEventHandler;
 
     void Awake()
     {
@@ -30,8 +31,23 @@ public class WorkerManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
 
+        OnSelectedWorkerApplyStatusEffectEventHandler = (statusEffect) => 
+        {
+            if(SelectedWorker != null)
+            {
+                WorkerDetails.UpdateDisplayDetails(SelectedWorker);
+            }
+        };
+
+        OnSelectedWorkerRemoveStatusEffectEventHandler = (statusEffect) => 
+        {
+            if(SelectedWorker != null)
+            {
+                WorkerDetails.UpdateDisplayDetails(SelectedWorker);
+            }
+        };
+    }
 
     void Start()
     {
@@ -43,7 +59,7 @@ public class WorkerManager : MonoBehaviour
         {
             if(worker != null)
             {
-                worker.OnSelectedEvent += SelectWorker;
+                worker.OnSelectEvent += SelectWorker;
             }
         }
         AddWorker();
@@ -59,7 +75,7 @@ public class WorkerManager : MonoBehaviour
         WorkerAppearanceGenerator.GenerateAppearance(newWorker.WorkerAppearance);
         newWorker.IconAppearance.SetApperance(newWorker.WorkerAppearance.WorkerAppearanceData);
 
-        newWorker.OnSelectedEvent += SelectWorker;
+        newWorker.OnSelectEvent += SelectWorker;
 
         return newWorker;
     }
@@ -73,14 +89,18 @@ public class WorkerManager : MonoBehaviour
         if(worker == null) return;
         int index = Workers.IndexOf(worker);
         Workers.Remove(worker);
-        worker.OnSelectedEvent -= SelectWorker;
+        worker.OnSelectEvent -= SelectWorker;
         Destroy(worker.gameObject);
         Worker nextWorker = Workers.Count > 0 ? Workers[Mathf.Clamp(index, 0, Workers.Count - 1)] : null;
         if(nextWorker != null)
         {
             nextWorker.Select();
         }
+    }
 
+    public void UpdateSelectedWorkerDetails()
+    {
+        WorkerDetails.UpdateDisplayDetails(SelectedWorker);
     }
 
     public void SelectWorker(Worker worker)
@@ -93,14 +113,22 @@ public class WorkerManager : MonoBehaviour
         
         DeselectWorker();
         SelectedWorker = worker;
-        WorkerStatUI.UpdateAttributesText(SelectedWorker);
-        OnWorkerSelectedEvent?.Invoke(SelectedWorker);
+        WorkerDetails.UpdateDisplayDetails(SelectedWorker);
+
+        worker.OnApplyStatusEffectEvent += OnSelectedWorkerApplyStatusEffectEventHandler;
+        worker.OnRemoveStatusEffectEvent += OnSelectedWorkerRemoveStatusEffectEventHandler;
+
+        OnWorkerSelectEvent?.Invoke(SelectedWorker);
     }
 
     public void DeselectWorker()
     {
         if(SelectedWorker == null) return;
-        WorkerStatUI.ResetAttributesText();
+
+        SelectedWorker.OnApplyStatusEffectEvent -= OnSelectedWorkerApplyStatusEffectEventHandler;
+        SelectedWorker.OnRemoveStatusEffectEvent -= OnSelectedWorkerRemoveStatusEffectEventHandler;
+        
+        WorkerDetails.ClearAttributesText();
         SelectedWorker.Deselect();
         SelectedWorker = null;
         OnWorkerDeselectedEvent?.Invoke();
@@ -130,7 +158,7 @@ public class WorkerManager : MonoBehaviour
         foreach(Worker worker in Workers)
         {
             if(worker == null) continue;
-            worker.OnSelectedEvent -= SelectWorker;
+            worker.OnSelectEvent -= SelectWorker;
         }
     }
 }
