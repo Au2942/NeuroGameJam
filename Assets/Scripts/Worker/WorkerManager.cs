@@ -18,8 +18,8 @@ public class WorkerManager : MonoBehaviour
 
     public event System.Action<Worker> OnWorkerSelectEvent;
     public event System.Action OnWorkerDeselectedEvent;
-    public System.Action<WorkerStatusEffect> OnSelectedWorkerApplyStatusEffectEventHandler;
-    public System.Action<WorkerStatusEffect> OnSelectedWorkerRemoveStatusEffectEventHandler;
+    public System.Action<StatusEffect> OnSelectedWorkerApplyStatusEffectEventHandler;
+    public System.Action<StatusEffect> OnSelectedWorkerRemoveStatusEffectEventHandler;
 
     void Awake()
     {

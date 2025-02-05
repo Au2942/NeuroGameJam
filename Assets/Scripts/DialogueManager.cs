@@ -75,6 +75,21 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    public void PlayDialogue()
+    {
+        if(IsDialoguePlaying)
+        {
+            if(IsTyping && typingCoroutine != null)
+            {
+                FinishTyping();
+            }
+            else 
+            {
+                NextDialogue();
+            }
+        } 
+    }
+
 
     private void StartDialogue()
     {   

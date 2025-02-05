@@ -3,8 +3,9 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 using System.Collections.Generic;
+using System.Collections;
 
-public class Worker : MonoBehaviour, ICombatUnit
+public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
 {
     [SerializeField] public string Name;
     [SerializeField] public WorkerAppearance WorkerAppearance;
@@ -22,23 +23,26 @@ public class Worker : MonoBehaviour, ICombatUnit
     public WorkerStats BaseStats => workerData.BaseStats;
     public WorkerStats TempStats => workerData.TempStats;
     public WorkerStats TotalStats => workerData.TotalStats;
-    [SerializeField] public List<WorkerStatusEffect> WorkerStatusEffects = new List<WorkerStatusEffect>();
+    public List<StatusEffect> StatusEffects = new List<StatusEffect>();
     [SerializeField] public bool IsAvailable = true;
+    [SerializeField] public bool CanRegenHealth = true;
     [SerializeField] public WorkHandler WorkHandler = new WorkHandler();
 
     public MemoryEntity assignedEntity => WorkHandler.entity;
-    public List<ICombatUnit> CombatTargets = new List<ICombatUnit>();
+    public List<ICombatant> CombatTargets = new List<ICombatant>();
 
-    float ICombatUnit.Health { get => workerData.Health; set => workerData.Health = value; }
-    float ICombatUnit.MaxHealth { get => workerData.TotalStats.MaxHealth; set => workerData.TotalStats.MaxHealth = value; }
+    float ICombatant.Health { get => workerData.Health; set => workerData.Health = value; }
+    float ICombatant.MaxHealth { get => workerData.TotalStats.MaxHealth; set => workerData.TotalStats.MaxHealth = value; }
     public float AttackDamage { get => workerData.TotalStats.WorkAmount; set => workerData.TotalStats.WorkAmount = value;}
     public float AttackRate { get => workerData.TotalStats.WorkTime; set => workerData.TotalStats.WorkTime = value;}
 
-    List<ICombatUnit> ICombatUnit.CombatTargets { get => CombatTargets; set => CombatTargets = value; }
+    List<ICombatant> ICombatant.CombatTargets { get => CombatTargets; set => CombatTargets = value; }
+    List<StatusEffect> IStatusEffectable.StatusEffects { get => StatusEffects; set => StatusEffects = value; }
+
     public event System.Action<Worker> OnSelectEvent; 
     public event System.Action<Worker> OnDieEvent; 
-    public event System.Action<WorkerStatusEffect> OnApplyStatusEffectEvent;
-    public event System.Action<WorkerStatusEffect> OnRemoveStatusEffectEvent; 
+    public event System.Action<StatusEffect> OnApplyStatusEffectEvent;
+    public event System.Action<StatusEffect> OnRemoveStatusEffectEvent; 
     private System.Action<PointerEventData> OnClickEventHandler;
 
     void Awake()
@@ -55,21 +59,25 @@ public class Worker : MonoBehaviour, ICombatUnit
     void Start()
     {
         workerData.Health = workerData.TotalStats.MaxHealth;
+        StartCoroutine(RegenHealth());
     }
 
     void Update()
     {
-        for(int i = WorkerStatusEffects.Count - 1; i >= 0; i--) //iterate backwards to be able to remove items
-        {
-            WorkerStatusEffect statusEffect = WorkerStatusEffects[i];
-            statusEffect.OnUpdate(Time.deltaTime);
-            if(statusEffect.ShouldExpire())
-            {
-                statusEffect.Remove();
-                WorkerStatusEffects.Remove(statusEffect);
-            }
-        }
         
+    }
+
+    IEnumerator RegenHealth()
+    {
+        while(true)
+        {
+            while(workerData.Health >= workerData.TotalStats.MaxHealth || !CanRegenHealth || WorkHandler.workState != WorkHandler.WorkState.None || GameManager.Instance.isPause)
+            {
+                yield return null;
+            }
+            yield return new WaitForSeconds(workerData.TotalStats.RegenTime);
+            AddHealth(1);
+        }
     }
 
     public void AddHealth(float value)
@@ -111,22 +119,21 @@ public class Worker : MonoBehaviour, ICombatUnit
         workerData.ApplyAllocAttributes();
     }
 
-    public void ApplyStatusEffect(WorkerStatusEffect statusEffect, Entity source = null)
+    public void ApplyStatusEffect(StatusEffect statusEffect, IStatusEffectSource source = null)
     {
-        statusEffect.Apply(source, this);
-        WorkerStatusEffects.Add(statusEffect);
+        StatusEffects.Add(statusEffect);
         OnApplyStatusEffectEvent?.Invoke(statusEffect);
     }
     
-    public void RemoveStatusEffect(WorkerStatusEffect statusEffect)
+    public void RemoveStatusEffect(StatusEffect statusEffect)
     {
-        WorkerStatusEffects.Remove(statusEffect);
+        StatusEffects.Remove(statusEffect);
         OnRemoveStatusEffectEvent?.Invoke(statusEffect);
     }
 
     public void Select()
     {
-        if(PlayerManager.Instance.state == PlayerManager.PlayerState.command) {return;}
+        if(PlayerManager.Instance.State == PlayerManager.PlayerState.command) {return;}
 
         if(!GameManager.Instance.isPause)
         {
@@ -189,23 +196,23 @@ public class Worker : MonoBehaviour, ICombatUnit
         }
         return false;
     }
-    public void DealDamage(ICombatUnit target)
+    public void DealDamage(ICombatant target)
     {
         target.TakeDamage(AttackDamage, this);
     }
 
-    public void TakeDamage(float value, ICombatUnit attacker)
+    public void TakeDamage(float value, ICombatant attacker)
     {
         Debug.Log(name + " health is " + workerData.Health);
         AddHealth(-value);
     }
 
-    public void AddCombatTarget(ICombatUnit target)
+    public void AddCombatTarget(ICombatant target)
     {
         CombatTargets.Add(target);
     }
 
-    public void RemoveCombatTarget(ICombatUnit target)
+    public void RemoveCombatTarget(ICombatant target)
     {
         CombatTargets.Remove(target);
     }

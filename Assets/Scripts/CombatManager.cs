@@ -21,14 +21,14 @@ public class CombatManager : MonoBehaviour
         }
     }
 
-    public CombatHandler StartCombat(ICombatUnit unit)
+    public CombatHandler StartCombat(ICombatant unit)
     {
         CombatHandler combatHandler = new CombatHandler(unit);
         activeCombats.Add(combatHandler);
         return combatHandler;
     }
 
-    public CombatHandler EngageInCombat(ICombatUnit engager, ICombatUnit target)
+    public CombatHandler EngageInCombat(ICombatant engager, ICombatant target)
     {
         if (!target.IsCombatReady())
         {

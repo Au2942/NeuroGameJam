@@ -5,11 +5,11 @@ public class StatusEffectIconManager : MonoBehaviour
 {
     public static StatusEffectIconManager Instance;
     [SerializeField] private StatusEffectIcon statusEffectIconPrefab;
-    [SerializeField] public List<WorkerStatusEffectSO> statusEffectsSO;
+    //[SerializeField] public WorkerStatusEffectSO[] statusEffectsSO = new WorkerStatusEffectSO[0];
     public int poolSize = 30;
     public int expandStep = 10;
     //this dictionary should be in StatusEffectManager maybe?
-    private Dictionary<string, WorkerStatusEffect> statusEffectByID = new Dictionary<string, WorkerStatusEffect>();
+    //private Dictionary<string, WorkerStatusEffect> statusEffectByID = new Dictionary<string, WorkerStatusEffect>();
     private Queue<StatusEffectIcon> statusEffectIconPool = new Queue<StatusEffectIcon>();
 
     void Awake()
@@ -23,12 +23,6 @@ public class StatusEffectIconManager : MonoBehaviour
             Instance = this;
         }
 
-        foreach(WorkerStatusEffectSO statusEffectSO in statusEffectsSO)
-        {
-            WorkerStatusEffect statusEffect = statusEffectSO.CreateWorkerStatusEffect();
-            WorkerStatusEffectData data = statusEffect.GetData();
-            statusEffectByID.TryAdd(data.ID, statusEffect);
-        }
         ExpandPool(poolSize);
     }
 
@@ -44,10 +38,11 @@ public class StatusEffectIconManager : MonoBehaviour
 
     private void SetStatusEffectIcon(string id, StatusEffectIcon icon)
     {
-        WorkerStatusEffect statusEffect = statusEffectByID[id];
-        WorkerStatusEffectData data = statusEffect.GetData();
-        icon.SetIcon(data.Icon);
-        icon.SetTooltip(data.Name, data.Description);
+        if(StatusEffectManager.Instance.TryGetStatusEffectDataByID(id, out StatusEffectData data))
+        {
+            icon.SetIcon(data.Icon);
+            icon.SetTooltip(data.Name, data.Description);
+        }
     }
     public StatusEffectIcon GetStatusEffectIcon(string id)
     {

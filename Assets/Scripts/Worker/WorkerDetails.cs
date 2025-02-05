@@ -16,9 +16,9 @@ public class WorkerDetails : MonoBehaviour
     [SerializeField] public Button SubtractHeartButton;
     [SerializeField] private TextMeshProUGUI heartText;
     [SerializeField] public Button AddHeartButton;
-    [SerializeField] public Button SubtractErmButton;
-    [SerializeField] private TextMeshProUGUI ermText;
-    [SerializeField] public Button AddErmButton;
+    [SerializeField] public Button SubtractERMButton;
+    [SerializeField] private TextMeshProUGUI ERMText;
+    [SerializeField] public Button AddERMButton;
     [SerializeField] public Button SubtractAccuracyButton;
     [SerializeField] private TextMeshProUGUI accuracyText;
     [SerializeField] public Button AddAccuracyButton;
@@ -58,9 +58,9 @@ public class WorkerDetails : MonoBehaviour
             statusEffectIcons.Remove(icon);
         }
 
-        foreach(WorkerStatusEffect statusEffect in worker.WorkerStatusEffects)
+        foreach(StatusEffect statusEffect in worker.StatusEffects)
         {
-            WorkerStatusEffectData data = statusEffect.GetData();
+            StatusEffectData data = statusEffect.GetData();
             StatusEffectIcon icon = StatusEffectIconManager.Instance.GetStatusEffectIcon(data.ID);
             icon.transform.SetParent(statusEffectsRect);
             statusEffectIcons.Add(icon);
@@ -72,12 +72,12 @@ public class WorkerDetails : MonoBehaviour
         if (worker == null) return;
 
         int heart = worker.BaseAttributes.Heart + worker.AllocAttributes.Heart + worker.TempAttributes.Heart;
-        int erm = worker.BaseAttributes.Erm + worker.AllocAttributes.Erm + worker.TempAttributes.Erm;
+        int ERM = worker.BaseAttributes.ERM + worker.AllocAttributes.ERM + worker.TempAttributes.ERM;
         int accuracy = worker.BaseAttributes.Accuracy + worker.AllocAttributes.Accuracy + worker.TempAttributes.Accuracy;
         int latency = worker.BaseAttributes.Latency + worker.AllocAttributes.Latency + worker.TempAttributes.Latency;
 
         heartText.text = FormatAttributeText(heart, worker.AllocAttributes.Heart, worker.TempAttributes.Heart);
-        ermText.text = FormatAttributeText(erm, worker.AllocAttributes.Erm, worker.TempAttributes.Erm);
+        ERMText.text = FormatAttributeText(ERM, worker.AllocAttributes.ERM, worker.TempAttributes.ERM);
         accuracyText.text = FormatAttributeText(accuracy, worker.AllocAttributes.Accuracy, worker.TempAttributes.Accuracy);
         latencyText.text = FormatAttributeText(latency, worker.AllocAttributes.Latency, worker.TempAttributes.Latency);
     }
@@ -130,7 +130,7 @@ public class WorkerDetails : MonoBehaviour
         heartText.text = "";
         latencyText.text = "";
         accuracyText.text = "";
-        ermText.text = "";
+        ERMText.text = "";
     }
 
     public void ShowButtons()
@@ -139,8 +139,8 @@ public class WorkerDetails : MonoBehaviour
         SideButtonsRect.gameObject.SetActive(true);
         AddHeartButton.gameObject.SetActive(true);
         SubtractHeartButton.gameObject.SetActive(true);
-        AddErmButton.gameObject.SetActive(true);
-        SubtractErmButton.gameObject.SetActive(true);
+        AddERMButton.gameObject.SetActive(true);
+        SubtractERMButton.gameObject.SetActive(true);
         AddAccuracyButton.gameObject.SetActive(true);
         SubtractAccuracyButton.gameObject.SetActive(true);
         AddLatencyButton.gameObject.SetActive(true);
@@ -153,8 +153,8 @@ public class WorkerDetails : MonoBehaviour
         SideButtonsRect.gameObject.SetActive(false);
         AddHeartButton.gameObject.SetActive(false);
         SubtractHeartButton.gameObject.SetActive(false);
-        AddErmButton.gameObject.SetActive(false);
-        SubtractErmButton.gameObject.SetActive(false);
+        AddERMButton.gameObject.SetActive(false);
+        SubtractERMButton.gameObject.SetActive(false);
         AddAccuracyButton.gameObject.SetActive(false);
         SubtractAccuracyButton.gameObject.SetActive(false);
         AddLatencyButton.gameObject.SetActive(false);

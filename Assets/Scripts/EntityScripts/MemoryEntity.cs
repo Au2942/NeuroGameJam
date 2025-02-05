@@ -1,25 +1,25 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class MemoryEntity : Entity, ICombatUnit
+public abstract class MemoryEntity : Entity, ICombatant
 {
     [SerializeField] protected MemoryEntityData memoryEntityData;
     protected GlitchOverlay GlitchEffect {get => memoryEntityData.GlitchEffect; set => memoryEntityData.GlitchEffect = value;}
     protected float AttackDamage {get => memoryEntityData.AttackDamage; set => memoryEntityData.AttackDamage = value;}
     protected float AttackRate {get => memoryEntityData.AttackRate; set => memoryEntityData.AttackRate = value;}
     protected float TimeToShutup {get => memoryEntityData.TimeToShutup; set => memoryEntityData.TimeToShutup = value;}
-    public bool IsBeingMaintained {get => memoryEntityData.IsBeingMaintained; set => memoryEntityData.IsBeingMaintained = value;}
-    public bool InFocus {get => memoryEntityData.InFocus; set => memoryEntityData.InFocus = value;}
     public bool DealAOEDamage {get => memoryEntityData.DealAOEDamage; set => memoryEntityData.DealAOEDamage = value;}
+    public bool InFocus = false;
+    public bool IsBeingMaintained = false;
 
-    protected List<ICombatUnit> combatTargets = new List<ICombatUnit>();
+    protected List<ICombatant> combatTargets = new List<ICombatant>();
     protected float shutupTimer = 0f;
 
-    float ICombatUnit.Health { get => Corruption; set => Corruption = value; }
-    float ICombatUnit.MaxHealth { get => MaxCorruption; set => MaxCorruption = value; }
-    float ICombatUnit.AttackDamage { get => AttackDamage; set => AttackDamage = value; }
-    float ICombatUnit.AttackRate { get => AttackRate; set => AttackRate = value; }
-    List<ICombatUnit> ICombatUnit.CombatTargets { get => combatTargets; set => combatTargets = value; }
+    float ICombatant.Health { get => Corruption; set => Corruption = value; }
+    float ICombatant.MaxHealth { get => MaxCorruption; set => MaxCorruption = value; }
+    float ICombatant.AttackDamage { get => AttackDamage; set => AttackDamage = value; }
+    float ICombatant.AttackRate { get => AttackRate; set => AttackRate = value; }
+    List<ICombatant> ICombatant.CombatTargets { get => combatTargets; set => combatTargets = value; }
 
     protected override void Awake()
     {
@@ -34,31 +34,31 @@ public abstract class MemoryEntity : Entity, ICombatUnit
         }
     }
 
-    public virtual void AddCombatTarget(ICombatUnit target)
+    public virtual void AddCombatTarget(ICombatant target)
     {
         combatTargets.Add(target);
     }
 
-    public virtual void RemoveCombatTarget(ICombatUnit target)
+    public virtual void RemoveCombatTarget(ICombatant target)
     {
         combatTargets.Remove(target);
     }
 
     protected virtual void SubmitInteract()
     {
-        if(PlayerManager.Instance.state == PlayerManager.PlayerState.command)
+        if(PlayerManager.Instance.State == PlayerManager.PlayerState.command || !Interactable)
         {
             return;
         }
-        if(!Interactable) 
+        if(DialogueManager.IsDialoguePlaying)
         {
-            return;
+            DialogueManager.PlayDialogue();
         }
     }
 
     protected override void Update()
     {
-        if(PlayerManager.Instance.state == PlayerManager.PlayerState.sleep) return;
+        if(PlayerManager.Instance.State == PlayerManager.PlayerState.sleep) return;
         if(IsBeingMaintained) return;
         base.Update();
         if(InFocus)
@@ -80,7 +80,7 @@ public abstract class MemoryEntity : Entity, ICombatUnit
     protected override void ClickInteract(GameObject clickedObject)
     {
         base.ClickInteract(clickedObject);
-        if(InFocus && PlayerManager.Instance.state == PlayerManager.PlayerState.command)
+        if(InFocus && PlayerManager.Instance.State == PlayerManager.PlayerState.command)
         {
             if(!Glitched)
             {
@@ -195,7 +195,7 @@ public abstract class MemoryEntity : Entity, ICombatUnit
         if(combatTargets.Count == 0) return;
         if(DealAOEDamage)
         {
-            foreach(ICombatUnit target in combatTargets)
+            foreach(ICombatant target in combatTargets)
             {
                 DealDamage(target);
             }
@@ -215,12 +215,12 @@ public abstract class MemoryEntity : Entity, ICombatUnit
         return false;
     }
 
-    public virtual void DealDamage(ICombatUnit target)
+    public virtual void DealDamage(ICombatant target)
     {
         target.TakeDamage(AttackDamage, this);
     }
 
-    public virtual void TakeDamage(float value, ICombatUnit attacker)
+    public virtual void TakeDamage(float value, ICombatant attacker)
     {
         DamageCorruption(value);
         Debug.Log(name + " corruption is " + Corruption);

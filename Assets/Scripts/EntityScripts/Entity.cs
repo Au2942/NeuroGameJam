@@ -3,13 +3,14 @@ using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using System.Collections;
 
-public abstract class Entity : MonoBehaviour
+public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSource
 {
     [SerializeField] protected EntityData entityData;
     public RectTransform EntityBody { get => entityData.EntityBody; set => entityData.EntityBody = value; }
     public RectTransform EntityCell { get => entityData.EntityCell; set => entityData.EntityCell = value; }
     protected List<UIEventHandler> ClickInteractDetectors { get => entityData.ClickInteractDetectors; set => entityData.ClickInteractDetectors = value; }
     protected DialogueManager DialogueManager { get => entityData.DialogueManager; set => entityData.DialogueManager = value; }
+    protected UIEventHandler DialogueInteractDetector { get => entityData.DialogueInteractDetector; set => entityData.DialogueInteractDetector = value; }
     protected List<DialogueSet> DialogueSets { get => entityData.DialogueSets; set => entityData.DialogueSets = value; }
     public int DialogueSetIndex { get => entityData.dialogueSetIndex; set => entityData.dialogueSetIndex = value; }
     protected bool TalkInOrder { get => entityData.TalkInOrder; set => entityData.TalkInOrder = value; }
@@ -21,8 +22,8 @@ public abstract class Entity : MonoBehaviour
     public float Corruption { get => entityData.Corruption; set => entityData.Corruption = value; }
     public float MaxCorruption { get => entityData.MaxCorruption; set => entityData.MaxCorruption = value; }
     public float CorruptionCooldown { get => entityData.CorruptionCooldown; set => entityData.CorruptionCooldown = value; }
-    public bool Interactable { get => entityData.Interactable; set => entityData.Interactable = value; }
-    public bool Glitched { get => entityData.Glitched; set => entityData.Glitched = value;}
+    public bool Interactable = true;
+    public bool Glitched = false;
     protected float GlitchRollThreshold { get => entityData.GlitchRollThreshold; set => entityData.GlitchRollThreshold = value; }
     public List<AnimatorClipsPair> DefaultAnimatorClips { get => entityData.DefaultAnimatorClips; set => entityData.DefaultAnimatorClips = value; }
     public List<AnimatorClipsPair> IdleAnimatorClips { get => entityData.IdleAnimatorClips; set => entityData.IdleAnimatorClips = value; }
@@ -30,17 +31,25 @@ public abstract class Entity : MonoBehaviour
     public List<AnimatorClipsPair> DialogueTypingAnimation { get => entityData.DialogueTypingAnimation; set => entityData.DialogueTypingAnimation = value; }
     public List<AnimatorClipsPair> NormalAnimatorClips { get => entityData.NormalAnimatorClips; set => entityData.NormalAnimatorClips = value; }
     public List<AnimatorClipsPair> GlitchAnimatorClips { get => entityData.GlitchAnimatorClips; set => entityData.GlitchAnimatorClips = value; }
-    [SerializeField] public EntityData.AnimState CurrentAnimationState { get => entityData.CurrentAnimationState; set => entityData.CurrentAnimationState = value; }
+    public AnimState CurrentAnimationState { get => entityData.CurrentAnimationState; set => entityData.CurrentAnimationState = value; }
 
+    public List<StatusEffect> StatusEffects = new List<StatusEffect>(); 
+    List<StatusEffect> IStatusEffectable.StatusEffects { get => StatusEffects; set => StatusEffects = value; }
+
+    public enum AnimState
+    {
+        Default,
+        Idle,
+    }
     protected float talkRollTimer = 0f;
     protected int talkCounter = 0;
-    public float CorruptionCooldownTimer {get; protected set;} = 0f;
-
+    public float CorruptionCooldownTimer = 0f;
     public event System.Action<float> OnHealthChangedEvent;
     public event System.Action<float> OnCorruptionChangedEvent;
     public event System.Action OnEnterGlitchEvent;
     public event System.Action OnExitGlitchEvent;
-    private List<System.Action<PointerEventData>> OnClickInteractHandlers = new List<System.Action<PointerEventData>>();
+    protected List<System.Action<PointerEventData>> OnClickInteractHandlers = new();
+    protected System.Action<PointerEventData> OnClickDialogueHandlers;
 
     protected virtual void Awake()
     {
@@ -62,7 +71,6 @@ public abstract class Entity : MonoBehaviour
     }
     protected virtual void OnEnable()
     {
-        OnClickInteractHandlers.Clear();
         for(int i = 0; i < ClickInteractDetectors.Count; i++)
         {
             int index = i;
@@ -71,6 +79,11 @@ public abstract class Entity : MonoBehaviour
         }
         GameManager.Instance.OnStartStream += OnStartStream;
         GameManager.Instance.OnEndStream += OnEndStream;
+        OnClickDialogueHandlers = (t) => Speak();
+        if(DialogueInteractDetector != null)
+        {
+            DialogueInteractDetector.OnLeftClickEvent += OnClickDialogueHandlers;
+        }
     }
     protected virtual void OnStartStream()
     {
@@ -100,7 +113,7 @@ public abstract class Entity : MonoBehaviour
         }
     }
 
-    public virtual void SetAnimationState(EntityData.AnimState state, bool force = false)
+    public virtual void SetAnimationState(AnimState state, bool force = false)
     {
         if (force || CurrentAnimationState != state)
         {
@@ -112,10 +125,10 @@ public abstract class Entity : MonoBehaviour
     {
         switch(CurrentAnimationState)
         {
-            case EntityData.AnimState.Default:
+            case AnimState.Default:
                 PlayDefaultAnimation();
                 break;
-            case EntityData.AnimState.Idle:
+            case AnimState.Idle:
                 PlayIdleAnimation();
                 break;
         }
@@ -189,7 +202,7 @@ public abstract class Entity : MonoBehaviour
                 PlayAnimation(DefaultAnimatorClips[i].animator, clipLayerPair.clip, clipLayerPair.layer);
             }
         }
-        CurrentAnimationState = EntityData.AnimState.Default;
+        CurrentAnimationState = AnimState.Default;
     }
 
     protected virtual void PlayIdleAnimation()
@@ -203,7 +216,7 @@ public abstract class Entity : MonoBehaviour
                 PlayAnimation(IdleAnimatorClips[i].animator, clipLayerPair.clip, clipLayerPair.layer);
             }
         }
-        CurrentAnimationState = EntityData.AnimState.Idle;
+        CurrentAnimationState = AnimState.Idle;
     }
 
 
@@ -394,15 +407,30 @@ public abstract class Entity : MonoBehaviour
         {
             ClickInteractDetectors[i].OnLeftClickEvent -= OnClickInteractHandlers[i];
         }
+        OnClickInteractHandlers.Clear();
         if(GameManager.Instance != null)
         {
             GameManager.Instance.OnStartStream -= OnStartStream;
             GameManager.Instance.OnEndStream -= OnEndStream;
         }
+        if(DialogueInteractDetector != null)
+        {
+            DialogueInteractDetector.OnLeftClickEvent -= OnClickDialogueHandlers;
+        }
+
     }
     protected virtual void OnDestroy()
     {
 
 
     }
+
+    public void ApplyStatusEffect(StatusEffect statusEffect, IStatusEffectSource source = null)
+    {
+    }
+
+    public void RemoveStatusEffect(StatusEffect statusEffect)
+    {
+    }
+
 }

@@ -83,7 +83,7 @@ public class PlayerViewersHandler : MonoBehaviour
             }
             // Gradually adjust baseline viewers toward current viewers
 
-            if(PlayerManager.Instance.state != PlayerManager.PlayerState.sleep)
+            if(PlayerManager.Instance.State != PlayerManager.PlayerState.sleep)
             {
                 UpdateBaselineViewers();
             }

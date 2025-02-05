@@ -94,7 +94,7 @@ public class PlayerSubscriptionsHandler : MonoBehaviour
     {
         while (true)
         {
-            while(GameManager.Instance.isPause)
+            while(GameManager.Instance.isPause || PlayerManager.Instance.State == PlayerManager.PlayerState.sleep)
             {
                 yield return null;
             }

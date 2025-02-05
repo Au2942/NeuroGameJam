@@ -29,17 +29,17 @@ public class WorkerData
             AllocAttributes.Heart -= unallocedHeart;
             allocedAttributes -= unallocedHeart;
         }
-        if(addedAttributes.Erm > 0)
+        if(addedAttributes.ERM > 0)
         {
-            int allocedErm = Mathf.Min(addedAttributes.Erm, MaxAttribute - BaseAttributes.Erm - AllocAttributes.Erm);
-            AllocAttributes.Erm += allocedErm;
-            allocedAttributes += allocedErm;
+            int allocedERM = Mathf.Min(addedAttributes.ERM, MaxAttribute - BaseAttributes.ERM - AllocAttributes.ERM);
+            AllocAttributes.ERM += allocedERM;
+            allocedAttributes += allocedERM;
         }
         else
         {
-            int unallocedErm = Mathf.Min(-addedAttributes.Erm, AllocAttributes.Erm);
-            AllocAttributes.Erm -= unallocedErm;
-            allocedAttributes -= unallocedErm;
+            int unallocedERM = Mathf.Min(-addedAttributes.ERM, AllocAttributes.ERM);
+            AllocAttributes.ERM -= unallocedERM;
+            allocedAttributes -= unallocedERM;
         }
         if(addedAttributes.Accuracy > 0)
         {
@@ -69,9 +69,9 @@ public class WorkerData
     }
     public int ResetAllocAttributes()
     {
-        int resetAttributes = AllocAttributes.Heart + + AllocAttributes.Erm + AllocAttributes.Accuracy + AllocAttributes.Latency;
+        int resetAttributes = AllocAttributes.Heart + + AllocAttributes.ERM + AllocAttributes.Accuracy + AllocAttributes.Latency;
         AllocAttributes.Heart = 0;
-        AllocAttributes.Erm = 0;
+        AllocAttributes.ERM = 0;
         AllocAttributes.Accuracy = 0;
         AllocAttributes.Latency = 0;
         return resetAttributes;
@@ -80,7 +80,7 @@ public class WorkerData
     public void ApplyAllocAttributes()
     {
         BaseAttributes.Heart += AllocAttributes.Heart;
-        BaseAttributes.Erm += AllocAttributes.Erm;
+        BaseAttributes.ERM += AllocAttributes.ERM;
         BaseAttributes.Accuracy += AllocAttributes.Accuracy;
         BaseAttributes.Latency += AllocAttributes.Latency;
         AllocAttributes = new WorkerAttributes(0,0,0,0);
@@ -92,7 +92,7 @@ public class WorkerData
     public void AddTempAttributes(WorkerAttributes addedAttributes)
     {
         TempAttributes.Heart += addedAttributes.Heart;
-        TempAttributes.Erm += addedAttributes.Erm;
+        TempAttributes.ERM += addedAttributes.ERM;
         TempAttributes.Accuracy += addedAttributes.Accuracy;
         TempAttributes.Latency += addedAttributes.Latency;
         UpdateTotalAttribute();
@@ -122,7 +122,7 @@ public class WorkerData
     {
         BaseStats.MaxHealth = 50f + (TotalAttributes.Heart * 10f);
         BaseStats.RegenTime = 5f - (TotalAttributes.Heart * 0.5f);
-        BaseStats.WorkAmount = 30f + (TotalAttributes.Erm * 5f);
+        BaseStats.WorkAmount = 30f + (TotalAttributes.ERM * 5f);
         BaseStats.WorkSuccessChance = 60f + (TotalAttributes.Accuracy * 5f);
         BaseStats.WorkTime = 5f - (TotalAttributes.Latency * 0.5f);
         BaseStats.RecallCooldown = 5f - (TotalAttributes.Latency * 0.5f);
@@ -140,8 +140,8 @@ public struct WorkerAttributes
 {
     public int Heart; //health, health regen rate
     public float HeartScore;
-    public int Erm; //repair amount
-    public float ErmScore;
+    public int ERM; //repair amount
+    public float ERMScore;
     public int Accuracy; //repair success chance
     public float AccuracyScore;
     public int Latency; //repair rate, recall cooldown
@@ -152,45 +152,45 @@ public struct WorkerAttributes
         Heart = heart;
         Latency = latency;
         Accuracy = accuracy;
-        Erm = erm;
+        ERM = erm;
         HeartScore = 0;
-        ErmScore = 0;
+        ERMScore = 0;
         AccuracyScore = 0;
         LatencyScore = 0;
     }
 
     public float Sum()
     {
-        return Heart + Erm + Accuracy + Latency;
+        return Heart + ERM + Accuracy + Latency;
     }
     public float Average()
     {
-        return (Heart + Erm + Accuracy + Latency) / 4;
+        return (Heart + ERM + Accuracy + Latency) / 4;
     }
 
     public static WorkerAttributes operator +(WorkerAttributes a, WorkerAttributes b)
     {
-        return new WorkerAttributes(a.Heart + b.Heart, a.Erm + b.Erm, a.Accuracy + b.Accuracy, a.Latency + b.Latency );
+        return new WorkerAttributes(a.Heart + b.Heart, a.ERM + b.ERM, a.Accuracy + b.Accuracy, a.Latency + b.Latency );
     }
 
     public static WorkerAttributes operator -(WorkerAttributes a, WorkerAttributes b)
     {
-        return new WorkerAttributes(a.Heart - b.Heart, a.Erm - b.Erm, a.Accuracy - b.Accuracy, a.Latency - b.Latency);
+        return new WorkerAttributes(a.Heart - b.Heart, a.ERM - b.ERM, a.Accuracy - b.Accuracy, a.Latency - b.Latency);
     }
 
     public static WorkerAttributes operator *(WorkerAttributes a, int b)
     {
-        return new WorkerAttributes(a.Heart * b, a.Erm * b, a.Accuracy * b, a.Latency * b);
+        return new WorkerAttributes(a.Heart * b, a.ERM * b, a.Accuracy * b, a.Latency * b);
     }
 
     public static WorkerAttributes operator /(WorkerAttributes a, int b)
     {
-        return new WorkerAttributes(a.Heart / b, a.Erm / b, a.Accuracy / b, a.Latency / b);
+        return new WorkerAttributes(a.Heart / b, a.ERM / b, a.Accuracy / b, a.Latency / b);
     }
 
     public static WorkerAttributes operator -(WorkerAttributes a)
     {
-        return new WorkerAttributes(-a.Heart, -a.Erm, -a.Accuracy, -a.Latency);
+        return new WorkerAttributes(-a.Heart, -a.ERM, -a.Accuracy, -a.Latency);
     }
 
 }

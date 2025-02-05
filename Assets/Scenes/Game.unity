@@ -154,8 +154,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 240}
-  m_SizeDelta: {x: 0, y: 600}
+  m_AnchoredPosition: {x: 0, y: 226}
+  m_SizeDelta: {x: 0, y: 628}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &36319369
 GameObject:
@@ -354,26 +354,29 @@ MonoBehaviour:
   StreamEntity: {fileID: 0}
   StreamName: 
   CurrentStream: {fileID: 0}
-  Health: 100
-  MaxHealth: 100
-  StabilityRecoverRate: 5
-  Performance: 0.1
-  MaxPerformance: 2
-  RemainingStreamTime: 60
-  StreamTimeIncrease: 0.25
-  NewStreamCD: 60
-  MemoryCorruptionInterval: 10
-  MemoryCorruptionDegree: 5
-  CurrentViewers: 0
-  PeakViewers: 0
-  Subscriptions: 0
-  CurrentInterests: 0.5
-  TargetInterests: -999
-  MaxInterests: 2
-  MinInterests: -1
-  InterestsDropBelowZero: 0.1
-  InterestsUpdateInterval: 5
-  state: 0
+  PlayerData:
+    Health: 100
+    MaxHealth: 100
+    StabilityRecoverRate: 5
+    Performance: 0.1
+    MaxPerformance: 2
+    RemainingStreamTime: 60
+    StreamTimeIncrease: 0.5
+    ElapsedStreamTime: 0
+    CurrentStreamTimer: 0
+    NewStreamCD: 60
+    MemoryCorruptionInterval: 10
+    MemoryCorruptionDegree: 5
+    CurrentViewers: 0
+    PeakViewers: 0
+    Subscriptions: 0
+    CurrentInterests: 0.5
+    TargetInterests: -999
+    MaxInterests: 2
+    MinInterests: -2
+    InterestsDropBelowZero: 0.1
+    InterestsUpdateInterval: 5
+    state: 0
   repairCursor:
     texture: {fileID: 2800000, guid: 4cc2c6bc10fd8224688570b66875aa52, type: 3}
     hotspot: {x: 16, y: 16}
@@ -861,13 +864,13 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 287264334}
+  m_Father: {fileID: 2002054091}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 449, y: 72}
-  m_Pivot: {x: 0, y: 0}
+  m_SizeDelta: {x: 449, y: 0}
+  m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &125203627
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -915,10 +918,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 48
+  m_fontSize: 64
   m_fontSizeBase: 48
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 36
   m_fontSizeMax: 64
   m_fontStyle: 0
@@ -979,7 +982,7 @@ GameObject:
   - component: {fileID: 162033368}
   - component: {fileID: 162033367}
   m_Layer: 5
-  m_Name: ErmText
+  m_Name: ERMText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1601,16 +1604,15 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 125203626}
-  - {fileID: 2002054091}
   - {fileID: 2137995846}
+  - {fileID: 2002054091}
   m_Father: {fileID: 34784277}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 898, y: 600}
-  m_Pivot: {x: 0.5, y: 1}
+  m_SizeDelta: {x: 898, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &312654538
 GameObject:
   m_ObjectHideFlags: 0
@@ -3012,11 +3014,11 @@ RectTransform:
   - {fileID: 1797779447}
   m_Father: {fileID: 34784277}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 512, y: 600}
-  m_Pivot: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 704, y: 0}
+  m_SizeDelta: {x: 512, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &697355089
 GameObject:
   m_ObjectHideFlags: 0
@@ -3048,11 +3050,11 @@ RectTransform:
   - {fileID: 7027468249452938610}
   m_Father: {fileID: 34784277}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 512, y: 600}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: -704, y: 0}
+  m_SizeDelta: {x: 512, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &716616137
 GameObject:
   m_ObjectHideFlags: 0
@@ -3364,8 +3366,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -300}
-  m_SizeDelta: {x: 0, y: 480}
+  m_AnchoredPosition: {x: 0, y: -314}
+  m_SizeDelta: {x: 0, y: 452}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &759369915
 GameObject:
@@ -4626,7 +4628,7 @@ GameObject:
   - component: {fileID: 1036702527}
   - component: {fileID: 1036702526}
   m_Layer: 5
-  m_Name: ErmSub
+  m_Name: ERMSub
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5849,10 +5851,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 744796106}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 266, y: -221}
-  m_SizeDelta: {x: 300.33337, y: 934.3333}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -694, y: -447}
+  m_SizeDelta: {x: 300.33337, y: 934.33325}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1150544711
 MonoBehaviour:
@@ -6270,9 +6272,9 @@ MonoBehaviour:
   SubtractHeartButton: {fileID: 1993028719}
   heartText: {fileID: 759929138}
   AddHeartButton: {fileID: 1624605189}
-  SubtractErmButton: {fileID: 1036702525}
-  ermText: {fileID: 162033367}
-  AddErmButton: {fileID: 1874782615}
+  SubtractERMButton: {fileID: 1036702525}
+  ERMText: {fileID: 162033367}
+  AddERMButton: {fileID: 1874782615}
   SubtractAccuracyButton: {fileID: 1989806316}
   accuracyText: {fileID: 254254818}
   AddAccuracyButton: {fileID: 1564884379}
@@ -6888,7 +6890,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1474524427}
   m_Layer: 5
-  m_Name: Erm
+  m_Name: ERM
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8516,7 +8518,7 @@ GameObject:
   - component: {fileID: 1874782617}
   - component: {fileID: 1874782616}
   m_Layer: 5
-  m_Name: ErmAdd
+  m_Name: ERMAdd
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8641,6 +8643,7 @@ GameObject:
   - component: {fileID: 1919729829}
   - component: {fileID: 1919729830}
   - component: {fileID: 1919729831}
+  - component: {fileID: 1919729832}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -8721,7 +8724,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18fd3cd6175f56f468b8e4dd2f96cf96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultStream: {fileID: 11400000, guid: c3a646e50b6ae0f42bc3233e9fb75bee, type: 2}
+  defaultStream: {fileID: 11400000, guid: f95c7bd089fd10f4db4434f013f3c930, type: 2}
   ScreenEffectController: {fileID: 1919729828}
   Tooltip: {fileID: 360580333}
 --- !u!114 &1919729821
@@ -8805,10 +8808,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   statusEffectIconPrefab: {fileID: 3840797214380912903, guid: 0ff07a62328843f43b2cbfc8afe8bb24, type: 3}
-  statusEffectsSO:
-  - {fileID: 11400000, guid: 47b3e425b76ed364bb6357f619c13acc, type: 2}
   poolSize: 30
   expandStep: 10
+--- !u!114 &1919729832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1919729811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e18921c5f6b4a9248be82cdde7aa190c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  StatusEffectSO:
+  - {fileID: 11400000, guid: 47b3e425b76ed364bb6357f619c13acc, type: 2}
 --- !u!1 &1925246405
 GameObject:
   m_ObjectHideFlags: 0
@@ -9396,13 +9411,14 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2062755057}
+  - {fileID: 125203626}
   m_Father: {fileID: 287264334}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 449, y: 80}
-  m_Pivot: {x: 1, y: 0}
+  m_SizeDelta: {x: 0, y: 80}
+  m_Pivot: {x: 0.5, y: 0}
 --- !u!1 &2020324474
 GameObject:
   m_ObjectHideFlags: 0
@@ -9799,7 +9815,7 @@ GameObject:
   - component: {fileID: 2046378477}
   - component: {fileID: 2046378479}
   m_Layer: 5
-  m_Name: ErmIcon
+  m_Name: ERMIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9874,8 +9890,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ee35b18d462d2340aa11f83dca71f60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  header: Fitness
-  content: Heal amount, Damge amount
+  header: ERM
+  content: Error Restoration Metric.
   delay: 0.5
 --- !u!1 &2062755056
 GameObject:
@@ -9911,10 +9927,10 @@ RectTransform:
   - {fileID: 1643642809}
   m_Father: {fileID: 2002054091}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 80}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &2062755058
 MonoBehaviour:
@@ -9936,7 +9952,7 @@ MonoBehaviour:
   m_ChildAlignment: 5
   m_Spacing: 30
   m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
+  m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
@@ -10324,7 +10340,7 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2137995845}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -9}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -10333,11 +10349,11 @@ RectTransform:
   - {fileID: 1076488878}
   m_Father: {fileID: 287264334}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 16}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -16}
   m_SizeDelta: {x: 898, y: 504}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &2137995847
 MonoBehaviour:
   m_ObjectHideFlags: 0

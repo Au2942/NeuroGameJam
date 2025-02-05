@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviour
 
         PlayerManager.Instance.ProgressStream();
         
-        if(PlayerManager.Instance.state == PlayerManager.PlayerState.sleep)
+        if(PlayerManager.Instance.State == PlayerManager.PlayerState.sleep)
         {
             return;
         }

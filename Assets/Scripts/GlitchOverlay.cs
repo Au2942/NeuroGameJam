@@ -59,7 +59,7 @@ public class GlitchOverlay : MonoBehaviour
     
     void Update()
     {
-        if(!show || GameManager.Instance.isPause || PlayerManager.Instance.state == PlayerManager.PlayerState.sleep)
+        if(!show || GameManager.Instance.isPause || PlayerManager.Instance.State == PlayerManager.PlayerState.sleep)
         {
             return;
         }

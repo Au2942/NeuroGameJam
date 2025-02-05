@@ -42,7 +42,7 @@ public class WorkHandler
         entity.IsBeingMaintained = true;
         entity.Interactable = false;
 
-        foreach(WorkerStatusEffect statusEffect in worker.WorkerStatusEffects)
+        foreach(WorkerStatusEffect statusEffect in worker.StatusEffects)
         {
             statusEffect.OnStartMaintain();
             statusEffect.OnStartWork();
@@ -91,7 +91,7 @@ public class WorkHandler
 
     private void OnMaintainSuccess()
     {
-        foreach(WorkerStatusEffect statusEffect in worker.WorkerStatusEffects)
+        foreach(WorkerStatusEffect statusEffect in worker.StatusEffects)
         {
             statusEffect.OnMaintainSuccess();
             statusEffect.OnWorkSuccess();
@@ -102,7 +102,7 @@ public class WorkHandler
 
     private void OnMaintainFail()
     {
-        foreach(WorkerStatusEffect statusEffect in worker.WorkerStatusEffects)
+        foreach(WorkerStatusEffect statusEffect in worker.StatusEffects)
         {
             statusEffect.OnMaintainFail();
             statusEffect.OnWorkFail();
@@ -116,7 +116,7 @@ public class WorkHandler
         if(entity == null) return;
         entity.Interactable = true;
         entity.IsBeingMaintained = false;
-        foreach(WorkerStatusEffect statusEffect in worker.WorkerStatusEffects)
+        foreach(WorkerStatusEffect statusEffect in worker.StatusEffects)
         {
             statusEffect.OnFinishMaintain();
             statusEffect.OnFinishWork();
@@ -133,7 +133,7 @@ public class WorkHandler
         worker.SetAvailability(false);
         MoveWorkerAppearance();
         entity.Interactable = false;
-        foreach(WorkerStatusEffect statusEffect in worker.WorkerStatusEffects)
+        foreach(WorkerStatusEffect statusEffect in worker.StatusEffects)
         {
             statusEffect.OnStartRepair();
             statusEffect.OnStartWork();
@@ -164,7 +164,7 @@ public class WorkHandler
         if(entity == null) return;
         entity.RestoreHealth(worker.TotalStats.WorkAmount);
         entity.Interactable = true;
-        foreach(WorkerStatusEffect statusEffect in worker.WorkerStatusEffects)
+        foreach(WorkerStatusEffect statusEffect in worker.StatusEffects)
         {
             statusEffect.OnFinishRepair();
             statusEffect.OnFinishWork();
@@ -205,7 +205,7 @@ public class WorkHandler
 
     private void OnRepairSuccess()
     {
-        foreach(WorkerStatusEffect statusEffect in worker.WorkerStatusEffects)
+        foreach(WorkerStatusEffect statusEffect in worker.StatusEffects)
         {
             statusEffect.OnRepairSuccess();
             statusEffect.OnWorkSuccess();
@@ -215,7 +215,7 @@ public class WorkHandler
 
     private void OnRepairFail()
     {
-        foreach(WorkerStatusEffect statusEffect in worker.WorkerStatusEffects)
+        foreach(WorkerStatusEffect statusEffect in worker.StatusEffects)
         {
             statusEffect.OnRepairFail();
             statusEffect.OnWorkFail();

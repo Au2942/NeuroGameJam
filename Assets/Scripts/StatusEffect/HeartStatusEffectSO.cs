@@ -14,19 +14,19 @@ public class HeartStatusEffect : WorkerStatusEffect<HeartStatusEffectData>
     public override void OnStartMaintain()
     {
         base.OnStartMaintain();
-        if(data.source != null)
+        if(Source != null && Source is MemoryEntity entity)
         {
-            if(data.target.assignedEntity != null && data.target.assignedEntity == data.source)
+            if(Target.assignedEntity != null && Target.assignedEntity == entity)
             {
                 //guaranteed success chance
                 WorkerStats bonusStats = new WorkerStats();
-                bonusStats.WorkSuccessChance = Mathf.Max(data.target.workerData.TotalStats.WorkSuccessChance, 100);
-                data.target.AddTempStats(bonusStats);
+                bonusStats.WorkSuccessChance = Mathf.Max(Target.workerData.TotalStats.WorkSuccessChance, 100);
+                Target.AddTempStats(bonusStats);
             }
             else
             {
                 //lower success rate then remove the status effect
-                data.heartBroken = true;
+                Data.heartBroken = true;
             }
         }
 
@@ -35,21 +35,21 @@ public class HeartStatusEffect : WorkerStatusEffect<HeartStatusEffectData>
     public override void OnUpdate(float deltaTime)
     {
         base.OnUpdate(deltaTime);
-        if(data.source == null)
+        if(Source == null)
         {
-            Remove();
+            Data.ExpireNextUpdate = true;
         }
     }
     public override void OnFinishMaintain()
     {
         base.OnFinishMaintain();
-        if(data.heartBroken)
+        if(Data.heartBroken)
         {
-            if(data.source is MemoryEntity memoryEntity)
+            if(Source is MemoryEntity memoryEntity)
             {
-                data.target.TakeDamage(data.target.workerData.TotalStats.MaxHealth/2, memoryEntity);
+                Target.TakeDamage(Target.workerData.TotalStats.MaxHealth/2, memoryEntity);
             }
-            data.ExpireNextUpdate = true;
+            Data.ExpireNextUpdate = true;
         }
     }
 }

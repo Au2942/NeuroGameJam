@@ -55,8 +55,8 @@ public class SleepSettingsScreen : MonoBehaviour
         WorkerDetails.SubtractLatencyButton.onClick.AddListener(delegate {AddLatency(-1);});
         WorkerDetails.AddAccuracyButton.onClick.AddListener(delegate {AddAccuracy(1);});
         WorkerDetails.SubtractAccuracyButton.onClick.AddListener(delegate {AddAccuracy(-1);});
-        WorkerDetails.AddErmButton.onClick.AddListener(delegate {AddErm(1);});
-        WorkerDetails.SubtractErmButton.onClick.AddListener(delegate {AddErm(-1);});
+        WorkerDetails.AddERMButton.onClick.AddListener(delegate {AddERM(1);});
+        WorkerDetails.SubtractERMButton.onClick.AddListener(delegate {AddERM(-1);});
         WorkerDetails.NewButton.onClick.AddListener(AddWorker);
         WorkerDetails.ResetButton.onClick.AddListener(ResetSelectedAllocAttributes);
         WorkerDetails.DeleteButton.onClick.AddListener(DeleteAddedWorker);
@@ -114,7 +114,7 @@ public class SleepSettingsScreen : MonoBehaviour
     }
 
 
-    public void AddErm(int value)
+    public void AddERM(int value)
     {
         AllocateAttributes(new WorkerAttributes(0, value, 0, 0));
     }

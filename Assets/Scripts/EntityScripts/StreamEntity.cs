@@ -34,7 +34,7 @@ public class StreamEntity : Entity
     protected override void Update()
     {  
         Health = PlayerManager.Instance.Health;
-        if(PlayerManager.Instance.state == PlayerManager.PlayerState.sleep) return;
+        if(PlayerManager.Instance.State == PlayerManager.PlayerState.sleep) return;
         base.Update();
     }
 

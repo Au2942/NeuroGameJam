@@ -1,7 +1,8 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "StreamSO", menuName = "Scriptable Objects/StreamSO")]
-public class StreamSO : ScriptableObject
+public class StreamSO : ScriptableObject, IStatusEffectSource
 {
     public string streamName;
     public StreamEntity stream;
@@ -16,5 +17,5 @@ public class StreamSO : ScriptableObject
     public float interestsDrop = 0.1f;
     public float viewsBonus = 0f;
     public float subsBonus = 0f;
-    
+
 }

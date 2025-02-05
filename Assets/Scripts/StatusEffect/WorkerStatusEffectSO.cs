@@ -1,17 +1,20 @@
 using UnityEngine;
-public abstract class WorkerStatusEffectSO : ScriptableObject
+public abstract class WorkerStatusEffectSO: StatusEffectSO
 {
+    public override StatusEffect CreateStatusEffect()
+    {
+        return CreateWorkerStatusEffect();
+    }
     public abstract WorkerStatusEffect CreateWorkerStatusEffect();
 }
 
-public class WorkerStatusEffectSO<DataType, StatusEffectType> : WorkerStatusEffectSO 
+public class WorkerStatusEffectSO<DataType, WorkerStatusEffectType> : WorkerStatusEffectSO
     where DataType : WorkerStatusEffectData, new()
-    where StatusEffectType : WorkerStatusEffect<DataType>, new()
+    where WorkerStatusEffectType : WorkerStatusEffect<DataType>, new()
 {
-    
     public DataType data;
     public override WorkerStatusEffect CreateWorkerStatusEffect()
     {
-        return new StatusEffectType { data = data };
+        return new WorkerStatusEffectType { Data = data };
     }
 }

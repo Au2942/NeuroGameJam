@@ -1,12 +1,7 @@
 using UnityEngine;
 
-public abstract class WorkerStatusEffect 
+public abstract class WorkerStatusEffect : StatusEffect
 {
-    public abstract WorkerStatusEffectData GetData();
-    public abstract void Apply(Entity source,Worker target);
-    public abstract void OnUpdate(float deltaTime);
-    public abstract bool ShouldExpire();
-    
     public abstract void OnStartWork();
     public abstract void OnWorkSuccess();
     public abstract void OnWorkFail();
@@ -19,51 +14,93 @@ public abstract class WorkerStatusEffect
     public abstract void OnRepairSuccess();
     public abstract void OnRepairFail();
     public abstract void OnFinishRepair();
-    public abstract void Remove();
 }
 
-public class WorkerStatusEffectData
+public class WorkerStatusEffectData : StatusEffectData
 {
-    public Entity source;
-    public Worker target;
-    public string ID;
-    public Sprite Icon;
-    public string Name;
-    public string Description;
     public WorkerAttributes BuffAttributes;
     public WorkerStats BuffStats;
-    public bool ExpireAfterLifetime = true;
-    public float ModifierLifetime;
-    public bool ExpireNextUpdate = false;
 }
 
 
-public abstract class WorkerStatusEffect<DataType> : WorkerStatusEffect where DataType : WorkerStatusEffectData, new()
+public abstract class WorkerStatusEffect<DataType> : WorkerStatusEffect 
+    where DataType : WorkerStatusEffectData, new()
 {
-    public DataType data;
-
-    public override WorkerStatusEffectData GetData()
+    public DataType Data;
+    public Worker Target;
+    public IStatusEffectSource Source;
+    public override void Apply(IStatusEffectable target, IStatusEffectSource source = null)
     {
-        return data;
+        if (target is Worker workerTarget)
+        {
+            Apply(workerTarget, source);
+        }
     }
 
-    public override void Apply(Entity entity, Worker worker)
+    public override StatusEffectData GetData()
     {
-        data.source = entity;
-        data.target = worker;
-        data.target.AddTempAttributes(data.BuffAttributes);
-        worker.AddTempStats(data.BuffStats);
+        return Data;
+    }
+    public override IStatusEffectable GetTarget()
+    {
+        return Target;
+    }
+
+
+    public override IStatusEffectSource GetSource()
+    {
+        return Source;
+    }
+
+
+    public virtual void Apply(Worker target, IStatusEffectSource source = null)
+    {
+        Target = target;
+        Source = source;
+        Target.AddTempAttributes(Data.BuffAttributes);
+        Target.AddTempStats(Data.BuffStats);
+        Target.ApplyStatusEffect(this);
     }
 
     public override void OnUpdate(float deltaTime)
     {
-        //ModifierLifetime -= deltaTime;
+        if (Data.ExpireAfterLifetime)
+        {
+            Data.ModifierLifetime -= deltaTime;
+            if (Data.ModifierLifetime <= 0)
+            {
+                Data.ExpireNextUpdate = true;
+            }
+        }
+    }
+
+    public override bool TryAddStack(int stack)
+    {
+        if (Data.Stack < Data.MaxStack)
+        {
+            Data.Stack = Mathf.Min(Data.Stack + stack, Data.MaxStack);
+            return true;
+        }
+        return false;
     }
 
     public override bool ShouldExpire()
     {
-        return (data.ExpireAfterLifetime && data.ModifierLifetime <= 0) || data.ExpireNextUpdate;
+        return Data.ExpireNextUpdate;
     }
+    public override void Expire()
+    {
+        if(Data.Stack > 1)
+        {
+            Data.Stack--;
+        }
+        else
+        {
+            Target.AddTempAttributes(-Data.BuffAttributes);
+            Target.AddTempStats(-Data.BuffStats);
+            Target.RemoveStatusEffect(this);
+        }
+    } 
 
     public override void OnStartWork() {}
     public override void OnWorkSuccess() {}
@@ -80,12 +117,6 @@ public abstract class WorkerStatusEffect<DataType> : WorkerStatusEffect where Da
     public override void OnRepairFail() {}
     public override void OnFinishRepair() {}
 
-    public override void Remove()
-    {
-        data.target.AddTempAttributes(-data.BuffAttributes);
-        data.target.AddTempStats(-data.BuffStats);
-        data.target.RemoveStatusEffect(this);
-    } 
 }
 
 

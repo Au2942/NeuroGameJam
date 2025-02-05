@@ -4,12 +4,14 @@ using UnityEngine;
 [System.Serializable]
 public class EntityData : MonoBehaviour
 {
+    [Header("Core")]
     [SerializeField] public RectTransform EntityBody;
     [SerializeField] public RectTransform EntityCell;
     [SerializeField] public List<UIEventHandler> ClickInteractDetectors = new();
     
     [Header("Dialogue")]
     [SerializeField] public DialogueManager DialogueManager;
+    [SerializeField] public UIEventHandler DialogueInteractDetector;
     [SerializeField] public List<DialogueSet> DialogueSets = new();
     [SerializeField] public int dialogueSetIndex = 0;
     [SerializeField] public bool TalkInOrder = true;
@@ -23,8 +25,6 @@ public class EntityData : MonoBehaviour
     [SerializeField] public float Corruption = 100; //to use when repairing / resetting
     [SerializeField] public float MaxCorruption = 100;
     [SerializeField] public float CorruptionCooldown = 10f; //cooldown after glitching out
-    [SerializeField] public bool Interactable = true;
-    [SerializeField] public bool Glitched = false;
     [SerializeField] public float GlitchRollThreshold = 0.7f; //start rolling at this integrity
 
     [Header("Animation")]
@@ -34,10 +34,6 @@ public class EntityData : MonoBehaviour
     [SerializeField] public List<AnimatorClipsPair> DialogueTypingAnimation = new(); //plays when playing a typing sound
     [SerializeField] public List<AnimatorClipsPair> NormalAnimatorClips = new();
     [SerializeField] public List<AnimatorClipsPair> GlitchAnimatorClips = new();
-    [SerializeField] public AnimState CurrentAnimationState = AnimState.Default;
-    public enum AnimState
-    {
-        Default,
-        Idle,
-    }
+    [SerializeField] public Entity.AnimState CurrentAnimationState = Entity.AnimState.Default;
+
 }

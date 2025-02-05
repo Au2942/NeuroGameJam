@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerManager : MonoBehaviour
+public class PlayerManager : MonoBehaviour, IStatusEffectable
 {
     public static PlayerManager Instance;
     public PlayerViewersHandler ViewersHandler;  
@@ -12,30 +12,35 @@ public class PlayerManager : MonoBehaviour
     public StreamEntity StreamEntity;
     public string StreamName;
     public StreamSO CurrentStream;
-    public float Health = 100; //integrity of self
-    public float MaxHealth = 100;
-    public float StabilityRecoverRate = 5f; //5 stability per second
-    public float Performance = 0.1f; //average of all memory entities integrity
-    public float MaxPerformance = 2f;
-    public float RemainingStreamTime = 60f; //~1 hour
-    public float StreamTimeIncrease = 0.03f; //3 seconds per subscription
-    public float NewStreamCD = 60f; //60 seconds before you can start a new stream
-    public float MemoryCorruptionInterval = 5f; //seconds before lower a memory health
-    public float MemoryCorruptionDegree = 10f; //5 health per corruption
-    public int CurrentViewers = 0; //ccv 
-    public int PeakViewers = 0;
-    public int Subscriptions = 0;
-    public float CurrentInterests = 0.5f;
-    public float TargetInterests = -999;
-    public float MaxInterests = 2f;
-    public float MinInterests = -2f;
-    public float InterestsDropBelowZero = 0.1f;
-    public float InterestsUpdateInterval = 5f; 
+    public PlayerData PlayerData = new PlayerData();
+    public float Health {get => PlayerData.Health; set => PlayerData.Health = value;}
+    public float MaxHealth {get => PlayerData.MaxHealth; set => PlayerData.MaxHealth = value;}
+    public float StabilityRecoverRate {get => PlayerData.StabilityRecoverRate; set => PlayerData.StabilityRecoverRate = value;}
+    public float Performance {get => PlayerData.Performance; set => PlayerData.Performance = value;}
+    public float MaxPerformance {get => PlayerData.MaxPerformance; set => PlayerData.MaxPerformance = value;}
+    public float RemainingStreamTime {get => PlayerData.RemainingStreamTime; set => PlayerData.RemainingStreamTime = value;}
+    public float StreamTimeIncrease {get => PlayerData.StreamTimeIncrease; set => PlayerData.StreamTimeIncrease = value;}
+    public float CurrentStreamTimer {get => PlayerData.CurrentStreamTimer; set => PlayerData.CurrentStreamTimer = value;}
+    public float ElapsedStreamTime {get => PlayerData.ElapsedStreamTime; set => PlayerData.ElapsedStreamTime = value;}
+    public float NewStreamCD {get => PlayerData.NewStreamCD; set => PlayerData.NewStreamCD = value;}
+    public float MemoryCorruptionInterval {get => PlayerData.MemoryCorruptionInterval; set => PlayerData.MemoryCorruptionInterval = value;}
+    public float MemoryCorruptionDegree {get => PlayerData.MemoryCorruptionDegree; set => PlayerData.MemoryCorruptionDegree = value;}
+    public int CurrentViewers {get => PlayerData.CurrentViewers; set => PlayerData.CurrentViewers = value;}
+    public int PeakViewers {get => PlayerData.PeakViewers; set => PlayerData.PeakViewers = value;}
+    public int Subscriptions {get => PlayerData.Subscriptions; set => PlayerData.Subscriptions = value;}
+    public float CurrentInterests {get => PlayerData.CurrentInterests; set => PlayerData.CurrentInterests = value;}
+    public float TargetInterests {get => PlayerData.TargetInterests; set => PlayerData.TargetInterests = value;}
+    public float MaxInterests {get => PlayerData.MaxInterests; set => PlayerData.MaxInterests = value;}
+    public float MinInterests {get => PlayerData.MinInterests; set => PlayerData.MinInterests = value;}
+    public float InterestsDropBelowZero {get => PlayerData.InterestsDropBelowZero; set => PlayerData.InterestsDropBelowZero = value;}
+    public float InterestsUpdateInterval {get => PlayerData.InterestsUpdateInterval; set => PlayerData.InterestsUpdateInterval = value;}
+    public PlayerState State {get => PlayerData.state; set => PlayerData.state = value;}
+    public List<StatusEffect> StatusEffects = new List<StatusEffect>();
+    List<StatusEffect> IStatusEffectable.StatusEffects { get => StatusEffects; set => StatusEffects = value; }
 
-    public PlayerState state = PlayerState.normal;
+
     public CustomCursor repairCursor;
-    //public event System.Action<float> OnInterestsChanged;
-    public float CurrentStreamTimer {get; set;} = 0f;
+    public event System.Action<float> OnInterestsChanged;
 
     public event System.Action<float> OnTakeDamageEvent;
     public event System.Action<float> OnHealthChangedEvent;
@@ -43,14 +48,12 @@ public class PlayerManager : MonoBehaviour
 
     public event System.Action<string> OnChangeStreamNameEvent;
 
-
     public enum PlayerState
     {
         normal,
         command,
         sleep
     }
-    public float ElapsedStreamTime {get; set;} = 0f;
 
     void Awake()
     {
@@ -61,6 +64,10 @@ public class PlayerManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
+        }
+        if(PlayerData == null)
+        {
+            PlayerData = new PlayerData();
         }
     }
     void Start()
@@ -132,8 +139,8 @@ public class PlayerManager : MonoBehaviour
     {
         while(StreamEntity.Corruption < StreamEntity.MaxCorruption)
         {
-            StreamEntity.RestoreCorruption(StabilityRecoverRate * Time.deltaTime);
             yield return null;
+            StreamEntity.RestoreCorruption(StabilityRecoverRate * Time.deltaTime);
         }
         FinishResetting();
     }
@@ -142,7 +149,7 @@ public class PlayerManager : MonoBehaviour
     {
         while(true)
         {
-            while(state == PlayerState.sleep)
+            while(State == PlayerState.sleep)
             {
                 yield return null;
             }
@@ -162,7 +169,7 @@ public class PlayerManager : MonoBehaviour
 
     public bool TryOpenSleepSettingsScreen()
     {
-        if(state == PlayerState.sleep)
+        if(State == PlayerState.sleep)
         {
             return false;
         }
@@ -213,7 +220,7 @@ public class PlayerManager : MonoBehaviour
         {
             if(InputManager.Instance.Cancel.triggered || InputManager.Instance.RightClick.triggered)
             {
-                if(state == PlayerState.command)
+                if(State == PlayerState.command)
                 {
                     SetState(PlayerState.normal);
                 }
@@ -225,20 +232,20 @@ public class PlayerManager : MonoBehaviour
 
     public void SetState(PlayerState newState, bool force = false)
     {
-        if(!force && state == newState)
+        if(!force && State == newState)
         {
             return;
         }
-        state = newState;
-        if(state == PlayerState.command)
+        State = newState;
+        if(State == PlayerState.command)
         {
             CursorManager.Instance.SetCustomCursor(repairCursor);
         }
-        else if(state == PlayerState.normal)
+        else if(State == PlayerState.normal)
         {
             CursorManager.Instance.SetDefaultCursor();
         }
-        else if(state == PlayerState.sleep)
+        else if(State == PlayerState.sleep)
         {
             
         }
@@ -293,7 +300,7 @@ public class PlayerManager : MonoBehaviour
     {
         while (true)
         {
-            while (GameManager.Instance.isPause || state == PlayerState.sleep)
+            while (GameManager.Instance.isPause || State == PlayerState.sleep)
             {
                 yield return null;
             }
@@ -327,5 +334,11 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    public void ApplyStatusEffect(StatusEffect statusEffect, IStatusEffectSource source = null)
+    {
+    }
 
+    public void RemoveStatusEffect(StatusEffect statusEffect)
+    {
+    }
 }

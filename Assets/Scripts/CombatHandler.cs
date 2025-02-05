@@ -5,11 +5,11 @@ using UnityEngine;
 [System.Serializable]
 public class CombatHandler
 {
-    public ICombatUnit Unit;
+    public ICombatant Unit;
     private float nextAttackTimer;
     private bool IsInCombat = true;
 
-    public CombatHandler(ICombatUnit unit)
+    public CombatHandler(ICombatant unit)
     {
         Unit = unit;
         nextAttackTimer = 0;
@@ -23,15 +23,15 @@ public class CombatHandler
             return;
         }
 
-        List<ICombatUnit> removeTargets = new List<ICombatUnit>();
-        foreach (ICombatUnit target in Unit.CombatTargets)
+        List<ICombatant> removeTargets = new List<ICombatant>();
+        foreach (ICombatant target in Unit.CombatTargets)
         {
             if (target == null || !target.IsCombatReady())
             {
                 removeTargets.Add(target);
             }
         }
-        foreach (ICombatUnit target in removeTargets)
+        foreach (ICombatant target in removeTargets)
         {
             Unit.RemoveCombatTarget(target);
         }

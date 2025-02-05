@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class HeartMemory : MemoryEntity
 {
-    [SerializeField] private HeartStatusEffectSO heartStatusEffectSO;
     [SerializeField] private InteractableSpawner heartSpawner;
     // [SerializeField] private float maxX = 600f;
     // [SerializeField] private float minX = -600f;
@@ -48,8 +47,7 @@ public class HeartMemory : MemoryEntity
     public override void MaintainSuccess(Worker worker)
     {
         base.MaintainSuccess(worker);
-        WorkerStatusEffect heartStatusEffect = heartStatusEffectSO.CreateWorkerStatusEffect();
-        worker.ApplyStatusEffect(heartStatusEffect, this);
+        StatusEffectManager.Instance.ApplyStatusEffect("heartSE", worker, this);
     }
 
 }
