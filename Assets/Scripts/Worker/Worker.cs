@@ -11,7 +11,6 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
     [SerializeField] public WorkerAppearance WorkerAppearance;
     [SerializeField] public WorkerAppearance IconAppearance;
     [SerializeField] public UIEventHandler iconClickDetector; 
-    [SerializeField] public TextMeshProUGUI NameText;
     [SerializeField] public Image DamageBar;
     [SerializeField] public Image CooldownOverlay;
     [SerializeField] public Image AddedOverlay;
@@ -86,7 +85,11 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
         if(workerData.Health > workerData.TotalStats.MaxHealth)
         {
             workerData.Health = workerData.TotalStats.MaxHealth;
+            value = workerData.TotalStats.MaxHealth - workerData.Health;
         }
+
+        PopupTextSpawner.Instance.SpawnPopupText(WorkerAppearance.transform, WorkerAppearance.transform.position, value.ToString(), 0.5f, value > 0 ? Color.green : Color.red);
+
         DamageBar.fillAmount = 1 - workerData.Health / workerData.TotalStats.MaxHealth;
         if(workerData.Health <= 0)
         {
@@ -135,15 +138,13 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
     {
         if(PlayerManager.Instance.State == PlayerManager.PlayerState.command) {return;}
 
-        if(!GameManager.Instance.isPause)
+        if(IsAvailable && !GameManager.Instance.isPause)
         {
-            if(IsAvailable)
-            {
-                PlayerManager.Instance.SetState(PlayerManager.PlayerState.command);
-            }
-            SetAvailability(false);
-            OnSelectEvent?.Invoke(this);
+            PlayerManager.Instance.SetState(PlayerManager.PlayerState.command);
         }
+        SetAvailability(false);
+        OnSelectEvent?.Invoke(this);
+
     }
 
 
@@ -201,10 +202,15 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
         target.TakeDamage(AttackDamage, this);
     }
 
-    public void TakeDamage(float value, ICombatant attacker)
+    public bool TakeDamage(float value, ICombatant attacker)
     {
-        Debug.Log(name + " health is " + workerData.Health);
+        if(Random.Range(0,100) < workerData.TotalStats.DamageAvoidanceChance)
+        {
+            PopupTextSpawner.Instance.SpawnPopupText(WorkerAppearance.transform, WorkerAppearance.transform.position, "Dodged", 0.5f, Color.white);
+            return false;
+        }
         AddHealth(-value);
+        return true;
     }
 
     public void AddCombatTarget(ICombatant target)

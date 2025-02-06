@@ -16,20 +16,11 @@ public class HeartStatusEffect : WorkerStatusEffect<HeartStatusEffectData>
         base.OnStartMaintain();
         if(Source != null && Source is MemoryEntity entity)
         {
-            if(Target.assignedEntity != null && Target.assignedEntity == entity)
+            if(Target.assignedEntity != null && Target.assignedEntity != entity)
             {
-                //guaranteed success chance
-                WorkerStats bonusStats = new WorkerStats();
-                bonusStats.WorkSuccessChance = Mathf.Max(Target.workerData.TotalStats.WorkSuccessChance, 100);
-                Target.AddTempStats(bonusStats);
-            }
-            else
-            {
-                //lower success rate then remove the status effect
                 Data.heartBroken = true;
             }
         }
-
     }
 
     public override void OnUpdate(float deltaTime)

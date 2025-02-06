@@ -225,10 +225,10 @@ public class WorkHandler
     public IEnumerator RecallCooldown()
     {
         float elapsedTime = 0f;;
-        AnimateReturnWorkerAppearance(worker.TotalStats.RecallCooldown);
-        while(elapsedTime < worker.TotalStats.RecallCooldown)
+        AnimateReturnWorkerAppearance(worker.TotalStats.RecallTime);
+        while(elapsedTime < worker.TotalStats.RecallTime)
         {
-            worker.CooldownOverlay.fillAmount = 1-(elapsedTime / worker.TotalStats.RecallCooldown);
+            worker.CooldownOverlay.fillAmount = 1-(elapsedTime / worker.TotalStats.RecallTime);
             elapsedTime += Time.deltaTime;
             yield return null;
         }

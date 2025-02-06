@@ -366,26 +366,25 @@ MonoBehaviour:
   WorkerAppearance: {fileID: 1069741012193160215}
   IconAppearance: {fileID: 6809993967491325009}
   iconClickDetector: {fileID: 6336504846050403486}
-  NameText: {fileID: 0}
   DamageBar: {fileID: 8963207524558829708}
   CooldownOverlay: {fileID: 8355236452841577328}
   AddedOverlay: {fileID: 2134498905164090994}
   workerData:
     Health: 50
     BaseAttributes:
-      Heart: 1
+      Heart: 0
       HeartScore: 0
-      Erm: 1
-      ErmScore: 0
-      Accuracy: 1
+      ErrorRecovery: 0
+      ErrorRecoveryScore: 0
+      Accuracy: 0
       AccuracyScore: 0
-      Latency: 1
+      Latency: 0
       LatencyScore: 0
     AllocAttributes:
       Heart: 0
       HeartScore: 0
-      Erm: 0
-      ErmScore: 0
+      ErrorRecovery: 0
+      ErrorRecoveryScore: 0
       Accuracy: 0
       AccuracyScore: 0
       Latency: 0
@@ -393,8 +392,8 @@ MonoBehaviour:
     TempAttributes:
       Heart: 0
       HeartScore: 0
-      Erm: 0
-      ErmScore: 0
+      ErrorRecovery: 0
+      ErrorRecoveryScore: 0
       Accuracy: 0
       AccuracyScore: 0
       Latency: 0
@@ -402,36 +401,56 @@ MonoBehaviour:
     TotalAttributes:
       Heart: 0
       HeartScore: 0
-      Erm: 0
-      ErmScore: 0
+      ErrorRecovery: 0
+      ErrorRecoveryScore: 0
       Accuracy: 0
       AccuracyScore: 0
       Latency: 0
       LatencyScore: 0
     MaxAttribute: 5
     Level: 1
-    BaseStats:
-      MaxHealth: 5
+    DefaultStats:
+      MaxHealth: 10
       RegenTime: 5
       WorkAmount: 30
       WorkSuccessChance: 60
+      DamageAvoidanceChance: 0
       WorkTime: 5
-      RecallCooldown: 5
+      RecallTime: 5
+    BaseStats:
+      MaxHealth: 10
+      RegenTime: 5
+      WorkAmount: 30
+      WorkSuccessChance: 60
+      DamageAvoidanceChance: 0
+      WorkTime: 5
+      RecallTime: 5
     TempStats:
       MaxHealth: 0
       RegenTime: 0
       WorkAmount: 0
       WorkSuccessChance: 0
+      DamageAvoidanceChance: 0
       WorkTime: 0
-      RecallCooldown: 0
+      RecallTime: 0
+    statPerAttribute:
+      MaxHealth: 5
+      RegenTime: -0.5
+      WorkAmount: 5
+      WorkSuccessChance: 5
+      DamageAvoidanceChance: 5
+      WorkTime: -0.5
+      RecallTime: -0.5
     TotalStats:
       MaxHealth: 0
       RegenTime: 0
       WorkAmount: 0
       WorkSuccessChance: 0
+      DamageAvoidanceChance: 0
       WorkTime: 0
-      RecallCooldown: 0
+      RecallTime: 0
   IsAvailable: 1
+  CanRegenHealth: 1
 --- !u!1 &2366228772817648179
 GameObject:
   m_ObjectHideFlags: 0
@@ -592,6 +611,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5436776509048930272}
   - component: {fileID: 1069741012193160215}
+  - component: {fileID: 6204306462595967581}
+  - component: {fileID: 3662157754348273087}
   m_Layer: 5
   m_Name: SWARMAppearance
   m_TagString: Untagged
@@ -644,6 +665,69 @@ MonoBehaviour:
     Propeller: {fileID: 5109604289122878414}
     WorkingArms: {fileID: 941258890434751116}
   AppearanceRect: {fileID: 5436776509048930272}
+--- !u!58 &6204306462595967581
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3172094336175505711}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 9.3}
+  m_Radius: 50
+--- !u!50 &3662157754348273087
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3172094336175505711}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &3353963459566240808
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-
+using System.Text;
 public class StatusEffectIconManager : MonoBehaviour
 {
     public static StatusEffectIconManager Instance;
@@ -41,7 +41,13 @@ public class StatusEffectIconManager : MonoBehaviour
         if(StatusEffectManager.Instance.TryGetStatusEffectDataByID(id, out StatusEffectData data))
         {
             icon.SetIcon(data.Icon);
-            icon.SetTooltip(data.Name, data.Description);
+            StringBuilder descriptionSB = new StringBuilder();
+            descriptionSB.Append(data.Description);
+            if(data.Stackable)
+            {
+                descriptionSB.Append("\nStacks: ").Append(data.Stack);
+            }
+            icon.SetTooltip(data.Name, descriptionSB.ToString());
         }
     }
     public StatusEffectIcon GetStatusEffectIcon(string id)

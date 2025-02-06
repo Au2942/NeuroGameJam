@@ -128,7 +128,7 @@ public class WorkerManager : MonoBehaviour
         SelectedWorker.OnApplyStatusEffectEvent -= OnSelectedWorkerApplyStatusEffectEventHandler;
         SelectedWorker.OnRemoveStatusEffectEvent -= OnSelectedWorkerRemoveStatusEffectEventHandler;
         
-        WorkerDetails.ClearAttributesText();
+        WorkerDetails.ClearDisplayDetails();
         SelectedWorker.Deselect();
         SelectedWorker = null;
         OnWorkerDeselectedEvent?.Invoke();

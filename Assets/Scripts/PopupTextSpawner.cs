@@ -11,6 +11,7 @@ public class PopupTextSpawner : MonoBehaviour
     [SerializeField] private int poolSize = 30;
     [SerializeField] private float scaleMultiplier = 2f;
     [SerializeField] private float defaultDuration = 0.5f;
+    [SerializeField] private Color defaultColor = Color.white;
     [SerializeField] private Ease defaultScaleEase = Ease.OutSine;
     [SerializeField] private Ease defaultAlphaEase = Ease.InExpo;
 
@@ -46,7 +47,7 @@ public class PopupTextSpawner : MonoBehaviour
         }
     }
 
-    public void SpawnPopupText(Transform parent, Vector3 position, string text, float duration, bool reuseActive = true)
+    public void SpawnPopupText(Transform parent, Vector3 position, string text, float duration, Color color, bool reuseActive = true)
     {
         GameObject popupText;
         if (popupTextPool.Count == 0)
@@ -64,7 +65,9 @@ public class PopupTextSpawner : MonoBehaviour
         popupText.transform.SetParent(parent);
         popupText.transform.position = position;
         popupText.SetActive(true);
-        popupText.GetComponent<TextMeshProUGUI>().text = text;
+        TextMeshProUGUI textMesh = popupText.GetComponent<TextMeshProUGUI>();
+        textMesh.text = text;
+        textMesh.color = color;
 
         Tween.Scale(popupText.transform, Vector3.one*scaleMultiplier, duration, ease: defaultScaleEase);
         Tween.Alpha(popupText.GetComponent<TextMeshProUGUI>(), 1, 0, duration, ease: defaultAlphaEase);
@@ -72,9 +75,17 @@ public class PopupTextSpawner : MonoBehaviour
         StartCoroutine(ReturnToPool(popupText, duration));
     }
 
-    public void SpawnPopupText(Transform parent, Vector3 position, string text, bool reuseActive = true)
+    public void SpawnPopupText(Transform parent, Vector3 position, string text, float duration, bool reuseActive = true)
     {
-        SpawnPopupText(parent, position, text, defaultDuration, reuseActive);
+        SpawnPopupText(parent, position, text, duration, defaultColor, reuseActive);
+    }
+    public void SpawnPopupText(Transform parent, Vector3 position, string text,  bool reuseActive = true)
+    {
+        SpawnPopupText(parent, position, text, defaultDuration, defaultColor, reuseActive);
+    }
+    public void SpawnPopupText(Transform parent, Vector3 position, string text, Color color, bool reuseActive = true)
+    {
+        SpawnPopupText(parent, position, text, defaultDuration, color, reuseActive);
     }
 
     private IEnumerator ReturnToPool(GameObject popupText, float duration)

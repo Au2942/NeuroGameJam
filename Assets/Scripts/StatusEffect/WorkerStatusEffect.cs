@@ -57,6 +57,7 @@ public abstract class WorkerStatusEffect<DataType> : WorkerStatusEffect
     {
         Target = target;
         Source = source;
+
         Target.AddTempAttributes(Data.BuffAttributes);
         Target.AddTempStats(Data.BuffStats);
         Target.ApplyStatusEffect(this);
@@ -78,7 +79,13 @@ public abstract class WorkerStatusEffect<DataType> : WorkerStatusEffect
     {
         if (Data.Stack < Data.MaxStack)
         {
-            Data.Stack = Mathf.Min(Data.Stack + stack, Data.MaxStack);
+            int stackToApply = Mathf.Min(stack, Data.MaxStack - Data.Stack);
+            Data.Stack += stackToApply;
+            for(int i = 0; i < stackToApply; i++)
+            {
+                Target.AddTempAttributes(Data.BuffAttributes);
+                Target.AddTempStats(Data.BuffStats);
+            }
             return true;
         }
         return false;

@@ -49,14 +49,14 @@ public class SleepSettingsScreen : MonoBehaviour
     {
         sleepHourSlider.onValueChanged.AddListener(delegate {SetSleepHours((int)sleepHourSlider.value);});
         confirmButton.onClick.AddListener(ConfirmSleep);
-        WorkerDetails.AddHeartButton.onClick.AddListener(delegate {AddHeart(1);});
-        WorkerDetails.SubtractHeartButton.onClick.AddListener(delegate {AddHeart(-1);});
-        WorkerDetails.AddLatencyButton.onClick.AddListener(delegate {AddLatency(1);});
-        WorkerDetails.SubtractLatencyButton.onClick.AddListener(delegate {AddLatency(-1);});
-        WorkerDetails.AddAccuracyButton.onClick.AddListener(delegate {AddAccuracy(1);});
-        WorkerDetails.SubtractAccuracyButton.onClick.AddListener(delegate {AddAccuracy(-1);});
-        WorkerDetails.AddERMButton.onClick.AddListener(delegate {AddERM(1);});
-        WorkerDetails.SubtractERMButton.onClick.AddListener(delegate {AddERM(-1);});
+        WorkerDetails.HeartAddButton.onClick.AddListener(delegate {AddHeart(1);});
+        WorkerDetails.HeartSubtractButton.onClick.AddListener(delegate {AddHeart(-1);});
+        WorkerDetails.LatencyAddButton.onClick.AddListener(delegate {AddLatency(1);});
+        WorkerDetails.LatencySubtractButton.onClick.AddListener(delegate {AddLatency(-1);});
+        WorkerDetails.AccuracyAddButton.onClick.AddListener(delegate {AddAccuracy(1);});
+        WorkerDetails.AccuracySubtractButton.onClick.AddListener(delegate {AddAccuracy(-1);});
+        WorkerDetails.AddErrorRecoveryButton.onClick.AddListener(delegate {AddErrorRecovery(1);});
+        WorkerDetails.SubtractErrorRecoveryButton.onClick.AddListener(delegate {AddErrorRecovery(-1);});
         WorkerDetails.NewButton.onClick.AddListener(AddWorker);
         WorkerDetails.ResetButton.onClick.AddListener(ResetSelectedAllocAttributes);
         WorkerDetails.DeleteButton.onClick.AddListener(DeleteAddedWorker);
@@ -114,7 +114,7 @@ public class SleepSettingsScreen : MonoBehaviour
     }
 
 
-    public void AddERM(int value)
+    public void AddErrorRecovery(int value)
     {
         AllocateAttributes(new WorkerAttributes(0, value, 0, 0));
     }

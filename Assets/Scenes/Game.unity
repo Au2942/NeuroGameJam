@@ -1002,10 +1002,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1474524427}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 48}
+  m_SizeDelta: {x: 48, y: 48}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &162033367
 MonoBehaviour:
@@ -1187,10 +1187,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 424223850}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 48}
+  m_SizeDelta: {x: 48, y: 48}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &254254818
 MonoBehaviour:
@@ -2980,8 +2980,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ee35b18d462d2340aa11f83dca71f60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  header: Accuracy
-  content: Work success chance
+  header: Accuracy & Reliability
+  content: Work success chance and damage avoidance chance of a worker.
   delay: 0.5
 --- !u!1 &666368183
 GameObject:
@@ -3480,11 +3480,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 887938269}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 48}
-  m_Pivot: {x: 0, y: 0}
+  m_SizeDelta: {x: 48, y: 48}
+  m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &759929138
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4047,6 +4047,7 @@ MonoBehaviour:
   poolSize: 100
   scaleMultiplier: 2
   defaultDuration: 0.5
+  defaultColor: {r: 1, g: 1, b: 1, a: 1}
   defaultScaleEase: 3
   defaultAlphaEase: 17
 --- !u!1 &872729741
@@ -4381,11 +4382,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 995998926}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 48}
-  m_Pivot: {x: 0, y: 0}
+  m_SizeDelta: {x: 48, y: 48}
+  m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &915016705
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4612,8 +4613,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ee35b18d462d2340aa11f83dca71f60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  header: Robustness
-  content: SWARM health and regen speed
+  header: Heart
+  content: Total health and recovery rate of a worker.
   delay: 0.5
 --- !u!1 &1036702524
 GameObject:
@@ -5212,7 +5213,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.26415092, g: 0.26415092, b: 0.26415092, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5749,7 +5750,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -6269,20 +6270,32 @@ MonoBehaviour:
   ResetButton: {fileID: 581664546}
   DeleteButton: {fileID: 1150894935}
   NewButton: {fileID: 741008197}
-  SubtractHeartButton: {fileID: 1993028719}
+  HeartAddButton: {fileID: 1624605189}
+  HeartSubtractButton: {fileID: 1993028719}
   heartText: {fileID: 759929138}
-  AddHeartButton: {fileID: 1624605189}
-  SubtractERMButton: {fileID: 1036702525}
-  ERMText: {fileID: 162033367}
-  AddERMButton: {fileID: 1874782615}
-  SubtractAccuracyButton: {fileID: 1989806316}
+  AddErrorRecoveryButton: {fileID: 1874782615}
+  SubtractErrorRecoveryButton: {fileID: 1036702525}
+  errorRecoveryText: {fileID: 162033367}
+  AccuracyAddButton: {fileID: 1564884379}
+  AccuracySubtractButton: {fileID: 1989806316}
   accuracyText: {fileID: 254254818}
-  AddAccuracyButton: {fileID: 1564884379}
-  SubtractLatencyButton: {fileID: 1505722507}
+  LatencyAddButton: {fileID: 904740196}
+  LatencySubtractButton: {fileID: 1505722507}
   latencyText: {fileID: 915016705}
-  AddLatencyButton: {fileID: 904740196}
+  HeartTooltip: {fileID: 1014037334}
+  HeartBaseTooltip: Robustness of the worker.
+  ErrorRecoveryTooltip: {fileID: 2046378479}
+  ErrorRecoveryBaseTooltip: Error Restoration Metric. Memory restoration capability
+    of the worker.
+  AccuracyTooltip: {fileID: 621988137}
+  AccuracyBaseTooltip: Accuracy in identifying problem of the worker.
+  LatencyTooltip: {fileID: 1851877440}
+  LatencyBaseTooltip: Task Update, Transmission and Execution Latency. Responsiveness
+    of the worker.
   allocColor: {r: 0.4292453, g: 0.91718477, b: 1, a: 0}
-  modifyColor: {r: 0.5235849, g: 1, b: 0.55160934, a: 0}
+  buffColor: {r: 0.49770963, g: 1, b: 0.28773582, a: 1}
+  debuffColor: {r: 0.6698113, g: 0.14698198, b: 0.13585795, a: 1}
+  statusEffectIcons: []
 --- !u!114 &1356682142
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7942,7 +7955,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -8381,8 +8394,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ee35b18d462d2340aa11f83dca71f60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  header: Latency
-  content: Work speed, Recall speed
+  header: TUTEL
+  content: Task Update, Transmission and Execution Latency. Work speed of a worker.
   delay: 0.5
 --- !u!1 &1863377379
 GameObject:
@@ -9450,9 +9463,9 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 887938269}
-  - {fileID: 995998926}
-  - {fileID: 424223850}
   - {fileID: 1474524427}
+  - {fileID: 424223850}
+  - {fileID: 995998926}
   m_Father: {fileID: 312654539}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -9891,7 +9904,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   header: ERM
-  content: Error Restoration Metric.
+  content: Error Restoration Metric. Memory's integrity restoration capability of
+    a worker.
   delay: 0.5
 --- !u!1 &2062755056
 GameObject:

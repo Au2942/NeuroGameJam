@@ -220,9 +220,10 @@ public abstract class MemoryEntity : Entity, ICombatant
         target.TakeDamage(AttackDamage, this);
     }
 
-    public virtual void TakeDamage(float value, ICombatant attacker)
+    public virtual bool TakeDamage(float value, ICombatant attacker)
     {
         DamageCorruption(value);
         Debug.Log(name + " corruption is " + Corruption);
+        return true;
     }
 }

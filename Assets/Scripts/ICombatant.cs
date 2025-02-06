@@ -11,5 +11,5 @@ public interface ICombatant
     void Attack();
     bool IsCombatReady();
     void DealDamage(ICombatant target);
-    void TakeDamage(float value, ICombatant attacker);
+    bool TakeDamage(float value, ICombatant attacker);
 }

@@ -19,7 +19,7 @@ MonoBehaviour:
     Description: Increase your Heart attribute but be ready to devote yourself to
       the giver...
     Stackable: 1
-    Stack: 1
+    Stack: 2
     MaxStack: 5
     ExpireAfterLifetime: 0
     ModifierLifetime: 0
@@ -27,8 +27,8 @@ MonoBehaviour:
     BuffAttributes:
       Heart: 1
       HeartScore: 0
-      ERM: 0
-      ERMScore: 0
+      ErrorRecovery: 0
+      ErrorRecoveryScore: 0
       Accuracy: 0
       AccuracyScore: 0
       Latency: 0
@@ -38,6 +38,7 @@ MonoBehaviour:
       RegenTime: 0
       WorkAmount: 0
       WorkSuccessChance: 0
+      DamageAvoidanceChance: -10
       WorkTime: 0
-      RecallCooldown: 0
+      RecallTime: 0
     heartBroken: 0

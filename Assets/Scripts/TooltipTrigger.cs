@@ -38,7 +38,7 @@ public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     private IEnumerator DelayTooltip()
     {
-        yield return new WaitForSeconds(delay);
+        yield return new WaitForSecondsRealtime(delay);
         if(isHovering)
         {
             GameManager.Instance.Tooltip.ShowTooltip(header, content);

@@ -18,7 +18,7 @@ public class StatusEffectData
     public string ID;
     public Sprite Icon;
     public string Name;
-    public string Description;
+    [TextArea(3,5)]public string Description;
     
     [Header("Stack")]
     public bool Stackable = false;
