@@ -36,6 +36,7 @@ public class StreamEntity : Entity
         Health = PlayerManager.Instance.Health;
         if(PlayerManager.Instance.State == PlayerManager.PlayerState.sleep) return;
         base.Update();
+        RollChanceToTalk();
     }
 
     public override void EnterGlitchState()

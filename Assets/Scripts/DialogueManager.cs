@@ -2,7 +2,8 @@ using System.Collections;
 using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
-using System.Linq;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 [System.Serializable]
 public struct DialogueSet
@@ -17,15 +18,19 @@ public struct DialogueSet
 
 public class DialogueManager : MonoBehaviour
 {
-    [SerializeField] private GameObject dialoguePanel;
+    [SerializeField] private RectTransform dialoguePanel;
+    [SerializeField] private LayoutElement layoutElement;
     [SerializeField] private TextMeshProUGUI speakerNameText;
     [SerializeField] private TextMeshProUGUI dialogueText;
+    [SerializeField] private UIEventHandler dialogueInteractDetector;
     [SerializeField] private DialogueInfoSO defaultDialogueInfo;
-    [SerializeField] private Entity speaker;
-
+    [SerializeField] private ISpeaker speaker;
+    [SerializeField] public bool Interactable = false;
     [SerializeField] private bool stayOnScreen = false;
     [SerializeField] public bool PlayAnimation = true;
     [SerializeField] public bool PlaySound = true;
+    [SerializeField] public bool LocationBasedSound = true;
+    [SerializeField] public bool UnscaledTime = false;
 
     private AudioSource audioSource;
     private DialogueInfoSO currentDialogueInfo;
@@ -38,14 +43,33 @@ public class DialogueManager : MonoBehaviour
     public bool IsTyping {get; private set;} = false;
     public bool IsDialoguePlaying {get; private set;} = false;
 
+    private System.Action<PointerEventData> DialogueInteractedHandler;
 
     void Awake()
     {
         currentDialogueInfo = defaultDialogueInfo;
     }
+
+    void OnEnable()
+    {
+        DialogueInteractedHandler = (eventData) => { if(Interactable) PlayDialogue(); };
+        if(dialogueInteractDetector != null)
+        {
+            dialogueInteractDetector.OnLeftClickEvent += DialogueInteractedHandler;
+        }
+    }
+
     void Start()
     {
-        dialoguePanel.SetActive(false);
+        UpdateLayoutElement();
+        dialoguePanel.gameObject.SetActive(false);
+    }
+    
+
+    private void UpdateLayoutElement()
+    {
+        layoutElement.enabled = dialogueText.preferredWidth > layoutElement.preferredWidth || speakerNameText.preferredWidth > layoutElement.preferredWidth;
+        LayoutRebuilder.ForceRebuildLayoutImmediate(dialoguePanel);
     }
 
 
@@ -100,13 +124,20 @@ public class DialogueManager : MonoBehaviour
         if(PlaySound)
         {
             audioSource = SFXManager.Instance.GetAudioSource();
-            audioSource.gameObject.transform.position = transform.position;
+            if(LocationBasedSound && audioSource != null)
+            {
+                audioSource.gameObject.transform.position = transform.position;
+            } 
         }
         IsDialoguePlaying = true;
-        dialoguePanel.SetActive(true);
+        dialoguePanel.gameObject.SetActive(true);
         if(speakerNameText != null)
         {
             speakerNameText.text = currentDialogueInfo.speakerName;
+            if(string.IsNullOrEmpty(speakerNameText.text))
+            {
+                speakerNameText.gameObject.SetActive(false);
+            }
         }
         foreach(string dialogue in currentDialogueInfo.dialogueText)
         {
@@ -191,7 +222,14 @@ public class DialogueManager : MonoBehaviour
 
     private IEnumerator WaitAndPlayNextDialogue()
     {
-        yield return new WaitForSeconds(1f);
+        if(UnscaledTime)
+        {
+            yield return new WaitForSecondsRealtime(1f);
+        }
+        else
+        {
+            yield return new WaitForSeconds(1f);
+        }
         NextDialogue();
 
     }
@@ -235,7 +273,7 @@ public class DialogueManager : MonoBehaviour
         }
         dialogueText.text = "";
         currentDialogueInfo = defaultDialogueInfo;
-        dialoguePanel.SetActive(false);
+        dialoguePanel.gameObject.SetActive(false);
     }
 
     IEnumerator TypeDialogueText()
@@ -262,15 +300,31 @@ public class DialogueManager : MonoBehaviour
                 charCount++;
                 validCharCount++;
                 dialogueText.maxVisibleCharacters = charCount;
-                yield return new WaitForSeconds(currentDialogueInfo.speakSpeed);
+                UpdateLayoutElement();
+                if(UnscaledTime)
+                {
+                    yield return new WaitForSecondsRealtime(currentDialogueInfo.speakSpeed);
+                }
+                else
+                {
+                    yield return new WaitForSeconds(currentDialogueInfo.speakSpeed);
+                }
             }
             else
             {
                 charCount++;
                 dialogueText.maxVisibleCharacters = charCount;
+                UpdateLayoutElement();
                 if(letter == '.' )
                 {
-                    yield return new WaitForSeconds(currentDialogueInfo.speakSpeed);
+                    if(UnscaledTime)
+                    {
+                        yield return new WaitForSecondsRealtime(currentDialogueInfo.speakSpeed);
+                    }
+                    else
+                    {
+                        yield return new WaitForSeconds(currentDialogueInfo.speakSpeed);
+                    }
                 }
             }
         }
@@ -317,7 +371,14 @@ public class DialogueManager : MonoBehaviour
                 }
             }
         }
-        yield return new WaitForSeconds(duration);
+        if(UnscaledTime)
+        {
+            yield return new WaitForSecondsRealtime(duration);
+        }
+        else
+        {
+            yield return new WaitForSeconds(duration);
+        }
 
         foreach (AnimatorStateInfosPair pair in storedTypingAnimationAnimatorStateInfosPairs)
         {
@@ -361,12 +422,26 @@ public class DialogueManager : MonoBehaviour
                 audioSource.pitch = minPitch;
             }
 
-            audioSource.PlayOneShot(audioClips[audioIndex]);
-
+            if(UnscaledTime)
+            {
+                audioSource.clip = audioClips[audioIndex];
+                audioSource.Play();
+            }
+            else
+            {
+                audioSource.PlayOneShot(audioClips[audioIndex]);
+            }
             if(PlayAnimation)
             {
                 PlayDialogueTypingAnimation(currentCharacterIndex, audioClips[audioIndex].length);
             }
         }
     }
+
+    void OnDisable()
+    {
+        dialogueInteractDetector.OnLeftClickEvent -= DialogueInteractedHandler;
+    }
+
+
 }

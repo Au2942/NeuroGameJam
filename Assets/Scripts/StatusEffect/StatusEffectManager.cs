@@ -36,8 +36,9 @@ public class StatusEffectManager : MonoBehaviour
             StatusEffect statusEffect = ActiveStatusEffects[i];
             statusEffect.OnUpdate(Time.deltaTime);
             if(statusEffect.ShouldExpire())
-            {
+            {   
                 statusEffect.Expire();
+                statusEffect.GetTarget().ChangeStatusEffectStack(statusEffect, statusEffect.GetData().Stack);
                 if(statusEffect.GetData().Stack <= 0)
                 {
                     statusEffect.GetTarget().RemoveStatusEffect(statusEffect);
@@ -54,6 +55,7 @@ public class StatusEffectManager : MonoBehaviour
         {
             if(targetStatusEffect.GetData().Stackable && targetStatusEffect.TryAddStack(stack))
             {
+                target.ChangeStatusEffectStack(targetStatusEffect, targetStatusEffect.GetData().Stack);
                 return targetStatusEffect;
             }
             else return null;
@@ -64,6 +66,7 @@ public class StatusEffectManager : MonoBehaviour
             if(statusEffect != null)
             {
                 statusEffect.Apply(target, source);
+                statusEffect.GetTarget().ApplyStatusEffect(statusEffect, source);
                 return statusEffect;
             }
             else return null;

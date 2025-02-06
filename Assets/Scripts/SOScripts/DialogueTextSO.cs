@@ -13,6 +13,6 @@ public class DialogueInfoSO : ScriptableObject
     [Range(-3,3)]
     public float MaxPitch = 1;
     [Range(-3,3)]
-    public float MinPitch = 0;
+    public float MinPitch = 1;
     public int frequency = 2;
 }

@@ -364,6 +364,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name: 
   WorkerAppearance: {fileID: 1069741012193160215}
+  Rigidbody: {fileID: 3662157754348273087}
+  Collider: {fileID: 6204306462595967581}
   IconAppearance: {fileID: 6809993967491325009}
   iconClickDetector: {fileID: 6336504846050403486}
   DamageBar: {fileID: 8963207524558829708}

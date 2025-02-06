@@ -38,7 +38,7 @@ public class HeartStatusEffect : WorkerStatusEffect<HeartStatusEffectData>
         {
             if(Source is MemoryEntity memoryEntity)
             {
-                Target.TakeDamage(Target.workerData.TotalStats.MaxHealth/2, memoryEntity);
+                Target.TakeDamage(memoryEntity.AttackDamage*Data.Stack, memoryEntity);
             }
             Data.ExpireNextUpdate = true;
         }

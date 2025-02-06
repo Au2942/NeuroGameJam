@@ -60,7 +60,6 @@ public abstract class WorkerStatusEffect<DataType> : WorkerStatusEffect
 
         Target.AddTempAttributes(Data.BuffAttributes);
         Target.AddTempStats(Data.BuffStats);
-        Target.ApplyStatusEffect(this);
     }
 
     public override void OnUpdate(float deltaTime)
@@ -97,16 +96,12 @@ public abstract class WorkerStatusEffect<DataType> : WorkerStatusEffect
     }
     public override void Expire()
     {
-        if(Data.Stack > 1)
+        if(Data.Stack > 0)
         {
             Data.Stack--;
         }
-        else
-        {
-            Target.AddTempAttributes(-Data.BuffAttributes);
-            Target.AddTempStats(-Data.BuffStats);
-            Target.RemoveStatusEffect(this);
-        }
+        Target.AddTempAttributes(-Data.BuffAttributes);
+        Target.AddTempStats(-Data.BuffStats);
     } 
 
     public override void OnStartWork() {}

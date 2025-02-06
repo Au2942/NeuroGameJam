@@ -11,7 +11,6 @@ public class EntityData : MonoBehaviour
     
     [Header("Dialogue")]
     [SerializeField] public DialogueManager DialogueManager;
-    [SerializeField] public UIEventHandler DialogueInteractDetector;
     [SerializeField] public List<DialogueSet> DialogueSets = new();
     [SerializeField] public int dialogueSetIndex = 0;
     [SerializeField] public bool TalkInOrder = true;

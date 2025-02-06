@@ -153,20 +153,21 @@ public class WorkerDetails : MonoBehaviour
 
         sb.Clear();
         sb.Append(ErrorRecoveryBaseTooltip).Append("\nRestoration Amount: ");
-        sb.Append(FormatStatText(baseStats.WorkAmount, allocStats.WorkAmount, tempStats.WorkAmount));
+        sb.Append(FormatStatText(baseStats.RestoreAmount, allocStats.RestoreAmount, tempStats.RestoreAmount));
+        sb.Append("\nTasks Per Work Order: ").Append(FormatStatText(baseStats.TaskAmount, allocStats.TaskAmount, tempStats.TaskAmount));
         ErrorRecoveryTooltip.SetTooltipContent(sb.ToString());
 
         sb.Clear();
-        sb.Append(AccuracyBaseTooltip).Append("\nWork Success Chance: ");
-        sb.Append(FormatStatText(baseStats.WorkSuccessChance, allocStats.WorkSuccessChance, tempStats.WorkSuccessChance)).Append("%");
-        sb.Append("\nDamage Avoidance Chance: ");
-        sb.Append(FormatStatText(baseStats.DamageAvoidanceChance, allocStats.DamageAvoidanceChance, tempStats.DamageAvoidanceChance)).Append("%");
+        sb.Append(AccuracyBaseTooltip).Append("\nTask Success Chance: ");
+        sb.Append(FormatStatText(baseStats.TaskSuccessChance, allocStats.TaskSuccessChance, tempStats.TaskSuccessChance)).Append("%");
+        sb.Append("\nDamage Ignore Chance: ");
+        sb.Append(FormatStatText(baseStats.DamageIgnoreChance, allocStats.DamageIgnoreChance, tempStats.DamageIgnoreChance)).Append("%");
         AccuracyTooltip.SetTooltipContent(sb.ToString());
 
         sb.Clear();
-        sb.Append(LatencyBaseTooltip).Append("\nWork Speed: ");
-        sb.Append(FormatStatText(baseStats.WorkTime, allocStats.WorkTime, tempStats.WorkTime, false)).Append("s");
-        sb.Append("\nRecall Cooldown: ").Append(FormatStatText(baseStats.RecallTime, allocStats.RecallTime, tempStats.RecallTime, false)).Append("s");
+        sb.Append(LatencyBaseTooltip).Append("\nTask Speed: ");
+        sb.Append(FormatStatText(baseStats.TaskTime, allocStats.TaskTime, tempStats.TaskTime, false)).Append("s");
+        sb.Append("\nResponse Speed: ").Append(FormatStatText(baseStats.ResponseTime, allocStats.ResponseTime, tempStats.ResponseTime, false)).Append("s");
         LatencyTooltip.SetTooltipContent(sb.ToString());
     }
 

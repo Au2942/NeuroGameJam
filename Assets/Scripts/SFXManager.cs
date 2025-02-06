@@ -74,16 +74,22 @@ public class SFXManager : MonoBehaviour
         }
     }
 
-    public AudioSource PlaySoundFX(AudioClip clip, Transform transform, float volume = 0.5f)
+    public AudioSource PlaySoundFX(AudioClip clip, Transform transform, float volume = 0.5f, bool oneshot = true)
     {
         AudioSource audioSource = GetAudioSource();
         if (audioSource != null)
         {
             audioSource.transform.position = transform.position;
-            audioSource.clip = clip;
             audioSource.volume = volume;
-            audioSource.PlayOneShot(clip);
-
+            if(oneshot)
+            {
+                audioSource.PlayOneShot(clip);
+            }
+            else
+            {
+                audioSource.clip = clip;
+                audioSource.Play();
+            }
             // Return the audio source to the pool after it finishes playing
             StartCoroutine(ReturnToPoolAfterPlaying(audioSource, clip.length));
         }

@@ -17,28 +17,60 @@ public class WorkHandler
         Repairing
     }
 
-    public void MoveWorkerAppearance()
+    private IEnumerator MoveToEnterCell()
     {
         worker.WorkerAppearance.gameObject.SetActive(true);
         entityCell = entity.EntityCell != null ? entity.EntityCell : entity.transform as RectTransform;
         workerAppearanceRect = worker.WorkerAppearance.AppearanceRect;
 
-        Vector2 targetPosition = Camera.main.ScreenToWorldPoint(InputManager.Instance.Point.ReadValue<Vector2>());
+        Vector2 mousePosition = (Vector2)Camera.main.ScreenToWorldPoint(InputManager.Instance.Point.ReadValue<Vector2>());
         
-        workerAppearanceRect.position = targetPosition;
+        
+        workerAppearanceRect.position = mousePosition;
         workerAppearanceRect.SetParent(entityCell);
         workerAppearanceRect.SetAsFirstSibling();
         workerAppearanceRect.localScale = Vector3.one;
+
+        workerAppearanceRect.anchoredPosition += new Vector2(0, entityCell.rect.height);
+        Vector2 targetPosition = workerAppearanceRect.anchoredPosition - new Vector2(0, entityCell.rect.height);
+
+        yield return Tween.UIAnchoredPosition(workerAppearanceRect, targetPosition, worker.TotalStats.ResponseTime, ease: Ease.OutSine).ToYieldInstruction();
     }
 
+    private IEnumerator MoveToDoTask()
+    {
+        Vector2 taskPosition = new Vector3(Random.Range(-entityCell.rect.width/2, entityCell.rect.width/2), Random.Range(-entityCell.rect.height/2, entityCell.rect.height/2));
+        //TODO make taskPosition distance based on worker's speed
+        yield return Tween.UIAnchoredPosition(workerAppearanceRect, taskPosition, worker.TotalStats.TaskTime/2, ease: Ease.InSine).ToYieldInstruction();
+        yield return new WaitForSeconds(worker.TotalStats.TaskTime/2);
+    }
 
-    public void StartMaintaining(MemoryEntity entity, Worker worker)
+    private void OnWorkSuccess()
+    {
+        foreach(WorkerStatusEffect statusEffect in worker.StatusEffects)
+        {
+            statusEffect.OnWorkSuccess();
+        }
+        entity.WorkSuccess(worker);
+    }
+
+    private void OnWorkFail()
+    {
+        foreach(WorkerStatusEffect statusEffect in worker.StatusEffects)
+        {
+            statusEffect.OnWorkFail();
+        }
+        entity.WorkFail(worker);
+    }
+
+    public IEnumerator StartMaintaining(MemoryEntity entity, Worker worker)
     {
         workState = WorkState.Maintaining;
         this.entity = entity;
         this.worker = worker;
         worker.SetAvailability(false);
-        MoveWorkerAppearance();
+
+        yield return worker.StartCoroutine(MoveToEnterCell());
         entity.IsBeingMaintained = true;
         entity.Interactable = false;
 
@@ -47,44 +79,66 @@ public class WorkHandler
             statusEffect.OnStartMaintain();
             statusEffect.OnStartWork();
         }
-
         worker.StartCoroutine(Maintaining());
     }
 
     private IEnumerator Maintaining()
     {
-        yield return new WaitForSeconds(worker.TotalStats.WorkTime); //implement a system to recall worker before they finish maintaining
-        RollMaintainSuccessChance();
+        int failCount = 0;
+        for(int i = 0; i < worker.TotalStats.TaskAmount; i++)
+        {
+            //implement a system to recall worker before they finish maintaining
+            yield return worker.StartCoroutine(MoveToDoTask()); 
+            if(!RollMaintainSuccessChance())
+            {
+                failCount++;
+            }
+            if(entity == null || entity.Health >= entity.MaxHealth) break;
+        }
+
+        if(failCount > worker.TotalStats.TaskAmount/2)
+        {
+            OnWorkFail();
+        }
+        else
+        {
+            OnWorkSuccess();
+        }
+
         FinishMaintaining();
     }
 
-    private void RollMaintainSuccessChance()
+
+    private bool RollMaintainSuccessChance()
     {
-        if(entity == null) return;
-        float successChance = worker.TotalStats.WorkSuccessChance;
+        if(entity == null) return true;
+        float successChance = worker.TotalStats.TaskSuccessChance;
         float roll = Random.Range(0, 100);
 
         if(successChance >= 100)
         {
             while(successChance > 100)
             {
-                OnMaintainSuccess();
                 successChance -= 100;
+                OnMaintainSuccess();
             }
             if(roll < successChance)
             {
                 OnMaintainSuccess();
             }
+            return true;
         }
         else
         {
             if(roll < successChance)
             {
                 OnMaintainSuccess();
+                return true;
             }
             else
             {
                 OnMaintainFail();
+                return false;
             }
         }
     }
@@ -94,9 +148,8 @@ public class WorkHandler
         foreach(WorkerStatusEffect statusEffect in worker.StatusEffects)
         {
             statusEffect.OnMaintainSuccess();
-            statusEffect.OnWorkSuccess();
         }
-
+        entity.RestoreHealth(worker.TotalStats.RestoreAmount);
         entity.MaintainSuccess(worker);
     }
 
@@ -105,9 +158,7 @@ public class WorkHandler
         foreach(WorkerStatusEffect statusEffect in worker.StatusEffects)
         {
             statusEffect.OnMaintainFail();
-            statusEffect.OnWorkFail();
         }
-
         entity.MaintainFail(worker);
     }
 
@@ -121,18 +172,20 @@ public class WorkHandler
             statusEffect.OnFinishMaintain();
             statusEffect.OnFinishWork();
         }
-        worker.StartCoroutine(RecallCooldown());
+        worker.StartCoroutine(ReturningWorker());
     }
 
 
-    public void StartRepairing(MemoryEntity entity, Worker worker)
+    public IEnumerator StartRepairing(MemoryEntity entity, Worker worker)
     {
         workState = WorkState.Repairing;
         this.entity = entity;
         this.worker = worker;
         worker.SetAvailability(false);
-        MoveWorkerAppearance();
+
+        yield return worker.StartCoroutine(MoveToEnterCell());
         entity.Interactable = false;
+
         foreach(WorkerStatusEffect statusEffect in worker.StatusEffects)
         {
             statusEffect.OnStartRepair();
@@ -144,46 +197,33 @@ public class WorkHandler
 
     private IEnumerator Repairing()
     {
-        
-        CombatHandler combatHandler = CombatManager.Instance.EngageInCombat(worker, entity);
-        if(combatHandler == null)
+        while(entity.Corruption > 0)
         {
-            Recall(); //entity is not combat ready
-            yield break;
+            for(int i = 0; i < worker.TotalStats.TaskAmount; i++)
+            {
+                yield return worker.StartCoroutine(MoveToDoTask());
+                RollRepairSuccessChance();
+                if(entity == null || entity.Corruption <= 0) break;
+            }
+            yield return new WaitForSeconds(worker.TotalStats.ResponseTime); //cooldown before next repair
         }
 
-        while(combatHandler.CheckIsInCombat())
-        {
-            yield return null;
-        }
+        OnWorkSuccess();
         FinishRepairing();
-    }
-
-    private void FinishRepairing()
-    {
-        if(entity == null) return;
-        entity.RestoreHealth(worker.TotalStats.WorkAmount);
-        entity.Interactable = true;
-        foreach(WorkerStatusEffect statusEffect in worker.StatusEffects)
-        {
-            statusEffect.OnFinishRepair();
-            statusEffect.OnFinishWork();
-        }
-        worker.StartCoroutine(RecallCooldown());
     }
 
     public void RollRepairSuccessChance()
     {
         if(entity == null) return;
-        float successChance = worker.TotalStats.WorkSuccessChance;
+        float successChance = worker.TotalStats.TaskSuccessChance;
         float roll = Random.Range(0, 100);
 
         if(successChance >= 100)
         {
             while(successChance > 100)
             {
-                OnRepairSuccess();
                 successChance -= 100;
+                OnRepairSuccess();
             }
             if(roll < successChance)
             {
@@ -208,9 +248,8 @@ public class WorkHandler
         foreach(WorkerStatusEffect statusEffect in worker.StatusEffects)
         {
             statusEffect.OnRepairSuccess();
-            statusEffect.OnWorkSuccess();
         }
-        worker.DealDamage(worker.CombatTargets[0]);
+        entity.DamageCorruption(worker.TotalStats.RestoreAmount);
     }
 
     private void OnRepairFail()
@@ -218,26 +257,36 @@ public class WorkHandler
         foreach(WorkerStatusEffect statusEffect in worker.StatusEffects)
         {
             statusEffect.OnRepairFail();
-            statusEffect.OnWorkFail();
         }
     }
-
-    public IEnumerator RecallCooldown()
+    private void FinishRepairing()
     {
-        float elapsedTime = 0f;;
-        AnimateReturnWorkerAppearance(worker.TotalStats.RecallTime);
-        while(elapsedTime < worker.TotalStats.RecallTime)
+        if(entity == null) return;
+        entity.RestoreHealth(worker.TotalStats.RestoreAmount);
+        entity.Interactable = true;
+        foreach(WorkerStatusEffect statusEffect in worker.StatusEffects)
         {
-            worker.CooldownOverlay.fillAmount = 1-(elapsedTime / worker.TotalStats.RecallTime);
+            statusEffect.OnFinishRepair();
+            statusEffect.OnFinishWork();
+        }
+        worker.StartCoroutine(ReturningWorker());
+    }
+    public IEnumerator ReturningWorker()
+    {
+        float elapsedTime = 0f;
+        MoveToReturnWorker(worker.TotalStats.ResponseTime);
+        while(elapsedTime < worker.TotalStats.ResponseTime)
+        {
+            worker.CooldownOverlay.fillAmount = 1-(elapsedTime / worker.TotalStats.ResponseTime);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        Recall();
+        ReturnWorker();
     }
 
-    public void AnimateReturnWorkerAppearance(float duration)
+    private void MoveToReturnWorker(float duration)
     {
-        Vector2 targetPosition = workerAppearanceRect.anchoredPosition + new Vector2(0, entityCell.rect.height + workerAppearanceRect.rect.height);
+        Vector2 targetPosition = workerAppearanceRect.anchoredPosition + new Vector2(0, entityCell.rect.height);
         Tween.UIAnchoredPosition(workerAppearanceRect, targetPosition, duration, ease: Ease.InSine);
     }
 
@@ -250,7 +299,7 @@ public class WorkHandler
         worker.WorkerAppearance.gameObject.SetActive(false);
     }
 
-    public void Recall()
+    public void ReturnWorker()
     {
         entity = null;
         worker.SetAvailability(true);

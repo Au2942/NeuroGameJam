@@ -1,5 +1,4 @@
 using UnityEngine;
-using PrimeTween;
 
 [System.Serializable]
 public class WorkerData
@@ -11,11 +10,13 @@ public class WorkerData
     [SerializeField] public WorkerAttributes TotalAttributes;
     [SerializeField] public int MaxAttribute = 6;
     [SerializeField] public int Level = 1;
-    [SerializeField] public WorkerStats DefaultStats = new WorkerStats(10f,5f,5f,60f,0f,5f,5f);
-    [SerializeField] public WorkerStats BaseStats = new WorkerStats(10f,5f,5f,60f,0f,5f,5f);
+    [SerializeField] public WorkerStats DefaultStats = new WorkerStats(10f, 5f, 2.5f, 10, 60f, 0f, 1f, 5f);
+    [SerializeField] public WorkerStats BaseStats = new WorkerStats();
     [SerializeField] public WorkerStats TempStats = new WorkerStats();
-    [SerializeField] public WorkerStats statPerAttribute = new WorkerStats(5f,-0.5f,5f,5f,5f,-0.5f,-0.5f);
+    [SerializeField] public WorkerStats statPerAttribute = new WorkerStats(5f,-0.5f, 0.5f, 2, 5f, 5f, -0.1f, -0.5f);
     [SerializeField] public WorkerStats TotalStats;
+
+    public event System.Action OnAttributeOrStatChanged;
 
     public int AllocateAttributes(WorkerAttributes addedAttributes)
     {
@@ -105,14 +106,29 @@ public class WorkerData
     {
         TempStats.MaxHealth += addedStats.MaxHealth;
         TempStats.RegenTime += addedStats.RegenTime;
-        TempStats.WorkAmount += addedStats.WorkAmount;
-        TempStats.WorkSuccessChance += addedStats.WorkSuccessChance;
-        TempStats.DamageAvoidanceChance += addedStats.DamageAvoidanceChance;
-        TempStats.WorkTime += addedStats.WorkTime;
-        TempStats.RecallTime += addedStats.RecallTime;
+        TempStats.RestoreAmount += addedStats.RestoreAmount;
+        TempStats.TaskAmount += addedStats.TaskAmount;
+        TempStats.TaskSuccessChance += addedStats.TaskSuccessChance;
+        TempStats.DamageIgnoreChance += addedStats.DamageIgnoreChance;
+        TempStats.TaskTime += addedStats.TaskTime;
+        TempStats.ResponseTime += addedStats.ResponseTime;
         UpdateTotalStats();
     }
 
+
+    public WorkerStats CalculateStatsFromAttributes(WorkerAttributes attributes)
+    {
+        WorkerStats stats = new WorkerStats();
+        stats.MaxHealth = attributes.Heart * statPerAttribute.MaxHealth;
+        stats.RegenTime = attributes.Heart * statPerAttribute.RegenTime;
+        stats.RestoreAmount = attributes.ErrorRecovery * statPerAttribute.RestoreAmount;
+        stats.TaskAmount = attributes.Accuracy * statPerAttribute.TaskAmount;
+        stats.TaskSuccessChance = attributes.Accuracy * statPerAttribute.TaskSuccessChance;
+        stats.DamageIgnoreChance = attributes.Accuracy * statPerAttribute.DamageIgnoreChance;
+        stats.TaskTime = attributes.Latency * statPerAttribute.TaskTime;
+        stats.ResponseTime = attributes.Latency * statPerAttribute.ResponseTime;
+        return stats;
+    }
 
     public void UpdateTotalAttribute()
     {
@@ -125,29 +141,17 @@ public class WorkerData
     {
         return AllocAttributes + TotalAttributes;
     }
-
     public void UpdateBaseStats()
     {
         BaseStats = DefaultStats + CalculateStatsFromAttributes(BaseAttributes);
         UpdateTotalStats();
     }
 
-    public WorkerStats CalculateStatsFromAttributes(WorkerAttributes attributes)
-    {
-        WorkerStats stats = new WorkerStats();
-        stats.MaxHealth = attributes.Heart * statPerAttribute.MaxHealth;
-        stats.RegenTime = attributes.Heart * statPerAttribute.RegenTime;
-        stats.WorkAmount = attributes.ErrorRecovery * statPerAttribute.WorkAmount;
-        stats.WorkSuccessChance = attributes.Accuracy * statPerAttribute.WorkSuccessChance;
-        stats.DamageAvoidanceChance = attributes.Accuracy * statPerAttribute.DamageAvoidanceChance;
-        stats.WorkTime = attributes.Latency * statPerAttribute.WorkTime;
-        stats.RecallTime = attributes.Latency * statPerAttribute.RecallTime;
-        return stats;
-    }
 
     private void UpdateTotalStats()
     {
         TotalStats = BaseStats + TempStats + CalculateStatsFromAttributes(TempAttributes);
+        OnAttributeOrStatChanged?.Invoke();
     }
 
 }
@@ -217,21 +221,23 @@ public struct WorkerStats
 {
     public float MaxHealth;
     public float RegenTime; //time to regen full health
-    public float WorkAmount; //heal amount, damage amount
-    public float WorkSuccessChance; 
-    public float DamageAvoidanceChance;
-    public float WorkTime; //time to complete work, heal and deal damage
-    public float RecallTime; //time to wait before starting new work
+    public float RestoreAmount; //heal amount, damage amount per task
+    public int TaskAmount; //how many tasks can be done per work
+    public float TaskSuccessChance; 
+    public float DamageIgnoreChance;
+    public float TaskTime; //time to complete a task
+    public float ResponseTime; //time to wait before starting new work
     
-    public WorkerStats(float maxHealth, float regenTime, float workAmount, float workSuccessChance, float damageAvoidanceChance, float workTime, float recallCooldown)
+    public WorkerStats(float maxHealth, float regenTime, float restoreAmount, int workAmount, float workSuccessChance, float damageIgnoreChance, float workTime, float responseTime)
     {
         MaxHealth = maxHealth;
         RegenTime = regenTime;
-        WorkAmount = workAmount;
-        WorkSuccessChance = workSuccessChance;
-        DamageAvoidanceChance = damageAvoidanceChance;
-        WorkTime = workTime;
-        RecallTime = recallCooldown;
+        RestoreAmount = restoreAmount;
+        TaskAmount = workAmount;
+        TaskSuccessChance = workSuccessChance;
+        DamageIgnoreChance = damageIgnoreChance;
+        TaskTime = workTime;
+        ResponseTime = responseTime;
     }
 
     public static WorkerStats operator +(WorkerStats a, WorkerStats b)
@@ -239,11 +245,12 @@ public struct WorkerStats
         return new WorkerStats(
             a.MaxHealth + b.MaxHealth, 
             a.RegenTime + b.RegenTime,
-            a.WorkAmount + b.WorkAmount,
-            a.WorkSuccessChance + b.WorkSuccessChance,
-            a.DamageAvoidanceChance + b.DamageAvoidanceChance,
-            a.WorkTime + b.WorkTime,
-            a.RecallTime + b.RecallTime
+            a.RestoreAmount + b.RestoreAmount,
+            a.TaskAmount + b.TaskAmount,
+            a.TaskSuccessChance + b.TaskSuccessChance,
+            a.DamageIgnoreChance + b.DamageIgnoreChance,
+            a.TaskTime + b.TaskTime,
+            a.ResponseTime + b.ResponseTime
         );
     }
 
@@ -252,11 +259,12 @@ public struct WorkerStats
         return new WorkerStats(
             a.MaxHealth - b.MaxHealth, 
             a.RegenTime - b.RegenTime, 
-            a.WorkAmount - b.WorkAmount, 
-            a.WorkSuccessChance - b.WorkSuccessChance, 
-            a.DamageAvoidanceChance - b.DamageAvoidanceChance, 
-            a.WorkTime - b.WorkTime, 
-            a.RecallTime - b.RecallTime
+            a.RestoreAmount - b.RestoreAmount, 
+            a.TaskAmount - b.TaskAmount,
+            a.TaskSuccessChance - b.TaskSuccessChance, 
+            a.DamageIgnoreChance - b.DamageIgnoreChance, 
+            a.TaskTime - b.TaskTime, 
+            a.ResponseTime - b.ResponseTime
         );
     }
 
@@ -265,11 +273,12 @@ public struct WorkerStats
         return new WorkerStats(
             a.MaxHealth * b, 
             a.RegenTime * b, 
-            a.WorkAmount * b, 
-            a.WorkSuccessChance * b,
-            a.DamageAvoidanceChance * b, 
-            a.WorkTime * b, 
-            a.RecallTime * b
+            a.RestoreAmount * b, 
+            a.TaskAmount * (int)b,
+            a.TaskSuccessChance * b,
+            a.DamageIgnoreChance * b, 
+            a.TaskTime * b, 
+            a.ResponseTime * b
         );
     }
 
@@ -278,11 +287,12 @@ public struct WorkerStats
         return new WorkerStats(
             a.MaxHealth / b,
             a.RegenTime / b,
-            a.WorkAmount / b, 
-            a.WorkSuccessChance / b,
-            a.DamageAvoidanceChance / b, 
-            a.WorkTime / b, 
-            a.RecallTime / b
+            a.RestoreAmount / b, 
+            a.TaskAmount / (int)b,
+            a.TaskSuccessChance / b,
+            a.DamageIgnoreChance / b, 
+            a.TaskTime / b, 
+            a.ResponseTime / b
         );
     }
 
@@ -291,11 +301,12 @@ public struct WorkerStats
         return new WorkerStats(
             -a.MaxHealth, 
             -a.RegenTime, 
-            -a.WorkAmount, 
-            -a.WorkSuccessChance,
-            -a.DamageAvoidanceChance, 
-            -a.WorkTime, 
-            -a.RecallTime
+            -a.RestoreAmount, 
+            -a.TaskAmount,
+            -a.TaskSuccessChance,
+            -a.DamageIgnoreChance, 
+            -a.TaskTime, 
+            -a.ResponseTime
         );
     }
 

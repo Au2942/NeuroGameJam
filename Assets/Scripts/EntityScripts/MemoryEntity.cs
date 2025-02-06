@@ -5,8 +5,8 @@ public abstract class MemoryEntity : Entity, ICombatant
 {
     [SerializeField] protected MemoryEntityData memoryEntityData;
     protected GlitchOverlay GlitchEffect {get => memoryEntityData.GlitchEffect; set => memoryEntityData.GlitchEffect = value;}
-    protected float AttackDamage {get => memoryEntityData.AttackDamage; set => memoryEntityData.AttackDamage = value;}
-    protected float AttackRate {get => memoryEntityData.AttackRate; set => memoryEntityData.AttackRate = value;}
+    public float AttackDamage {get => memoryEntityData.AttackDamage; set => memoryEntityData.AttackDamage = value;}
+    public float AttackRate {get => memoryEntityData.AttackRate; set => memoryEntityData.AttackRate = value;}
     protected float TimeToShutup {get => memoryEntityData.TimeToShutup; set => memoryEntityData.TimeToShutup = value;}
     public bool DealAOEDamage {get => memoryEntityData.DealAOEDamage; set => memoryEntityData.DealAOEDamage = value;}
     public bool InFocus = false;
@@ -74,6 +74,7 @@ public abstract class MemoryEntity : Entity, ICombatant
     public virtual void SetInFocus(bool focus)
     {
         InFocus = focus;
+        DialogueManager.Interactable = focus;
         DialogueManager.PlaySound = focus;
     }
 
@@ -101,9 +102,14 @@ public abstract class MemoryEntity : Entity, ICombatant
 
     public virtual void MaintainSuccess(Worker worker)
     {
-        RestoreHealth(worker.TotalStats.WorkAmount);
+        
+    }
+
+    public virtual void WorkSuccess(Worker worker)
+    {
         RollChanceToRecall(worker);
     }
+
     public virtual void RollChanceToRecall(Worker worker)
     {
         if(Random.Range(0f, 1f) > 1-HealthPercentage())
@@ -120,14 +126,12 @@ public abstract class MemoryEntity : Entity, ICombatant
 
     public virtual void MaintainFail(Worker worker)
     {
-        RestoreHealth(worker.TotalStats.WorkAmount/2);
-        OnMaintainFail(worker);
-        RollChanceToGlitch();
+        DealDamage(worker);
     }
 
-    public virtual void OnMaintainFail(Worker worker)
+    public virtual void WorkFail(Worker worker)
     {
-        DealDamage(worker);
+        RollChanceToGlitch();
     }
 
     protected override void OnHealthChanged(float amount)
@@ -176,7 +180,6 @@ public abstract class MemoryEntity : Entity, ICombatant
         {
             GameManager.Instance.ScreenEffectController.Show();
         }
-        CombatManager.Instance.StartCombat(this);
     }
 
     public override void ExitGlitchState()

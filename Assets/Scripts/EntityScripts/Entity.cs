@@ -3,14 +3,13 @@ using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using System.Collections;
 
-public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSource
+public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSource, ISpeaker
 {
     [SerializeField] protected EntityData entityData;
     public RectTransform EntityBody { get => entityData.EntityBody; set => entityData.EntityBody = value; }
     public RectTransform EntityCell { get => entityData.EntityCell; set => entityData.EntityCell = value; }
     protected List<UIEventHandler> ClickInteractDetectors { get => entityData.ClickInteractDetectors; set => entityData.ClickInteractDetectors = value; }
     protected DialogueManager DialogueManager { get => entityData.DialogueManager; set => entityData.DialogueManager = value; }
-    protected UIEventHandler DialogueInteractDetector { get => entityData.DialogueInteractDetector; set => entityData.DialogueInteractDetector = value; }
     protected List<DialogueSet> DialogueSets { get => entityData.DialogueSets; set => entityData.DialogueSets = value; }
     public int DialogueSetIndex { get => entityData.dialogueSetIndex; set => entityData.dialogueSetIndex = value; }
     protected bool TalkInOrder { get => entityData.TalkInOrder; set => entityData.TalkInOrder = value; }
@@ -79,11 +78,6 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
         }
         GameManager.Instance.OnStartStream += OnStartStream;
         GameManager.Instance.OnEndStream += OnEndStream;
-        OnClickDialogueHandlers = (t) => Speak();
-        if(DialogueInteractDetector != null)
-        {
-            DialogueInteractDetector.OnLeftClickEvent += OnClickDialogueHandlers;
-        }
     }
     protected virtual void OnStartStream()
     {
@@ -413,10 +407,6 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
             GameManager.Instance.OnStartStream -= OnStartStream;
             GameManager.Instance.OnEndStream -= OnEndStream;
         }
-        if(DialogueInteractDetector != null)
-        {
-            DialogueInteractDetector.OnLeftClickEvent -= OnClickDialogueHandlers;
-        }
 
     }
     protected virtual void OnDestroy()
@@ -430,6 +420,10 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
     }
 
     public void RemoveStatusEffect(StatusEffect statusEffect)
+    {
+    }
+
+    public void ChangeStatusEffectStack(StatusEffect statusEffect, int stack)
     {
     }
 

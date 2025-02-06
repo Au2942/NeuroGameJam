@@ -44,9 +44,9 @@ public class HeartMemory : MemoryEntity
         // else heartSpawner.StartSpawningInteractables(minX, maxX, minY, maxY);
     }
 
-    public override void MaintainSuccess(Worker worker)
+    public override void WorkSuccess(Worker worker)
     {
-        base.MaintainSuccess(worker);
+        base.WorkSuccess(worker);
         StatusEffectManager.Instance.ApplyStatusEffect("heartSE", worker, this);
     }
 

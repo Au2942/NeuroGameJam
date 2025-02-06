@@ -9,6 +9,8 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
 {
     [SerializeField] public string Name;
     [SerializeField] public WorkerAppearance WorkerAppearance;
+    [SerializeField] public Rigidbody2D Rigidbody;
+    [SerializeField] public Collider2D Collider;
     [SerializeField] public WorkerAppearance IconAppearance;
     [SerializeField] public UIEventHandler iconClickDetector; 
     [SerializeField] public Image DamageBar;
@@ -26,22 +28,17 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
     [SerializeField] public bool IsAvailable = true;
     [SerializeField] public bool CanRegenHealth = true;
     [SerializeField] public WorkHandler WorkHandler = new WorkHandler();
-
     public MemoryEntity assignedEntity => WorkHandler.entity;
     public List<ICombatant> CombatTargets = new List<ICombatant>();
-
     float ICombatant.Health { get => workerData.Health; set => workerData.Health = value; }
     float ICombatant.MaxHealth { get => workerData.TotalStats.MaxHealth; set => workerData.TotalStats.MaxHealth = value; }
-    public float AttackDamage { get => workerData.TotalStats.WorkAmount; set => workerData.TotalStats.WorkAmount = value;}
-    public float AttackRate { get => workerData.TotalStats.WorkTime; set => workerData.TotalStats.WorkTime = value;}
-
+    public float AttackDamage { get => workerData.TotalStats.RestoreAmount; set => workerData.TotalStats.RestoreAmount = value;}
+    public float AttackRate { get => workerData.TotalStats.TaskTime; set => workerData.TotalStats.TaskTime = value;}
     List<ICombatant> ICombatant.CombatTargets { get => CombatTargets; set => CombatTargets = value; }
     List<StatusEffect> IStatusEffectable.StatusEffects { get => StatusEffects; set => StatusEffects = value; }
-
     public event System.Action<Worker> OnSelectEvent; 
     public event System.Action<Worker> OnDieEvent; 
-    public event System.Action<StatusEffect> OnApplyStatusEffectEvent;
-    public event System.Action<StatusEffect> OnRemoveStatusEffectEvent; 
+    public event System.Action OnDetailsChanged;
     private System.Action<PointerEventData> OnClickEventHandler;
 
     void Awake()
@@ -88,13 +85,17 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
             value = workerData.TotalStats.MaxHealth - workerData.Health;
         }
 
-        PopupTextSpawner.Instance.SpawnPopupText(WorkerAppearance.transform, WorkerAppearance.transform.position, value.ToString(), 0.5f, value > 0 ? Color.green : Color.red);
+        if(WorkerAppearance.gameObject.activeSelf)
+        {
+            PopupTextSpawner.Instance.SpawnPopupText(WorkerAppearance.transform, WorkerAppearance.transform.position, value.ToString(), 0.5f, value > 0 ? Color.green : Color.red);
+        }
 
         DamageBar.fillAmount = 1 - workerData.Health / workerData.TotalStats.MaxHealth;
         if(workerData.Health <= 0)
         {
             Die();
         }
+        OnDetailsChanged?.Invoke();
     }
 
     public int AllocateAttributes(WorkerAttributes attributes)
@@ -110,28 +111,36 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
     public void AddTempAttributes(WorkerAttributes attributes)
     {
         workerData.AddTempAttributes(attributes);
+        OnDetailsChanged?.Invoke();
     }
 
     public void AddTempStats(WorkerStats stats)
     {
         workerData.AddTempStats(stats);
+        OnDetailsChanged?.Invoke();
     }
 
     public void ApplyAllocAttributes()
     {
         workerData.ApplyAllocAttributes();
+        OnDetailsChanged?.Invoke();
     }
 
     public void ApplyStatusEffect(StatusEffect statusEffect, IStatusEffectSource source = null)
     {
         StatusEffects.Add(statusEffect);
-        OnApplyStatusEffectEvent?.Invoke(statusEffect);
+        OnDetailsChanged?.Invoke();
+    }
+
+    public void ChangeStatusEffectStack(StatusEffect statusEffect, int stack)
+    {
+        OnDetailsChanged?.Invoke();
     }
     
     public void RemoveStatusEffect(StatusEffect statusEffect)
     {
         StatusEffects.Remove(statusEffect);
-        OnRemoveStatusEffectEvent?.Invoke(statusEffect);
+        OnDetailsChanged?.Invoke();
     }
 
     public void Select()
@@ -170,12 +179,12 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
     }
     public void DoMaintenance(MemoryEntity entity)
     {
-        WorkHandler.StartMaintaining(entity, this);
+        StartCoroutine(WorkHandler.StartMaintaining(entity, this));
     }
 
     public void DoRepair(MemoryEntity entity)
     {
-        WorkHandler.StartRepairing(entity, this);
+        StartCoroutine(WorkHandler.StartRepairing(entity, this));
     }
 
     void OnDestroy()
@@ -204,9 +213,12 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
 
     public bool TakeDamage(float value, ICombatant attacker)
     {
-        if(Random.Range(0,100) < workerData.TotalStats.DamageAvoidanceChance)
+        if(Random.Range(0,100) < workerData.TotalStats.DamageIgnoreChance)
         {
-            PopupTextSpawner.Instance.SpawnPopupText(WorkerAppearance.transform, WorkerAppearance.transform.position, "Dodged", 0.5f, Color.white);
+            if(WorkerAppearance.gameObject.activeSelf)
+            {
+                PopupTextSpawner.Instance.SpawnPopupText(WorkerAppearance.transform, WorkerAppearance.transform.position, "Dodged", 0.5f, Color.white);
+            }
             return false;
         }
         AddHealth(-value);

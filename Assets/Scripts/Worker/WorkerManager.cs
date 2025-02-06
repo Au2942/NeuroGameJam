@@ -18,8 +18,7 @@ public class WorkerManager : MonoBehaviour
 
     public event System.Action<Worker> OnWorkerSelectEvent;
     public event System.Action OnWorkerDeselectedEvent;
-    public System.Action<StatusEffect> OnSelectedWorkerApplyStatusEffectEventHandler;
-    public System.Action<StatusEffect> OnSelectedWorkerRemoveStatusEffectEventHandler;
+    public System.Action OnSelectedWorkerDetailsChangedEventHandler;
 
     void Awake()
     {
@@ -31,22 +30,6 @@ public class WorkerManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
-        OnSelectedWorkerApplyStatusEffectEventHandler = (statusEffect) => 
-        {
-            if(SelectedWorker != null)
-            {
-                WorkerDetails.UpdateDisplayDetails(SelectedWorker);
-            }
-        };
-
-        OnSelectedWorkerRemoveStatusEffectEventHandler = (statusEffect) => 
-        {
-            if(SelectedWorker != null)
-            {
-                WorkerDetails.UpdateDisplayDetails(SelectedWorker);
-            }
-        };
     }
 
     void Start()
@@ -115,8 +98,7 @@ public class WorkerManager : MonoBehaviour
         SelectedWorker = worker;
         WorkerDetails.UpdateDisplayDetails(SelectedWorker);
 
-        worker.OnApplyStatusEffectEvent += OnSelectedWorkerApplyStatusEffectEventHandler;
-        worker.OnRemoveStatusEffectEvent += OnSelectedWorkerRemoveStatusEffectEventHandler;
+        worker.OnDetailsChanged += UpdateSelectedWorkerDetails;
 
         OnWorkerSelectEvent?.Invoke(SelectedWorker);
     }
@@ -125,8 +107,7 @@ public class WorkerManager : MonoBehaviour
     {
         if(SelectedWorker == null) return;
 
-        SelectedWorker.OnApplyStatusEffectEvent -= OnSelectedWorkerApplyStatusEffectEventHandler;
-        SelectedWorker.OnRemoveStatusEffectEvent -= OnSelectedWorkerRemoveStatusEffectEventHandler;
+        SelectedWorker.OnDetailsChanged -= UpdateSelectedWorkerDetails;
         
         WorkerDetails.ClearDisplayDetails();
         SelectedWorker.Deselect();

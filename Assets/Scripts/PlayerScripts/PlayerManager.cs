@@ -341,4 +341,8 @@ public class PlayerManager : MonoBehaviour, IStatusEffectable
     public void RemoveStatusEffect(StatusEffect statusEffect)
     {
     }
+
+    public void ChangeStatusEffectStack(StatusEffect statusEffect, int stack)
+    {
+    }
 }

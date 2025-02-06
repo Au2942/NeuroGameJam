@@ -10,6 +10,7 @@ public class SleepSettingsScreen : MonoBehaviour
     public static SleepSettingsScreen Instance;
     [SerializeField] private RectTransform sleepSettingsUI;
     [SerializeField] private RectTransform sleepSettingsLayout;
+    [SerializeField] private SleepNeuro SleepNeuro;
     [SerializeField] private RectTransform actionsPanel;
     [SerializeField] private RectTransform workerPanel;
     [SerializeField] private float healthPerHours = 20f;
@@ -85,10 +86,12 @@ public class SleepSettingsScreen : MonoBehaviour
         if (sleepHours < 4)
         {
             sb2.Append("4 hrs (").Append(sleepHours).Append(" hrs)");
+            SleepNeuro.SetAwakeState(true);
         }
         else
         {
             sb2.Append(sleepHours).Append(" hrs");
+            SleepNeuro.SetAwakeState(false);
         }
 
         sb3.Clear();
