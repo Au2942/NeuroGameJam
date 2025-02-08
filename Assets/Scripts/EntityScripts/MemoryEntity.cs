@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -180,6 +181,7 @@ public abstract class MemoryEntity : Entity, ICombatant
         {
             GameManager.Instance.ScreenEffectController.Show();
         }
+        StartCoroutine(Attacking());
     }
 
     public override void ExitGlitchState()
@@ -193,6 +195,14 @@ public abstract class MemoryEntity : Entity, ICombatant
         //CombatManager.Instance.EndCombat(this);
     }
 
+    protected virtual IEnumerator Attacking()
+    {
+        while(IsCombatReady())
+        {
+            Attack();
+            yield return new WaitForSeconds(AttackRate);
+        }
+    }
     public virtual void Attack()
     {
         if(combatTargets.Count == 0) return;

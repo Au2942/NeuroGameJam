@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using PrimeTween;
 
+[System.Serializable]
 public class WorkHandler
 {
     public MemoryEntity entity;
@@ -31,10 +32,7 @@ public class WorkHandler
         workerAppearanceRect.SetAsFirstSibling();
         workerAppearanceRect.localScale = Vector3.one;
 
-        workerAppearanceRect.anchoredPosition += new Vector2(0, entityCell.rect.height);
-        Vector2 targetPosition = workerAppearanceRect.anchoredPosition - new Vector2(0, entityCell.rect.height);
-
-        yield return Tween.UIAnchoredPosition(workerAppearanceRect, targetPosition, worker.TotalStats.ResponseTime, ease: Ease.OutSine).ToYieldInstruction();
+        yield return worker.StartCoroutine(worker.WorkerAppearance.PlayTeleportEffect(worker.TotalStats.ResponseTime));
     }
 
     private IEnumerator MoveToDoTask()
@@ -185,6 +183,7 @@ public class WorkHandler
 
         yield return worker.StartCoroutine(MoveToEnterCell());
         entity.Interactable = false;
+        entity.AddCombatTarget(worker);
 
         foreach(WorkerStatusEffect statusEffect in worker.StatusEffects)
         {
@@ -274,20 +273,15 @@ public class WorkHandler
     public IEnumerator ReturningWorker()
     {
         float elapsedTime = 0f;
-        MoveToReturnWorker(worker.TotalStats.ResponseTime);
+        worker.StartCoroutine(worker.WorkerAppearance.PlayTeleportEffect(worker.TotalStats.ResponseTime, true));
         while(elapsedTime < worker.TotalStats.ResponseTime)
         {
             worker.CooldownOverlay.fillAmount = 1-(elapsedTime / worker.TotalStats.ResponseTime);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
+        ReturnWorkerAppearance();
         ReturnWorker();
-    }
-
-    private void MoveToReturnWorker(float duration)
-    {
-        Vector2 targetPosition = workerAppearanceRect.anchoredPosition + new Vector2(0, entityCell.rect.height);
-        Tween.UIAnchoredPosition(workerAppearanceRect, targetPosition, duration, ease: Ease.InSine);
     }
 
     public void ReturnWorkerAppearance()
@@ -299,11 +293,11 @@ public class WorkHandler
         worker.WorkerAppearance.gameObject.SetActive(false);
     }
 
+
     public void ReturnWorker()
     {
         entity = null;
         worker.SetAvailability(true);
-        ReturnWorkerAppearance();
         worker.CooldownOverlay.fillAmount = 1;
         workState = WorkState.None;
         if(WorkerManager.Instance.SelectedWorker == worker)
@@ -311,6 +305,8 @@ public class WorkHandler
             WorkerManager.Instance.DeselectWorker();
         }
     }   
+
+
 
 
 }

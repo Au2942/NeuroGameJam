@@ -11,7 +11,7 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
     [SerializeField] public WorkerAppearance WorkerAppearance;
     [SerializeField] public Rigidbody2D Rigidbody;
     [SerializeField] public Collider2D Collider;
-    [SerializeField] public WorkerAppearance IconAppearance;
+    [SerializeField] public WorkerAppearanceData IconAppearance;
     [SerializeField] public UIEventHandler iconClickDetector; 
     [SerializeField] public Image DamageBar;
     [SerializeField] public Image CooldownOverlay;
@@ -238,7 +238,6 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
     {
         OnDieEvent?.Invoke(this);
         WorkerManager.Instance.RemoveWorker(this);
-        Destroy(gameObject,0);
     }
 
     void OnDisable()

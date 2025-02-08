@@ -43,7 +43,7 @@ public class StreamSelector : MonoBehaviour
     {
         GameManager.Instance.isPause = true;
         GameManager.Instance.StopStream();
-        TimescaleManager.Instance.SetTimescale(0);
+        TimescaleManager.Instance.PauseTimeScale();
         streamSelectionLayout.SetActive(true);
         streamNo.text = "Stream #" + GameManager.Instance.MemoryCount;
         isOpen = true;
@@ -107,7 +107,7 @@ public class StreamSelector : MonoBehaviour
         streamSelectionLayout.SetActive(false);
         GameManager.Instance.isPause = false;
         GameManager.Instance.ContinueStream();
-        TimescaleManager.Instance.ResetTimescale();
+        TimescaleManager.Instance.UnpauseTimeScale();
     }
 
     void OnDestroy()

@@ -185,19 +185,25 @@ public class PlayerManager : MonoBehaviour, IStatusEffectable
         SetStreamName("Snooze Stream");
         GameManager.Instance.StopStream();
         TimescaleManager.Instance.SetTimescale(50);
+        GameManager.Instance.VignetteController.FadeVignette(0, 1, 1, true);
         StartCoroutine(Sleeping(sleepTime));
-    }
+    } 
 
     private IEnumerator Sleeping(float sleepTime)
     {
         yield return new WaitForSeconds(sleepTime);
+        TimescaleManager.Instance.ResetTimescale();
+        StreamSelector.Instance.OpenUI(true);
+        while(StreamSelector.Instance.isOpen)
+        {
+            yield return null;
+        }
         WakeUp();
     }
 
     public void WakeUp()
     {
-        TimescaleManager.Instance.ResetTimescale();
-        StreamSelector.Instance.OpenUI(true);
+        GameManager.Instance.VignetteController.FadeVignette(1, 0, 1, true);
         SetState(PlayerState.normal);
         CurrentInterests = 0; // reset interests
         if(StreamEntity != null) StreamEntity.ExitSleepState();
@@ -247,7 +253,7 @@ public class PlayerManager : MonoBehaviour, IStatusEffectable
         }
         else if(State == PlayerState.sleep)
         {
-            
+            StreamEntity.ShutUp();
         }
     }
 

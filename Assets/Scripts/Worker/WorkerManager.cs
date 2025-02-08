@@ -56,7 +56,7 @@ public class WorkerManager : MonoBehaviour
         Workers.Add(newWorker);
 
         WorkerAppearanceGenerator.GenerateAppearance(newWorker.WorkerAppearance);
-        newWorker.IconAppearance.SetApperance(newWorker.WorkerAppearance.WorkerAppearanceData);
+        newWorker.IconAppearance.CopyData(newWorker.WorkerAppearance.WorkerAppearanceData);
 
         newWorker.OnSelectEvent += SelectWorker;
 
@@ -73,7 +73,7 @@ public class WorkerManager : MonoBehaviour
         int index = Workers.IndexOf(worker);
         Workers.Remove(worker);
         worker.OnSelectEvent -= SelectWorker;
-        Destroy(worker.gameObject);
+        Destroy(worker.gameObject, 0);
         Worker nextWorker = Workers.Count > 0 ? Workers[Mathf.Clamp(index, 0, Workers.Count - 1)] : null;
         if(nextWorker != null)
         {

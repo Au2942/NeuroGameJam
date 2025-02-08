@@ -66,7 +66,7 @@ public class SleepSettingsScreen : MonoBehaviour
     {
         GameManager.Instance.isPause = true;
         GameManager.Instance.StopStream();
-        TimescaleManager.Instance.SetTimescale(0);
+        TimescaleManager.Instance.PauseTimeScale();
 
         sleepSettingsUI.gameObject.SetActive(true);
         IsOpen = true;
@@ -204,8 +204,8 @@ public class SleepSettingsScreen : MonoBehaviour
         }
 
         PlayerManager.Instance.HealHealth(GetRemainingSleepPoints()*healthPerHours/hoursPerRestoreHealthChunk);
-        CloseUI();
         PlayerManager.Instance.Sleep( Mathf.Max(4,sleepHours) * 3600/DisplayTimeMultiplier); //this also change timescale so must be last
+        CloseUI();
     }
 
     private float GetRemainingSleepPoints()
@@ -234,7 +234,7 @@ public class SleepSettingsScreen : MonoBehaviour
         IsOpen = false;
         sleepSettingsUI.gameObject.SetActive(false);
 
-        TimescaleManager.Instance.SetTimescale(1);
+        TimescaleManager.Instance.UnpauseTimeScale();
         GameManager.Instance.ContinueStream();
         GameManager.Instance.isPause = false;
     }

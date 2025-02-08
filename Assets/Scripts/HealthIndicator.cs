@@ -47,7 +47,7 @@ public class HealthIndicator : MonoBehaviour
             {
                 healthBar.materialForRendering.SetColor("_Color1", colors[1]);
                 healthBar.materialForRendering.SetColor("_Color2", colors[2]);
-                healthBar.materialForRendering.SetFloat("_Fill", entity.Corruption/entity.MaxHealth); //corruption goes from maxhealth - health to 0
+                healthBar.materialForRendering.SetFloat("_Fill", Mathf.FloorToInt(entity.Corruption/entity.MaxHealth)); //corruption goes from maxhealth - health to 0
             }
             
         }
