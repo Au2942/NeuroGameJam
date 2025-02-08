@@ -18,7 +18,7 @@ MonoBehaviour:
     m_Value: 0
   noiseStrength:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0
   noiseAmount:
     m_OverrideState: 1
     m_Value: 50

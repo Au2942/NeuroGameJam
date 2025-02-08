@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: LavaLamp
-  m_Shader: {fileID: -6465566751694194690, guid: 2dc6c4c89093da94a934b3639f6a3993, type: 3}
+  m_Name: TeleportDissolve
+  m_Shader: {fileID: -6465566751694194690, guid: a296d0d8ca2703042b4fe7a97a8eb7ea, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -41,9 +41,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BottomSize: 2
     - _ColorMask: 15
-    - _CoreSize: 0.5
+    - _Duration: 1
+    - _Progress: 1
+    - _Seed: 0
+    - _Size: 25
     - _Speed: 1
     - _Stencil: 0
     - _StencilComp: 8
@@ -53,16 +55,7 @@ Material:
     - _UIMaskSoftnessX: 1
     - _UIMaskSoftnessY: 1
     m_Colors:
-    - _Ball1Movement: {r: -0.251, g: -0.577, b: 30, a: 0}
-    - _Ball1Range: {r: 0.27, g: 0.5, b: 0, a: 0}
-    - _Ball2Movement: {r: 0.251, g: -0.347, b: 45, a: 0}
-    - _Ball2Range: {r: 0.3, g: 0.5, b: 0, a: 0}
-    - _Ball3Movement: {r: -0.311, g: 0.677, b: 0, a: 90}
-    - _Ball3Range: {r: 0.3, g: 0.4, b: 0, a: 0}
-    - _BallSizes: {r: 0.5, g: 0.45, b: 0.34, a: 0}
-    - _BottomPos: {r: 0, g: -1.3, b: 0, a: 0}
     - _ClipRect: {r: 0, g: 0, b: 0, a: 0}
-    - _CoreColor: {r: 1.6055588, g: 0, b: 0.9879672, a: 1}
-    - _GlowColor: {r: 0.45568144, g: 0, b: 1.6055585, a: 1}
+    - _Color: {r: 0, g: 23.96863, b: 7.5039754, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
