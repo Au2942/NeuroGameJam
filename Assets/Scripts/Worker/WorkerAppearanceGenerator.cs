@@ -28,9 +28,9 @@ public class WorkerAppearanceGenerator : MonoBehaviour
         //working arms
         int workingArmsIndex = Random.Range(0, WorkingArms.Length);
 
-        WA.SetSprite(Body[headIndex], Face[faceIndex], PropellerArms[propellerIndex], WorkingArms[workingArmsIndex]);
+        WA.SetSprite(PropellerArms[propellerIndex], WorkingArms[workingArmsIndex], Body[headIndex], Face[faceIndex]);
         
-        WA.SetColor(GetRandomColorHSV(BodyColor), GetRandomColorHSV(ScreenColor), GetRandomColorHSV(PropellerArmsColor), GetRandomColorHSV(WorkingArmsColor));
+        WA.SetColor(GetRandomColorHSV(PropellerArmsColor), GetRandomColorHSV(WorkingArmsColor), GetRandomColorHSV(BodyColor), GetRandomColorHSV(ScreenColor));
     }
 
     private Color GetRandomColorHSV(Vector3[] colorRange)

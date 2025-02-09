@@ -9,6 +9,7 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
 {
     [SerializeField] public string Name;
     [SerializeField] public WorkerAppearance WorkerAppearance;
+    [SerializeField] public UIEventHandler WorkerClickDetector;
     [SerializeField] public Rigidbody2D Rigidbody;
     [SerializeField] public Collider2D Collider;
     [SerializeField] public WorkerAppearanceData IconAppearance;
@@ -39,28 +40,39 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
     public event System.Action<Worker> OnSelectEvent; 
     public event System.Action<Worker> OnDieEvent; 
     public event System.Action OnDetailsChanged;
-    private System.Action<PointerEventData> OnClickEventHandler;
+    private System.Action<PointerEventData> OnWorkerClickEventHandler;
+    private System.Action<PointerEventData> OnWorkerMouseEnterEventHandler;
+    private System.Action<PointerEventData> OnWorkerMouseExitEventHandler;
+    private System.Action<PointerEventData> OnIconClickEventHandler;
 
     void Awake()
     {
-        OnClickEventHandler = (eventData) => Select();
+        OnIconClickEventHandler = (eventData) => Select();
+        OnWorkerMouseEnterEventHandler = (eventData) => WorkerAppearance.ShowOutline(true);
+        OnWorkerMouseExitEventHandler = (eventData) => {if(WorkerManager.Instance.SelectedWorker != this) WorkerAppearance.ShowOutline(false); };
     }
     
     void OnEnable()
     {
         workerData.UpdateTotalAttribute();
-        iconClickDetector.OnLeftClickEvent += OnClickEventHandler;
+        WorkerClickDetector.OnLeftClickEvent += OnWorkerClickEventHandler;
+        WorkerClickDetector.OnPointerEnterEvent += OnWorkerMouseEnterEventHandler;
+        WorkerClickDetector.OnPointerExitEvent += OnWorkerMouseExitEventHandler;
+        iconClickDetector.OnLeftClickEvent += OnIconClickEventHandler;
+
+    }
+    void OnDisable()
+    {
+        WorkerClickDetector.OnLeftClickEvent -= OnWorkerClickEventHandler;
+        WorkerClickDetector.OnPointerEnterEvent -= OnWorkerMouseEnterEventHandler;
+        WorkerClickDetector.OnPointerExitEvent -= OnWorkerMouseExitEventHandler;
+        iconClickDetector.OnLeftClickEvent -= OnIconClickEventHandler;
     }
 
     void Start()
     {
         workerData.Health = workerData.TotalStats.MaxHealth;
         StartCoroutine(RegenHealth());
-    }
-
-    void Update()
-    {
-        
     }
 
     IEnumerator RegenHealth()
@@ -151,6 +163,7 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
         {
             PlayerManager.Instance.SetState(PlayerManager.PlayerState.command);
         }
+        WorkerAppearance.ShowOutline(true);
         SetAvailability(false);
         OnSelectEvent?.Invoke(this);
 
@@ -163,6 +176,7 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
         {
             SetAvailability(true);
         }
+        WorkerAppearance.ShowOutline(false);
     }
 
     public void SetAvailability(bool availability)
@@ -240,10 +254,7 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
         WorkerManager.Instance.RemoveWorker(this);
     }
 
-    void OnDisable()
-    {
-        iconClickDetector.OnLeftClickEvent -= OnClickEventHandler;
-    }
+
 
 }
 
