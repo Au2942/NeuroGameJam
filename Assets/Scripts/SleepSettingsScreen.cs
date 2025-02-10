@@ -155,7 +155,7 @@ public class SleepSettingsScreen : MonoBehaviour
     {
         if(GetRemainingSleepPoints() < hoursPerAddedWorker) return;
         Worker worker = WorkerManager.Instance.AddWorker();
-        worker.AddedOverlay.gameObject.SetActive(true);
+        worker.Icon.ShowNewWorkerBG(true);
         worker.Select();
         addedWorkers.Add(worker);
         WorkerDetails.NewButton.transform.SetAsLastSibling();
@@ -194,13 +194,14 @@ public class SleepSettingsScreen : MonoBehaviour
 
         foreach(Worker worker in trainedWorkers)
         {
+            float previousMaxHealth = worker.TotalStats.MaxHealth;
             worker.ApplyAllocAttributes();
-            worker.workerData.Health = worker.TotalStats.MaxHealth;
+            worker.workerData.Health = worker.TotalStats.MaxHealth * worker.workerData.Health / previousMaxHealth;
         }
 
         foreach(Worker worker in addedWorkers)
         {
-            worker.AddedOverlay.gameObject.SetActive(false);
+            worker.Icon.ShowNewWorkerBG(false);
         }
 
         PlayerManager.Instance.HealHealth(GetRemainingSleepPoints()*healthPerHours/hoursPerRestoreHealthChunk);
@@ -225,8 +226,20 @@ public class SleepSettingsScreen : MonoBehaviour
     {
         allocedAttributes = 0;
         sleepHours = 0;
+
+        foreach(Worker worker in trainedWorkers)
+        {
+            worker.ResetAllocAttributes();
+        }
+        foreach(Worker worker in addedWorkers)
+        {
+            WorkerManager.Instance.RemoveWorker(worker);
+        }
+
         addedWorkers.Clear();
         trainedWorkers.Clear();
+
+        sleepHourSlider.value = 0;
 
         workerPanel.SetParent(actionsPanel);
         WorkerManager.Instance.DeselectWorker();

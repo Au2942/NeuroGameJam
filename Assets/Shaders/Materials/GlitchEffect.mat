@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Masked
-  m_Shader: {fileID: 10770, guid: 0000000000000000f000000000000000, type: 0}
+  m_Name: GlitchEffect
+  m_Shader: {fileID: 4800000, guid: e64d5f64cc2a2534995bd41ac84424cd, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -23,35 +23,31 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _AlphaTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _MaskTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _NormalMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Ints: []
+    m_Ints:
+    - _BlockSeed1: 71
+    - _BlockSeed2: 113
+    - _BlockSize: 32
+    - _BlockStride: 1
     m_Floats:
+    - _BlockStrength: 0
     - _ColorMask: 15
-    - _EnableExternalAlpha: 0
-    - _Stencil: 2
+    - _Shake: 0
+    - _Stencil: 1
     - _StencilComp: 3
-    - _StencilOp: 0
-    - _StencilReadMask: 1
+    - _StencilOp: 2
+    - _StencilReadMask: 0
     - _StencilWriteMask: 0
+    - _UIMaskSoftnessX: 1
+    - _UIMaskSoftnessY: 1
     - _UseUIAlphaClip: 0
-    - _ZWrite: 0
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ClipRect: {r: 0, g: 0, b: 0, a: 0}
+    - _Drift: {r: 0, g: 0, b: 0, a: 0}
+    - _Jitter: {r: 0, g: 0, b: 0, a: 0}
+    - _Jump: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

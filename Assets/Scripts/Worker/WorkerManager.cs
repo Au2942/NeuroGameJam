@@ -56,7 +56,7 @@ public class WorkerManager : MonoBehaviour
         Workers.Add(newWorker);
 
         WorkerAppearanceGenerator.GenerateAppearance(newWorker.WorkerAppearance);
-        newWorker.IconAppearance.CopyData(newWorker.WorkerAppearance.WorkerAppearanceData);
+        newWorker.Icon.Appearance.CopyData(newWorker.WorkerAppearance.WorkerAppearanceData);
 
         newWorker.OnSelectEvent += SelectWorker;
 

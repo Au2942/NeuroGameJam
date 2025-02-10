@@ -21,7 +21,7 @@ public class ScreenEffectController : MonoBehaviour
         screenEffectVolumeComponent.intensity.value = 0;
     }
 
-    public void SetScreenEffectSettings(float noiseStrength, float noiseAmount, float noiseIntensity, float scanlineStrength, float scanlineAmount)
+    public void SetScreenEffectSettings(float noiseStrength, float noiseAmount, float noiseIntensity, float scanlineStrength, int scanlineAmount)
     {
         screenEffectVolumeComponent.noiseStrength.value = noiseStrength;
         screenEffectVolumeComponent.noiseAmount.value = noiseAmount;

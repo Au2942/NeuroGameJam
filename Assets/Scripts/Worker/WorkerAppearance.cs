@@ -3,15 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using CompositeCanvas;
 
 public class WorkerAppearance : MonoBehaviour
 {
     [SerializeField] public WorkerAppearanceData WorkerAppearanceData = new WorkerAppearanceData();
+    [SerializeField] public CompositeCanvasRenderer CompositeRenderer;
     [SerializeField] public RectTransform AppearanceRect;
     [SerializeField] private Material outlineMaterial;
     [SerializeField] private Material tpMaterial;
+    private Material tempOutlineMaterial;
     private Material tempTPMaterial;
-    private Queue<Material> originalMaterials = new Queue<Material>();
     private bool isTeleporting = false;
     private bool outlineVisible = false;
 
@@ -19,24 +21,31 @@ public class WorkerAppearance : MonoBehaviour
     {
         if(AppearanceRect == null)
             AppearanceRect = GetComponent<RectTransform>();
-
+        if(outlineMaterial != null)
+        {
+            tempOutlineMaterial = new Material(outlineMaterial);
+        }
         if(tpMaterial != null)
+        {
             tempTPMaterial = new Material(tpMaterial);
+        }
         gameObject.SetActive(false);
     }
 
     public void ShowOutline(bool show)
     {
-        if(outlineMaterial == null || isTeleporting)
+        if(tempOutlineMaterial == null || isTeleporting)
         {
             return;
         }
         outlineVisible = show;
         if(outlineVisible)
         {
-            WorkerAppearanceData.Body.material = outlineMaterial;
-            WorkerAppearanceData.PropellerArms.material = outlineMaterial;
-            WorkerAppearanceData.WorkingArms.material = outlineMaterial;
+            CompositeRenderer.material = tempOutlineMaterial;
+        }
+        else
+        {
+            CompositeRenderer.material = CompositeRenderer.defaultMaterial;
         }
 
     }
@@ -49,28 +58,20 @@ public class WorkerAppearance : MonoBehaviour
         }
         ShowOutline(false);
         isTeleporting = true;
-        foreach(Image image in WorkerAppearanceData)
-        {
-            originalMaterials.Enqueue(image.material);
-            image.material = tempTPMaterial;
-        }
-        Image body = WorkerAppearanceData.Body;
-        body.materialForRendering.SetFloat("_Seed", Random.Range(0, 1000));
+        tempTPMaterial.SetFloat("_Seed", Random.Range(0, 1000));
+        CompositeRenderer.material = tempTPMaterial;
         float elapsedTime = 0f;
         while(elapsedTime < duration)
         {
             float progress = reverse ? 1 - elapsedTime / duration : elapsedTime / duration;
-            body.materialForRendering.SetFloat("_Progress", progress);
+            CompositeRenderer.material.SetFloat("_Progress", progress);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        body.materialForRendering.SetFloat("_Progress", reverse ? 0 : 1);
-        
-        foreach(Image image in WorkerAppearanceData)
-        {
-            image.material = originalMaterials.Dequeue();
-        }
+        CompositeRenderer.material.SetFloat("_Progress", reverse ? 0 : 1);
+        CompositeRenderer.material = CompositeRenderer.defaultMaterial;
+
         isTeleporting = false;
         ShowOutline(outlineVisible);
     }
@@ -107,9 +108,27 @@ public class WorkerAppearance : MonoBehaviour
 
     void OnDestroy()
     {
+        if(tempOutlineMaterial != null)
+        {
+            if(Application.isPlaying)
+            {
+                Destroy(tempOutlineMaterial);
+            }
+            else
+            {
+                DestroyImmediate(tempOutlineMaterial, true);
+            }
+        }
         if(tempTPMaterial != null)
         {
-            DestroyImmediate(tempTPMaterial);
+            if(Application.isPlaying)
+            {
+                Destroy(tempTPMaterial);
+            }
+            else
+            {
+                DestroyImmediate(tempTPMaterial, true);
+            }
         }
     }
      

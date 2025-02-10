@@ -1,5 +1,14 @@
 {
   "dependencies": {
+    "com.coffee.composite-canvas-renderer": {
+      "version": "https://github.com/mob-sakai/CompositeCanvasRenderer.git?path=Packages/src",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.ugui": "1.0.0"
+      },
+      "hash": "6781c96265274c6dffcdc7764ba1be20ebe9b71d"
+    },
     "com.kyrylokuzyk.primetween": {
       "version": "file:../Assets/Plugins/PrimeTween/internal/com.kyrylokuzyk.primetween.tgz",
       "depth": 0,

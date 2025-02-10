@@ -1,12 +1,18 @@
 //copy from 2D shuffle by anastadunbar https://www.shadertoy.com/view/MdtXRf
 #ifndef SHUFFLED_INCLUDED
 #define SHUFFLED_INCLUDED
-#define rand(co) frac(sin((co)*(91.3458))*47453.5453)
+
+float rand_float(float co) 
+{
+    return frac(sin((co)*(91.3458))*47453.5453);
+}
+
+
 float shuffle_float(float x,float div,float i,float seed){
-    float original = x;
+    uint original = floor(x);
     i += seed;
-    float from = float(floor(rand((i)*.22)*div));
-    float to = float(floor(rand(i*.82)*div));
+    uint from = uint(floor(rand_float(i*.22)*div));
+    uint to = uint(floor(rand_float(i*.82)*div));
     if(original==from){x=to;}
     if(original==to){x=from;}
     return x;

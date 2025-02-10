@@ -509,9 +509,9 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -299.0000305175781,
-            "y": 340.0000305175781,
-            "width": 207.99998474121095,
+            "x": -257.0000305175781,
+            "y": 390.0000305175781,
+            "width": 208.00001525878907,
             "height": 302.0000305175781
         }
     },
@@ -532,7 +532,7 @@
         "x"
     ],
     "m_Precision": 0,
-    "m_PreviewExpanded": true,
+    "m_PreviewExpanded": false,
     "m_DismissedVersion": 0,
     "m_PreviewMode": 0,
     "m_CustomColors": {
@@ -545,7 +545,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector4MaterialSlot",
     "m_ObjectId": "056b2e91dce54757bda97830fda31aff",
     "m_Id": 0,
-    "m_DisplayName": "Color",
+    "m_DisplayName": "TPColor",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -679,7 +679,7 @@
         "linear interpolate"
     ],
     "m_Precision": 0,
-    "m_PreviewExpanded": true,
+    "m_PreviewExpanded": false,
     "m_DismissedVersion": 0,
     "m_PreviewMode": 0,
     "m_CustomColors": {
@@ -999,10 +999,10 @@
     "m_Guid": {
         "m_GuidSerialized": "f1e33c77-4278-4bd9-92aa-245e3c8240cc"
     },
-    "m_Name": "Color",
+    "m_Name": "TPColor",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Color",
-    "m_DefaultReferenceName": "_Color",
+    "m_RefNameGeneratedByDisplayName": "TPColor",
+    "m_DefaultReferenceName": "_TPColor",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
@@ -1973,10 +1973,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -447.00006103515627,
-            "y": 40.000022888183597,
-            "width": 208.00003051757813,
-            "height": 361.0
+            "x": -292.0000305175781,
+            "y": 111.99999237060547,
+            "width": 160.99998474121095,
+            "height": 176.99996948242188
         }
     },
     "m_Slots": [
@@ -2016,7 +2016,7 @@
         "overwrite"
     ],
     "m_Precision": 0,
-    "m_PreviewExpanded": true,
+    "m_PreviewExpanded": false,
     "m_DismissedVersion": 0,
     "m_PreviewMode": 0,
     "m_CustomColors": {

@@ -23,7 +23,8 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs: []
-    m_Ints: []
+    m_Ints:
+    - _ScanlineAmount: 600
     m_Floats:
     - _NoiseAmount: 50
     - _NoiseIntensity: 0.1

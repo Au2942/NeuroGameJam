@@ -29,7 +29,7 @@ public class WorkHandler
         
         workerAppearanceRect.position = mousePosition;
         workerAppearanceRect.SetParent(entityCell);
-        workerAppearanceRect.SetAsFirstSibling();
+        workerAppearanceRect.SetAsLastSibling();
         workerAppearanceRect.localScale = Vector3.one;
 
         yield return worker.StartCoroutine(worker.WorkerAppearance.PlayTeleportEffect(worker.TotalStats.ResponseTime));
@@ -276,7 +276,7 @@ public class WorkHandler
         worker.StartCoroutine(worker.WorkerAppearance.PlayTeleportEffect(worker.TotalStats.ResponseTime, true));
         while(elapsedTime < worker.TotalStats.ResponseTime)
         {
-            worker.CooldownOverlay.fillAmount = 1-(elapsedTime / worker.TotalStats.ResponseTime);
+            worker.Icon.SetCooldownOverlay(1-(elapsedTime / worker.TotalStats.ResponseTime));
             elapsedTime += Time.deltaTime;
             yield return null;
         }
@@ -298,7 +298,7 @@ public class WorkHandler
     {
         entity = null;
         worker.SetAvailability(true);
-        worker.CooldownOverlay.fillAmount = 1;
+        worker.Icon.SetCooldownOverlay(1);
         workState = WorkState.None;
         if(WorkerManager.Instance.SelectedWorker == worker)
         {

@@ -48,12 +48,14 @@ public class MemoryBlock : MonoBehaviour
     {
         RectTransform rectTransform = GetComponent<RectTransform>();
         ScrollRect scrollRect = MemoryNavigator.ScrollRect;
-        float center = scrollRect.content.anchoredPosition.x;
-        float distanceFromCenter = Mathf.Abs(MemoryIndex*320f - center);
+        float memoryWidth = MemoryNavigator.GetMemoryWidth();
+        float center = MemoryNavigator.GetContentWidth()/2 - scrollRect.content.anchoredPosition.x; // width/2 - position.x
+        float blockPosition = MemoryNavigator.GetMemoryBlockPosition(MemoryIndex);
+        float distanceFromCenter = Mathf.Abs(blockPosition - center);
         float scale = 0.5f;
-        if(distanceFromCenter < 160f)
+        if(distanceFromCenter < memoryWidth/2)
         {
-            scale = 1f - distanceFromCenter / 320f;
+            scale = 1f - distanceFromCenter / memoryWidth;
             MemoryNavigator.SetNearestIndex(MemoryIndex);
         }
         rectTransform.localScale = new Vector3(scale, scale, 1);

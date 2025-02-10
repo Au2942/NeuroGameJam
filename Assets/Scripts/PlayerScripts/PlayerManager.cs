@@ -90,7 +90,6 @@ public class PlayerManager : MonoBehaviour, IStatusEffectable
 
         StreamEntity stream = Instantiate(newStream.stream, StreamRect);
         SetStreamName("Subathon " + newStream.streamName + " stream");
-        //GameManager.Instance.MemoryData.AddMemory("Subathon " + newStream.streamName + " stream", stream);
         StreamEntity = stream;
         SetPlayerStream(newStream);
 

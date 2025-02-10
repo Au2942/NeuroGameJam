@@ -193,11 +193,11 @@ RectTransform:
   - {fileID: 1128512654}
   m_Father: {fileID: 1736910481}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: -0.84185505, y: 0}
   m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 1, y: 0.5}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &36319371
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1021,7 +1021,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1206,7 +1206,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1961,6 +1961,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 424223850}
+  - component: {fileID: 424223851}
   m_Layer: 5
   m_Name: Accuracy
   m_TagString: Untagged
@@ -1991,6 +1992,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &424223851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 424223847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ee35b18d462d2340aa11f83dca71f60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  header: Accuracy & Reliability
+  content: Work success chance and damage avoidance chance of a worker.
+  delay: 0.5
 --- !u!1 &441413014
 GameObject:
   m_ObjectHideFlags: 0
@@ -2877,7 +2893,6 @@ GameObject:
   - component: {fileID: 621988134}
   - component: {fileID: 621988136}
   - component: {fileID: 621988135}
-  - component: {fileID: 621988137}
   m_Layer: 5
   m_Name: AccuracyIcon
   m_TagString: Untagged
@@ -2942,21 +2957,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 621988133}
   m_CullTransparentMesh: 1
---- !u!114 &621988137
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 621988133}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ee35b18d462d2340aa11f83dca71f60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  header: Accuracy & Reliability
-  content: Work success chance and damage avoidance chance of a worker.
-  delay: 0.5
 --- !u!1 &666368183
 GameObject:
   m_ObjectHideFlags: 0
@@ -3660,7 +3660,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -4361,6 +4361,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 887938269}
+  - component: {fileID: 887938270}
   m_Layer: 5
   m_Name: Heart
   m_TagString: Untagged
@@ -4391,6 +4392,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
+--- !u!114 &887938270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 887938266}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ee35b18d462d2340aa11f83dca71f60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  header: Heart
+  content: Total health and recovery rate of a worker.
+  delay: 0.5
 --- !u!1 &904740195
 GameObject:
   m_ObjectHideFlags: 0
@@ -4562,7 +4578,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -4656,6 +4672,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 995998926}
+  - component: {fileID: 995998927}
   m_Layer: 5
   m_Name: Latency
   m_TagString: Untagged
@@ -4686,6 +4703,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 1, y: 1}
+--- !u!114 &995998927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 995998923}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ee35b18d462d2340aa11f83dca71f60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  header: TUTEL
+  content: Task Update, Transmission and Execution Latency. Work speed of a worker.
+  delay: 0.5
 --- !u!1 &1014037330
 GameObject:
   m_ObjectHideFlags: 0
@@ -4697,7 +4729,6 @@ GameObject:
   - component: {fileID: 1014037331}
   - component: {fileID: 1014037333}
   - component: {fileID: 1014037332}
-  - component: {fileID: 1014037334}
   m_Layer: 5
   m_Name: HeartIcon
   m_TagString: Untagged
@@ -4762,21 +4793,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1014037330}
   m_CullTransparentMesh: 1
---- !u!114 &1014037334
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1014037330}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ee35b18d462d2340aa11f83dca71f60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  header: Heart
-  content: Total health and recovery rate of a worker.
-  delay: 0.5
 --- !u!1 &1036702524
 GameObject:
   m_ObjectHideFlags: 0
@@ -5233,7 +5249,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 3f05a141bf13b99458cee8807289d93d, type: 2}
+  m_Material: {fileID: 0}
   m_Color: {r: 0.13562375, g: 0.12882696, b: 0.14150941, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -6444,14 +6460,14 @@ MonoBehaviour:
   LatencyAddButton: {fileID: 904740196}
   LatencySubtractButton: {fileID: 1505722507}
   latencyText: {fileID: 915016705}
-  HeartTooltip: {fileID: 1014037334}
+  HeartTooltip: {fileID: 887938270}
   HeartBaseTooltip: Robustness of the worker.
-  ErrorRecoveryTooltip: {fileID: 2046378479}
+  ErrorRecoveryTooltip: {fileID: 1474524428}
   ErrorRecoveryBaseTooltip: Error Restoration Metric. Memory restoration capability
     of the worker.
-  AccuracyTooltip: {fileID: 621988137}
+  AccuracyTooltip: {fileID: 424223851}
   AccuracyBaseTooltip: Accuracy in identifying problem of the worker.
-  LatencyTooltip: {fileID: 1851877440}
+  LatencyTooltip: {fileID: 995998927}
   LatencyBaseTooltip: Task Update, Transmission and Execution Latency. Responsiveness
     of the worker.
   allocColor: {r: 0.4292453, g: 0.91718477, b: 1, a: 0}
@@ -6628,15 +6644,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 12
-    m_Right: 12
-    m_Top: 12
-    m_Bottom: 12
+    m_Left: 6
+    m_Right: 6
+    m_Top: 6
+    m_Bottom: 6
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 96, y: 96}
-  m_Spacing: {x: 12, y: 12}
+  m_CellSize: {x: 108, y: 108}
+  m_Spacing: {x: 6, y: 6}
   m_Constraint: 0
   m_ConstraintCount: 3
 --- !u!1 &1405532014
@@ -6989,6 +7005,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1474524427}
+  - component: {fileID: 1474524428}
   m_Layer: 5
   m_Name: ERM
   m_TagString: Untagged
@@ -7019,6 +7036,22 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 1, y: 0}
+--- !u!114 &1474524428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1474524424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ee35b18d462d2340aa11f83dca71f60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  header: ERM
+  content: Error Restoration Metric. Memory's integrity restoration capability of
+    a worker.
+  delay: 0.5
 --- !u!1 &1495817792
 GameObject:
   m_ObjectHideFlags: 0
@@ -8485,7 +8518,7 @@ GameObject:
   - component: {fileID: 1736910481}
   - component: {fileID: 1736910484}
   - component: {fileID: 1736910483}
-  - component: {fileID: 1736910482}
+  - component: {fileID: 1736910485}
   m_Layer: 5
   m_Name: MemoryView
   m_TagString: Untagged
@@ -8513,19 +8546,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1736910482
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1736910480}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ShowMaskGraphic: 1
 --- !u!114 &1736910483
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8564,6 +8584,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1736910480}
   m_CullTransparentMesh: 1
+--- !u!114 &1736910485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1736910480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3312d7739989d2b4e91e6319e9a96d76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding: {x: 0, y: 0, z: 0, w: 0}
+  m_Softness: {x: 0, y: 0}
 --- !u!1 &1797779446
 GameObject:
   m_ObjectHideFlags: 0
@@ -8703,7 +8737,6 @@ GameObject:
   - component: {fileID: 1851877437}
   - component: {fileID: 1851877439}
   - component: {fileID: 1851877438}
-  - component: {fileID: 1851877440}
   m_Layer: 5
   m_Name: LatencyIcon
   m_TagString: Untagged
@@ -8768,21 +8801,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1851877436}
   m_CullTransparentMesh: 1
---- !u!114 &1851877440
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1851877436}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ee35b18d462d2340aa11f83dca71f60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  header: TUTEL
-  content: Task Update, Transmission and Execution Latency. Work speed of a worker.
-  delay: 0.5
 --- !u!1 &1863377379
 GameObject:
   m_ObjectHideFlags: 0
@@ -9464,7 +9482,7 @@ GameObject:
   - component: {fileID: 1930635745}
   - component: {fileID: 1930635748}
   - component: {fileID: 1930635747}
-  - component: {fileID: 1930635746}
+  - component: {fileID: 1930635749}
   m_Layer: 5
   m_Name: SWARMView
   m_TagString: Untagged
@@ -9492,19 +9510,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1930635746
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1930635744}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ShowMaskGraphic: 1
 --- !u!114 &1930635747
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9543,6 +9548,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1930635744}
   m_CullTransparentMesh: 1
+--- !u!114 &1930635749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1930635744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3312d7739989d2b4e91e6319e9a96d76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding: {x: 0, y: 0, z: 0, w: 0}
+  m_Softness: {x: 0, y: 0}
 --- !u!1 &1989806315
 GameObject:
   m_ObjectHideFlags: 0
@@ -10214,7 +10233,6 @@ GameObject:
   - component: {fileID: 2046378476}
   - component: {fileID: 2046378478}
   - component: {fileID: 2046378477}
-  - component: {fileID: 2046378479}
   m_Layer: 5
   m_Name: ERMIcon
   m_TagString: Untagged
@@ -10279,22 +10297,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2046378475}
   m_CullTransparentMesh: 1
---- !u!114 &2046378479
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2046378475}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ee35b18d462d2340aa11f83dca71f60, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  header: ERM
-  content: Error Restoration Metric. Memory's integrity restoration capability of
-    a worker.
-  delay: 0.5
 --- !u!1 &2062755056
 GameObject:
   m_ObjectHideFlags: 0

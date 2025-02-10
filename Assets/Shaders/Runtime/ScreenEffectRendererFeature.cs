@@ -11,9 +11,9 @@ public class ScreenEffectsSettings
     [Range(0,100f)] public float noiseAmount;
     [Range(0,1f)] public float noiseIntensity;
     [Range(0,1f)] public float scanlineStrength;
-    [Range(0,1000f)] public float scanlineAmount;
+    [Range(0,1000f)] public int scanlineAmount;
     
-    public ScreenEffectsSettings(float noiseStrength, float noiseAmount, float noiseIntensity, float scanlineStrength, float scanlineAmount)
+    public ScreenEffectsSettings(float noiseStrength, float noiseAmount, float noiseIntensity, float scanlineStrength, int scanlineAmount)
     {
         this.noiseStrength = noiseStrength;
         this.noiseAmount = noiseAmount;
@@ -90,7 +90,7 @@ public class ScreenEffectRendererFeature : ScriptableRendererFeature
                 m_BlitMaterial.SetFloat(noiseAmountID, settings.noiseAmount);
                 m_BlitMaterial.SetFloat(noiseIntensityID, settings.noiseIntensity);
                 m_BlitMaterial.SetFloat(scanlineStrengthID, settings.scanlineStrength);
-                m_BlitMaterial.SetFloat(scanlineAmountID, settings.scanlineAmount);
+                m_BlitMaterial.SetInteger(scanlineAmountID, settings.scanlineAmount);
             }
             else
             {
@@ -98,7 +98,7 @@ public class ScreenEffectRendererFeature : ScriptableRendererFeature
                 m_BlitMaterial.SetFloat(noiseAmountID, defaultSettings.noiseAmount);
                 m_BlitMaterial.SetFloat(noiseIntensityID, defaultSettings.noiseIntensity);
                 m_BlitMaterial.SetFloat(scanlineStrengthID, defaultSettings.scanlineStrength);
-                m_BlitMaterial.SetFloat(scanlineAmountID, defaultSettings.scanlineAmount);
+                m_BlitMaterial.SetInteger(scanlineAmountID, defaultSettings.scanlineAmount);
             }
 
         }
@@ -146,7 +146,7 @@ public class ScreenEffectRendererFeature : ScriptableRendererFeature
         }
         else
         {
-            DestroyImmediate(tempMaterial);
+            DestroyImmediate(tempMaterial, true);
         }
     }
 

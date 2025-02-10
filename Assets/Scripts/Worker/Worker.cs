@@ -12,11 +12,7 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
     [SerializeField] public UIEventHandler WorkerClickDetector;
     [SerializeField] public Rigidbody2D Rigidbody;
     [SerializeField] public Collider2D Collider;
-    [SerializeField] public WorkerAppearanceData IconAppearance;
-    [SerializeField] public UIEventHandler iconClickDetector; 
-    [SerializeField] public Image DamageBar;
-    [SerializeField] public Image CooldownOverlay;
-    [SerializeField] public Image AddedOverlay;
+    [SerializeField] public WorkerIcon Icon;
     [SerializeField] public WorkerData workerData = new WorkerData();
     public WorkerAttributes BaseAttributes => workerData.BaseAttributes;
     public WorkerAttributes TempAttributes => workerData.TempAttributes;
@@ -45,11 +41,15 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
     private System.Action<PointerEventData> OnWorkerMouseExitEventHandler;
     private System.Action<PointerEventData> OnIconClickEventHandler;
 
+
+
     void Awake()
     {
-        OnIconClickEventHandler = (eventData) => Select();
         OnWorkerMouseEnterEventHandler = (eventData) => WorkerAppearance.ShowOutline(true);
         OnWorkerMouseExitEventHandler = (eventData) => {if(WorkerManager.Instance.SelectedWorker != this) WorkerAppearance.ShowOutline(false); };
+        OnIconClickEventHandler = (eventData) => Select();
+        Icon.ClickDetector.OnLeftClickEvent += OnIconClickEventHandler;
+
     }
     
     void OnEnable()
@@ -58,7 +58,6 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
         WorkerClickDetector.OnLeftClickEvent += OnWorkerClickEventHandler;
         WorkerClickDetector.OnPointerEnterEvent += OnWorkerMouseEnterEventHandler;
         WorkerClickDetector.OnPointerExitEvent += OnWorkerMouseExitEventHandler;
-        iconClickDetector.OnLeftClickEvent += OnIconClickEventHandler;
 
     }
     void OnDisable()
@@ -66,7 +65,7 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
         WorkerClickDetector.OnLeftClickEvent -= OnWorkerClickEventHandler;
         WorkerClickDetector.OnPointerEnterEvent -= OnWorkerMouseEnterEventHandler;
         WorkerClickDetector.OnPointerExitEvent -= OnWorkerMouseExitEventHandler;
-        iconClickDetector.OnLeftClickEvent -= OnIconClickEventHandler;
+        Icon.ClickDetector.OnLeftClickEvent -= OnIconClickEventHandler;
     }
 
     void Start()
@@ -102,7 +101,8 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
             PopupTextSpawner.Instance.SpawnPopupText(WorkerAppearance.transform, WorkerAppearance.transform.position, value.ToString(), 0.5f, value > 0 ? Color.green : Color.red);
         }
 
-        DamageBar.fillAmount = 1 - workerData.Health / workerData.TotalStats.MaxHealth;
+        Icon.SetDamageBar(1 - workerData.Health / workerData.TotalStats.MaxHealth);
+
         if(workerData.Health <= 0)
         {
             Die();
@@ -164,32 +164,19 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
             PlayerManager.Instance.SetState(PlayerManager.PlayerState.command);
         }
         WorkerAppearance.ShowOutline(true);
-        SetAvailability(false);
+        Icon.ShowSelectBorder(true);
         OnSelectEvent?.Invoke(this);
-
     }
-
 
     public void Deselect()
     {
-        if(WorkHandler.workState == WorkHandler.WorkState.None)
-        {
-            SetAvailability(true);
-        }
         WorkerAppearance.ShowOutline(false);
+        Icon.ShowSelectBorder(false);
     }
 
     public void SetAvailability(bool availability)
     {
-        IsAvailable = availability;
-        if(IsAvailable)
-        {
-            CooldownOverlay.gameObject.SetActive(false);
-        }
-        else
-        {
-            CooldownOverlay.gameObject.SetActive(true);
-        }
+        Icon.DisplayCooldownOverlay(!availability);
     }
     public void DoMaintenance(MemoryEntity entity)
     {
@@ -201,10 +188,6 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
         StartCoroutine(WorkHandler.StartRepairing(entity, this));
     }
 
-    void OnDestroy()
-    {
-        iconClickDetector.OnLeftClickEvent -= (eventData) => Select();
-    }
 
     public void Attack()
     {

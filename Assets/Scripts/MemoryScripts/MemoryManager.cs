@@ -69,7 +69,7 @@ public class MemoryManager : MonoBehaviour
         MemoryInfo memoryInfo = MemoryData.AddMemory("Memory of " + stream.name + "stream #" + MemoryTypesCount[stream.name], memory);
         
         MemoryNavigator.SetupMemoryBlock(memory, memoryInfo);
-        MemoryNavigator.SetCurrentMemoryIndex(CurrentMemoryIndex);
+        MemoryNavigator.SetCurrentMemoryIndex(CurrentMemoryIndex, false);
 
         return memory.gameObject;
     }

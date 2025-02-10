@@ -10,7 +10,7 @@ public class MemoryNavigator : MonoBehaviour
     [SerializeField] private RectTransform memoryContent;
     [SerializeField] private HealthIndicator healthIndicator;
     [SerializeField] private float memoryWidth = 320;
-    [SerializeField] public float distanceBetweenIndex = 896;
+    [SerializeField] public float distanceBetweenIndex = 0;
     [SerializeField] private float cooldownBetweenNavigation = 0.2f;
     [SerializeField] public int CurrentMemoryIndex = 0;
     public MemoryData MemoryData => MemoryManager.Instance.MemoryData;
@@ -98,7 +98,7 @@ public class MemoryNavigator : MonoBehaviour
         }
     }
 
-    public void SetCurrentMemoryIndex(int index)
+    public void SetCurrentMemoryIndex(int index, bool smooth = true)
     {
         if(index < 0 || index >= MemoryCount)
         {
@@ -106,7 +106,7 @@ public class MemoryNavigator : MonoBehaviour
         }
         CurrentMemoryIndex = index;
         SetFocusMemory(CurrentMemoryIndex);
-        ScrollToIndex(CurrentMemoryIndex);
+        ScrollToIndex(CurrentMemoryIndex, smooth);
         SetIntegrityBarEntity(MemoryData.GetMemoryEntity(CurrentMemoryIndex));
         OnChangeMemoryIndex?.Invoke(CurrentMemoryIndex);
     }
@@ -137,10 +137,17 @@ public class MemoryNavigator : MonoBehaviour
         }
     }
 
-    private void ScrollToIndex(int index)
+    private void ScrollToIndex(int index, bool smooth = true)
     {
-        if(smoothScrollCoroutine != null) StopCoroutine(smoothScrollCoroutine);
-        smoothScrollCoroutine = StartCoroutine(SmoothScrollTo(index));
+        if(smooth)
+        {
+            if(smoothScrollCoroutine != null) StopCoroutine(smoothScrollCoroutine);
+            smoothScrollCoroutine = StartCoroutine(SmoothScrollTo(index));
+        }
+        else
+        {
+            InstantScrollTo(index);
+        }
     }
 
     private void SetIntegrityBarEntity(MemoryEntity entity)
@@ -162,6 +169,21 @@ public class MemoryNavigator : MonoBehaviour
 
     }
 
+    public float GetMemoryWidth()
+    {
+        return memoryWidth;
+    }
+
+    public float GetMemoryBlockPosition(int index)
+    {
+        return distanceBetweenIndex * (2 + MemoryCount - index);
+    }
+
+    public float GetContentWidth()
+    {
+        int blockCount = MemoryCount + 5; // 4 buffers and 1 extra from the 2x size middle memory
+        return blockCount * memoryWidth + (blockCount-1) * memoryContent.GetComponent<HorizontalLayoutGroup>().spacing;
+    }
     
 
     public void SnapToNearestMemory()
@@ -173,6 +195,7 @@ public class MemoryNavigator : MonoBehaviour
     {
         nearestIndex = index;
     }
+
 
     IEnumerator SnapToNearestMemoryRoutine()
     {
@@ -195,6 +218,12 @@ public class MemoryNavigator : MonoBehaviour
         }
     }
 
+    public void InstantScrollTo(int index)
+    {
+        memoryContent.anchoredPosition = new Vector2(-memoryWidth/2*(MemoryCount-1) + memoryWidth * index, memoryContent.anchoredPosition.y);
+    }
+
+
     IEnumerator SmoothScrollTo(int index)
     {
         ScrollRect.StopMovement();
@@ -202,7 +231,7 @@ public class MemoryNavigator : MonoBehaviour
         float elapsedTime = 0f;
 
         float contentOffset = memoryContent.anchoredPosition.x; // Offset of content
-        float targetX = index * memoryWidth;
+        float targetX = -memoryWidth/2*(MemoryCount-1) + memoryWidth * index;
     
 
         while (elapsedTime < duration)

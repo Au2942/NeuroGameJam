@@ -92,7 +92,7 @@ public class WorkerDetails : MonoBehaviour
 
     private void ClearInfos()
     {
-        workerNameText.text = "ID :";
+        workerNameText.text = "ID:";
         for(int i = 0; i < statusEffectIcons.Count; i++)
         {
             StatusEffectIcon icon = statusEffectIcons[i];
@@ -133,11 +133,11 @@ public class WorkerDetails : MonoBehaviour
         }
         if (tempVal > 0)
         {
-            sb.Append(buffColorHex).Append("(").Append(NumberToTier(baseVal+allocVal+tempVal)).Append(")</color>");
+            sb.Append(buffColorHex).Append("+").Append(tempVal).Append("</color>");
         }
         else if(tempVal < 0)
         {
-            sb.Append(debuffColorHex).Append("(").Append(NumberToTier(baseVal+allocVal+tempVal)).Append(")</color>");
+            sb.Append(debuffColorHex).Append("+").Append(tempVal).Append("</color>");
         }
         return sb.ToString();
     }
@@ -187,11 +187,11 @@ public class WorkerDetails : MonoBehaviour
         }
         if (tempVal > 0)
         {
-            sb.Append(moreIsBetter? buffColorHex : debuffColorHex).Append("(").Append("+").Append(tempVal).Append(")</color>");
+            sb.Append(moreIsBetter? buffColorHex : debuffColorHex).Append("+").Append(tempVal).Append("</color>");
         }
         else if(tempVal < 0)
         {
-            sb.Append(moreIsBetter? debuffColorHex : buffColorHex).Append("(").Append(tempVal).Append(")</color>");
+            sb.Append(moreIsBetter? debuffColorHex : buffColorHex).Append(tempVal).Append("</color>");
         }
         return sb.ToString();
     }

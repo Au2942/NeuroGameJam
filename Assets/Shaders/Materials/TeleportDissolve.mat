@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Outline
-  m_Shader: {fileID: -6465566751694194690, guid: 8f15e66ba0268f045803dfda0a711649, type: 3}
+  m_Name: TeleportDissolve
+  m_Shader: {fileID: -6465566751694194690, guid: a296d0d8ca2703042b4fe7a97a8eb7ea, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -42,16 +42,19 @@ Material:
     m_Ints: []
     m_Floats:
     - _ColorMask: 15
+    - _Progress: 1
+    - _Seed: 0
+    - _Size: 25
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0
     - _StencilReadMask: 255
     - _StencilWriteMask: 255
-    - _Thickness: 1
     - _UIMaskSoftnessX: 1
     - _UIMaskSoftnessY: 1
     m_Colors:
     - _ClipRect: {r: 0, g: 0, b: 0, a: 0}
-    - _Color: {r: 0, g: 1, b: 0.9424863, a: 1}
+    - _Color: {r: 0, g: 3.471698, b: 2.8977888, a: 1}
+    - _TPColor: {r: 0, g: 2, b: 0.6261497, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

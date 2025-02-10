@@ -82,7 +82,7 @@ Shader "CustomEffects/FlickerScanline_Shader"
         _NoiseAmount ("Noise Amount", Range(0, 100)) = 50
         _NoiseIntensity ("Noise Intensity", Range(0, 1)) = 0.1
         _ScanlineStrength ("Scanline Strength", Range(0, 1)) = 1
-        _ScanlineAmount ("Scanline Amount", Range(0, 1000)) = 600
+        _ScanlineAmount ("Scanline Amount", Integer) = 600
     }
     SubShader
     {		

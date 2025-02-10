@@ -1,13 +1,14 @@
 using UnityEngine;
 using UnityEngine.UI;
+using CompositeCanvas;
 
 
 
 public class GlitchOverlay : MonoBehaviour
 {
-    [SerializeField] private Image glitchEffect;
+    [SerializeField] private CompositeCanvasRenderer glitchEffect;
     [SerializeField] Material glitchMaterial;
-    [SerializeField] private float blockSize = 32f;
+    [SerializeField] private int blockSize = 32;
     [SerializeField] private float maxBlock = 1f;
     [SerializeField] private float maxDrift = 0.1f;
     [SerializeField] private float maxJitter = 0.1f;
@@ -43,16 +44,14 @@ public class GlitchOverlay : MonoBehaviour
     void Start()
     {
         tempMaterial = new Material(glitchMaterial);
-        glitchEffect.material = tempMaterial;
         MemoryManager.Instance.MemoryNavigator.ScrollRect.onValueChanged.AddListener(delegate {UpdateBounds();});
-        glitchEffect.gameObject.SetActive(show);
     }
 
     public void UpdateBounds()
     {
         Vector3[] corners = new Vector3[4];
         glitchEffect.rectTransform.GetWorldCorners(corners);
-        glitchEffect.materialForRendering.SetVector("_MeshBound", 
+        glitchEffect.material.SetVector("_MeshBound", 
             new Vector4(corners[0].x, corners[0].y, corners[2].x, corners[2].y));
     }
 
@@ -69,14 +68,14 @@ public class GlitchOverlay : MonoBehaviour
     public void Show()
     {
         show = true;
+        glitchEffect.material = tempMaterial;
         UpdateBounds();
-        glitchEffect.gameObject.SetActive(show);
     }
 
     public void Hide()
     {
         show = false;
-        glitchEffect.gameObject.SetActive(show);
+        glitchEffect.material = glitchEffect.defaultMaterial;
     }
 
     public void SetGlitchIntensity(float percentage)
@@ -179,22 +178,28 @@ public class GlitchOverlay : MonoBehaviour
 
         var vjump = new Vector2(_jumpTime, jump);
 
-        glitchEffect.materialForRendering.SetFloat(blockSizeID, blockSize);
-        glitchEffect.materialForRendering.SetFloat(blockStrengthID, block3);
-        glitchEffect.materialForRendering.SetInt(blockStrideID, _blockStride);
-        glitchEffect.materialForRendering.SetInt(blockSeed1ID, _blockSeed1);
-        glitchEffect.materialForRendering.SetInt(blockSeed2ID, _blockSeed2);
-        glitchEffect.materialForRendering.SetVector(driftID, vdrift);
-        glitchEffect.materialForRendering.SetVector(jitterID, vjitter);
-        glitchEffect.materialForRendering.SetVector(jumpID, vjump);
-        glitchEffect.materialForRendering.SetFloat(shakeID, shake);
+        glitchEffect.material.SetInteger(blockSizeID, blockSize);
+        glitchEffect.material.SetFloat(blockStrengthID, block3);
+        glitchEffect.material.SetInteger(blockStrideID, _blockStride);
+        glitchEffect.material.SetInteger(blockSeed1ID, _blockSeed1);
+        glitchEffect.material.SetInteger(blockSeed2ID, _blockSeed2);
+        glitchEffect.material.SetVector(driftID, vdrift);
+        glitchEffect.material.SetVector(jitterID, vjitter);
+        glitchEffect.material.SetVector(jumpID, vjump);
+        glitchEffect.material.SetFloat(shakeID, shake);
         
         
     }
 
     void OnDestroy()
     {
-        //MemoryNavigationManager.Instance.OnUpdateMemoryLayout -= UpdateBounds;
-        DestroyImmediate(tempMaterial,true);
+        if(Application.isPlaying)
+        {
+            Destroy(tempMaterial);
+        }
+        else
+        {
+            DestroyImmediate(tempMaterial, true);
+        }
     }
 }
