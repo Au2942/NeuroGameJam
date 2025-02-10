@@ -148,7 +148,7 @@ public class WorkerDetails : MonoBehaviour
         sb.Clear();
         sb.Append(HeartBaseTooltip).Append("\nHealth: ").Append(worker.workerData.Health).Append("/");
         sb.Append(FormatStatText(baseStats.MaxHealth, allocStats.MaxHealth, tempStats.MaxHealth));
-        sb.Append("\nHealth Regen: 1/").Append(FormatStatText(baseStats.RegenTime, allocStats.RegenTime, tempStats.RegenTime, false)).Append("s");
+        sb.Append("\nHealth Regen: 1 health every ").Append(FormatStatText(baseStats.RegenTime, allocStats.RegenTime, tempStats.RegenTime, false)).Append("s");
         HeartTooltip.SetTooltipContent(sb.ToString());
 
         sb.Clear();

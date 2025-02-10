@@ -176,7 +176,8 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
 
     public void SetAvailability(bool availability)
     {
-        Icon.DisplayCooldownOverlay(!availability);
+        IsAvailable = availability;
+        Icon.DisplayCooldownOverlay(!IsAvailable);
     }
     public void DoMaintenance(MemoryEntity entity)
     {

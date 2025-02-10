@@ -20,11 +20,11 @@ public class WorkerIcon : MonoBehaviour
     {
         if(show)
         {
-            CooldownOverlay.gameObject.SetActive(false);
+            CooldownOverlay.gameObject.SetActive(true);
         }
         else
         {
-            CooldownOverlay.gameObject.SetActive(true);
+            CooldownOverlay.gameObject.SetActive(false);
         }
     }
 
