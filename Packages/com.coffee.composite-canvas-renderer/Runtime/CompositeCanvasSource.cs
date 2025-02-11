@@ -295,7 +295,6 @@ namespace CompositeCanvas
 
                 _mesh.SetColors(colors);
                 ListPool<Color32>.Return(ref colors);
-
             }
 
 

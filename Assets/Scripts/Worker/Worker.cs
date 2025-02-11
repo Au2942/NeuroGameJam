@@ -204,22 +204,39 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
         }
         return false;
     }
-    public void DealDamage(ICombatant target)
+    public void DealDamage(ICombatant target, DamageType damageType = DamageType.Normal)
     {
-        target.TakeDamage(AttackDamage, this);
+        target.TakeDamage(AttackDamage, damageType, this);
     }
 
-    public bool TakeDamage(float value, ICombatant attacker)
+    public bool TakeDamage(float value, DamageType damageType = DamageType.Normal, ICombatant attacker = null)
     {
-        if(Random.Range(0,100) < workerData.TotalStats.DamageIgnoreChance)
+        float damage = -value;
+        if(damageType != DamageType.True)
         {
-            if(WorkerAppearance.gameObject.activeSelf)
-            {
-                PopupTextSpawner.Instance.SpawnPopupText(WorkerAppearance.transform, WorkerAppearance.transform.position, "Dodged", 0.5f, Color.white);
-            }
-            return false;
+            AddHealth(damage);
+            return true;
         }
-        AddHealth(-value);
+        
+        int resistCount = 0;
+        float operationReliability = workerData.TotalStats.OperationReliability;
+        while(operationReliability > 100)
+        {
+            operationReliability -= 100;
+            resistCount++;
+        }
+        if(Random.Range(0,100) < operationReliability)
+        {
+            resistCount++;
+        }
+
+        if(WorkerAppearance.gameObject.activeSelf && resistCount > 0)
+        {
+            PopupTextSpawner.Instance.SpawnPopupText(WorkerAppearance.transform, WorkerAppearance.transform.position, "Resist X" + resistCount, 0.5f, Color.white);
+            damage /= resistCount;
+        }
+
+        AddHealth(damage);
         return true;
     }
 
@@ -238,7 +255,10 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
         WorkerManager.Instance.RemoveWorker(this);
     }
 
-
-
+    public void OnDestroy()
+    {
+        Destroy(WorkerAppearance.gameObject);
+        Destroy(Icon.gameObject);
+    }
 }
 

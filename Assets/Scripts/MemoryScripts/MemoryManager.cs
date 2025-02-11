@@ -33,9 +33,9 @@ public class MemoryManager : MonoBehaviour
         List<MemoryEntity> targets = new();
         foreach(var memoryInfo in MemoryData.MemoryInfos)
         {
-            if(memoryInfo.entity.CorruptionCooldownTimer <= 0 && !memoryInfo.entity.IsBeingMaintained)
+            if(memoryInfo.Entity.CorruptionCooldownTimer <= 0 && !memoryInfo.Entity.IsBeingMaintained)
             {
-                targets.Add(memoryInfo.entity);
+                targets.Add(memoryInfo.Entity);
             }
         }
         if(targets.Count == 0)
@@ -44,11 +44,6 @@ public class MemoryManager : MonoBehaviour
         }
         int randomIndex = Random.Range(0, targets.Count);
         targets[randomIndex].DamageHealth(corruptionAmount);
-    }
-
-    public void SetCurrentMemoryIndex(int newIndex)
-    {
-        MemoryNavigator.SetCurrentMemoryIndex(newIndex);
     }
 
 
@@ -66,9 +61,9 @@ public class MemoryManager : MonoBehaviour
         }
 
         MemoryEntity memory = Instantiate(stream.memory);
-        MemoryInfo memoryInfo = MemoryData.AddMemory("Memory of " + stream.name + "stream #" + MemoryTypesCount[stream.name], memory);
+        MemoryInfo memoryInfo = MemoryData.AddMemory(memory);
         
-        MemoryNavigator.SetupMemoryBlock(memory, memoryInfo);
+        MemoryNavigator.SetupMemoryBlock("Memory of " + stream.name + "stream #" + MemoryTypesCount[stream.name], memoryInfo);
         MemoryNavigator.SetCurrentMemoryIndex(CurrentMemoryIndex, false);
 
         return memory.gameObject;

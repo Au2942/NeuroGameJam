@@ -32,10 +32,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 5436776509048930272}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 250, y: 250}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7845283511909698191
 CanvasRenderer:
@@ -182,10 +182,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 5436776509048930272}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 250, y: 250}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6705085400964632542
 CanvasRenderer:
@@ -409,45 +409,45 @@ MonoBehaviour:
       MaxHealth: 10
       RegenTime: 5
       RestoreAmount: 2.5
-      TaskAmount: 10
+      TaskExecutionCount: 10
       TaskSuccessChance: 60
-      DamageIgnoreChance: 0
+      OperationReliability: 0
       TaskTime: 1
       ResponseTime: 5
     BaseStats:
       MaxHealth: 10
       RegenTime: 5
       RestoreAmount: 0
-      TaskAmount: 0
+      TaskExecutionCount: 0
       TaskSuccessChance: 0
-      DamageIgnoreChance: 0
+      OperationReliability: 0
       TaskTime: 0
       ResponseTime: 0
     TempStats:
       MaxHealth: 0
       RegenTime: 0
       RestoreAmount: 0
-      TaskAmount: 0
+      TaskExecutionCount: 0
       TaskSuccessChance: 0
-      DamageIgnoreChance: 0
+      OperationReliability: 0
       TaskTime: 0
       ResponseTime: 0
     statPerAttribute:
       MaxHealth: 5
       RegenTime: -0.5
       RestoreAmount: 0.5
-      TaskAmount: 2
+      TaskExecutionCount: 2
       TaskSuccessChance: 5
-      DamageIgnoreChance: 5
+      OperationReliability: 5
       TaskTime: -0.1
       ResponseTime: -0.5
     TotalStats:
       MaxHealth: 0
       RegenTime: 0
       RestoreAmount: 0
-      TaskAmount: 0
+      TaskExecutionCount: 0
       TaskSuccessChance: 0
-      DamageIgnoreChance: 0
+      OperationReliability: 0
       TaskTime: 0
       ResponseTime: 0
   IsAvailable: 1
@@ -488,10 +488,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 5436776509048930272}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 250, y: 250}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6248921610490954462
 CanvasRenderer:
@@ -652,7 +652,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 250, y: 250}
+  m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1069741012193160215
 MonoBehaviour:
@@ -915,10 +915,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 5436776509048930272}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 250, y: 250}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7367341677101008743
 CanvasRenderer:
@@ -1247,10 +1247,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 5436776509048930272}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 250, y: 250}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4683208392992588503
 CanvasRenderer:
@@ -1673,10 +1673,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 5436776509048930272}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 250, y: 250}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7022863846459355590
 CanvasRenderer:

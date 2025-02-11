@@ -28,32 +28,32 @@ public class WorkerDetails : MonoBehaviour
     [SerializeField] private TextMeshProUGUI latencyText;
     [Header("Tooltip")]
     [SerializeField] public TooltipTrigger HeartTooltip;
-    [SerializeField][TextArea(3,5)] public string HeartBaseTooltip = "Robustness of the worker.";
+    [SerializeField][TextArea(3,5)] public string HeartBaseTooltip = "Health Assessment and Recovery Time.";
     [SerializeField] public TooltipTrigger ErrorRecoveryTooltip;
     [SerializeField][TextArea(3,5)] public string ErrorRecoveryBaseTooltip = "Error Restoration Metric. Memory restoration capability of the worker.";
     [SerializeField] public TooltipTrigger AccuracyTooltip;
-    [SerializeField][TextArea(3,5)] public string AccuracyBaseTooltip = "Problem identifying accuracy and prediction reliability of the worker.";
+    [SerializeField][TextArea(3,5)] public string AccuracyBaseTooltip = "Accuracy & Reliability. Task success rate and operation reliability.";
     [SerializeField] public TooltipTrigger LatencyTooltip;
     [SerializeField][TextArea(3,5)] public string LatencyBaseTooltip = "Task Update, Transmission and Execution Latency. Responsiveness of the worker.";
     [Header("Colors")]
-    [SerializeField] private Color allocColor = new Color(1,1,1);
-    [SerializeField] private Color buffColor = new Color(1,1,1);
-    [SerializeField] private Color debuffColor = new Color(1,1,1);
+    [SerializeField] public Color AllocColor = new Color(1,1,1);
+    [SerializeField] public Color BuffColor = new Color(1,1,1);
+    [SerializeField] public Color DebuffColor = new Color(1,1,1);
     public List<StatusEffectIcon> statusEffectIcons = new List<StatusEffectIcon>();
 
 
-    private string allocColorHex;
-    private string buffColorHex;
-    private string debuffColorHex;
+    public string AllocColorHex;
+    public string BuffColorHex;
+    public string DebuffColorHex;
     void Start()
     {
         StringBuilder sb = new StringBuilder();
         sb.Clear();
-        allocColorHex = sb.Append("<color=#").Append(ColorUtility.ToHtmlStringRGB(allocColor)).Append(">").ToString();
+        AllocColorHex = sb.Append("<color=#").Append(ColorUtility.ToHtmlStringRGB(AllocColor)).Append(">").ToString();
         sb.Clear();
-        buffColorHex = sb.Append("<color=#").Append(ColorUtility.ToHtmlStringRGB(buffColor)).Append(">").ToString();
+        BuffColorHex = sb.Append("<color=#").Append(ColorUtility.ToHtmlStringRGB(BuffColor)).Append(">").ToString();
         sb.Clear();
-        debuffColorHex = sb.Append("<color=#").Append(ColorUtility.ToHtmlStringRGB(debuffColor)).Append(">").ToString();
+        DebuffColorHex = sb.Append("<color=#").Append(ColorUtility.ToHtmlStringRGB(DebuffColor)).Append(">").ToString();
         ClearAttributesAndStatsText();
         HideButtons();
     }
@@ -129,15 +129,15 @@ public class WorkerDetails : MonoBehaviour
         sb.Append(tier);
         if (allocVal > 0)
         {
-            sb.Append(allocColorHex).Append("(").Append(NumberToTier(baseVal+allocVal)).Append(")</color>");
+            sb.Append(AllocColorHex).Append("(").Append(NumberToTier(baseVal+allocVal)).Append(")</color>");
         }
         if (tempVal > 0)
         {
-            sb.Append(buffColorHex).Append("+").Append(tempVal).Append("</color>");
+            sb.Append(BuffColorHex).Append("(").Append(NumberToTier(tempVal)).Append(")</color>");
         }
         else if(tempVal < 0)
         {
-            sb.Append(debuffColorHex).Append("+").Append(tempVal).Append("</color>");
+            sb.Append(DebuffColorHex).Append("(").Append(NumberToTier(tempVal)).Append(")</color>");
         }
         return sb.ToString();
     }
@@ -146,52 +146,52 @@ public class WorkerDetails : MonoBehaviour
     {
         StringBuilder sb = new StringBuilder();
         sb.Clear();
-        sb.Append(HeartBaseTooltip).Append("\nHealth: ").Append(worker.workerData.Health).Append("/");
+        sb.Append(HeartBaseTooltip).Append("\nHeart Capacity: ").Append(worker.workerData.Health).Append("/");
         sb.Append(FormatStatText(baseStats.MaxHealth, allocStats.MaxHealth, tempStats.MaxHealth));
-        sb.Append("\nHealth Regen: 1 health every ").Append(FormatStatText(baseStats.RegenTime, allocStats.RegenTime, tempStats.RegenTime, false)).Append("s");
+        sb.Append("\nMend Rate: ").Append(FormatStatText(baseStats.RegenTime, allocStats.RegenTime, tempStats.RegenTime, 100,false)).Append("ms");
         HeartTooltip.SetTooltipContent(sb.ToString());
 
         sb.Clear();
-        sb.Append(ErrorRecoveryBaseTooltip).Append("\nRestoration Amount: ");
+        sb.Append(ErrorRecoveryBaseTooltip).Append("\nRestoration Yield: ");
         sb.Append(FormatStatText(baseStats.RestoreAmount, allocStats.RestoreAmount, tempStats.RestoreAmount));
-        sb.Append("\nTasks Per Work Order: ").Append(FormatStatText(baseStats.TaskAmount, allocStats.TaskAmount, tempStats.TaskAmount));
+        sb.Append("\nExecution Iterations: ").Append(FormatStatText(baseStats.TaskExecutionCount, allocStats.TaskExecutionCount, tempStats.TaskExecutionCount));
         ErrorRecoveryTooltip.SetTooltipContent(sb.ToString());
 
         sb.Clear();
-        sb.Append(AccuracyBaseTooltip).Append("\nTask Success Chance: ");
+        sb.Append(AccuracyBaseTooltip).Append("\nExecution Accuracy: ");
         sb.Append(FormatStatText(baseStats.TaskSuccessChance, allocStats.TaskSuccessChance, tempStats.TaskSuccessChance)).Append("%");
-        sb.Append("\nDamage Ignore Chance: ");
-        sb.Append(FormatStatText(baseStats.DamageIgnoreChance, allocStats.DamageIgnoreChance, tempStats.DamageIgnoreChance)).Append("%");
+        sb.Append("\nOperation Reliability: ");
+        sb.Append(FormatStatText(baseStats.OperationReliability, allocStats.OperationReliability, tempStats.OperationReliability)).Append("%");
         AccuracyTooltip.SetTooltipContent(sb.ToString());
 
         sb.Clear();
-        sb.Append(LatencyBaseTooltip).Append("\nTask Speed: ");
-        sb.Append(FormatStatText(baseStats.TaskTime, allocStats.TaskTime, tempStats.TaskTime, false)).Append("s");
-        sb.Append("\nResponse Speed: ").Append(FormatStatText(baseStats.ResponseTime, allocStats.ResponseTime, tempStats.ResponseTime, false)).Append("s");
+        sb.Append(LatencyBaseTooltip).Append("\nExecution Time: ");
+        sb.Append(FormatStatText(baseStats.TaskTime, allocStats.TaskTime, tempStats.TaskTime, 100, false)).Append("ms");
+        sb.Append("\nResponse Latency: ").Append(FormatStatText(baseStats.ResponseTime, allocStats.ResponseTime, tempStats.ResponseTime, 100, false)).Append("ms");
         LatencyTooltip.SetTooltipContent(sb.ToString());
     }
 
-    private string FormatStatText(float baseVal, float allocVal, float tempVal, bool moreIsBetter = true)
+    private string FormatStatText(float baseVal, float allocVal, float tempVal, float multiplier = 1, bool moreIsBetter = true)
     {
 
         StringBuilder sb = new StringBuilder();
         sb.Clear();
-        sb.Append(baseVal);
+        sb.Append(baseVal*multiplier);
         if (allocVal > 0)
         {
-            sb.Append(allocColorHex).Append("(").Append("+").Append(allocVal).Append(")</color>");
+            sb.Append(AllocColorHex).Append("(").Append("+").Append(allocVal*multiplier).Append(")</color>");
         }
         else if(allocVal < 0)
         {
-            sb.Append(allocColorHex).Append("(").Append(allocVal).Append(")</color>");
+            sb.Append(AllocColorHex).Append("(").Append(allocVal*multiplier).Append(")</color>");
         }
         if (tempVal > 0)
         {
-            sb.Append(moreIsBetter? buffColorHex : debuffColorHex).Append("+").Append(tempVal).Append("</color>");
+            sb.Append(moreIsBetter? BuffColorHex : DebuffColorHex).Append("+").Append(tempVal*multiplier).Append("</color>");
         }
         else if(tempVal < 0)
         {
-            sb.Append(moreIsBetter? debuffColorHex : buffColorHex).Append(tempVal).Append("</color>");
+            sb.Append(moreIsBetter? DebuffColorHex : BuffColorHex).Append(tempVal*multiplier).Append("</color>");
         }
         return sb.ToString();
     }

@@ -89,9 +89,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2e5449d532d0de4e984249c34c2721e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  iconImage: {fileID: 992781705881379313}
-  iconSprite: {fileID: 0}
-  tooltipTrigger: {fileID: 4079831299920069889}
+  TooltipTrigger: {fileID: 4079831299920069889}
+  IconImage: {fileID: 992781705881379313}
 --- !u!114 &4079831299920069889
 MonoBehaviour:
   m_ObjectHideFlags: 0

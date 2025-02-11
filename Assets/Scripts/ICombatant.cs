@@ -10,6 +10,12 @@ public interface ICombatant
     void RemoveCombatTarget(ICombatant target);
     void Attack();
     bool IsCombatReady();
-    void DealDamage(ICombatant target);
-    bool TakeDamage(float value, ICombatant attacker);
+    void DealDamage(ICombatant target, DamageType damageType);
+    bool TakeDamage(float value, DamageType damageType, ICombatant attacker);
+}
+
+public enum DamageType
+{
+    Normal,
+    True
 }

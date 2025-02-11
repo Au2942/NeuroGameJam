@@ -4,23 +4,19 @@ using System.Collections.Generic;
 [System.Serializable]
 public struct MemoryInfo
 {
-    public string name;
-    public MemoryEntity entity;
+    public MemoryEntity Entity;
+    public MemoryBlock Block;
 
-    public MemoryInfo(string memoryName, MemoryEntity memoryEntity)
+    public MemoryInfo(MemoryEntity memoryEntity, MemoryBlock memoryBlock)
     {
-        name = memoryName;
-        entity = memoryEntity;
+        Entity = memoryEntity;
+        Block = memoryBlock;
     }
 
-    public void SetMemoryName(string newName)
-    {
-        name = newName;
-    }
 
     public void SetMemoryEntity(MemoryEntity newEntity)
     {
-        entity = newEntity;
+        Entity = newEntity;
     }
 }
 [System.Serializable]
@@ -28,12 +24,12 @@ public class MemoryData
 {
     [SerializeField] public List<MemoryInfo> MemoryInfos = new List<MemoryInfo>();
 
-    public MemoryInfo AddMemory(string memoryName, MemoryEntity memoryEntity)
+    public MemoryInfo AddMemory(MemoryEntity memoryEntity)
     {
         MemoryInfo newMemoryInfo = new MemoryInfo
         {
-            name = memoryName,
-            entity = memoryEntity
+            Entity = memoryEntity,
+            Block = memoryEntity.MemoryBlock
         };
         MemoryInfos.Add(newMemoryInfo);
         return newMemoryInfo;
@@ -55,39 +51,9 @@ public class MemoryData
         MemoryInfos.RemoveAt(index);
     }
 
-    public void SetMemoryName(int index, string newName)
-    {
-        if(index < 0 || index >= MemoryInfos.Count)
-        {
-            return;
-        }
-        MemoryInfos[index].SetMemoryName(newName);
-    }
-
-    public string GetMemoryName(int index)
-    {
-        if(index < 0 || index >= MemoryInfos.Count)
-        {
-            return null;
-        }
-        return MemoryInfos[index].name;
-    }
-
-    public string GetMemoryName(Entity memoryEntity)
-    {
-        string memoryName = MemoryInfos.Find(x => x.entity == memoryEntity).name;
-        return memoryName;
-    }
-
-    public int GetMemoryIndex(string memoryName)
-    {
-        int index = MemoryInfos.FindIndex(x => x.name == memoryName);
-        return index;
-    }
-
     public int GetMemoryIndex(Entity memoryEntity)
     {
-        int index = MemoryInfos.FindIndex(x => x.entity == memoryEntity);
+        int index = MemoryInfos.FindIndex(x => x.Entity == memoryEntity);
         return index;
     }
 
@@ -97,28 +63,17 @@ public class MemoryData
         {
             return null;
         }
-        return MemoryInfos[index].entity;
+        return MemoryInfos[index].Entity;
     }
 
-    public MemoryEntity GetMemoryEntity(string memoryName)
-    {
-        MemoryEntity memoryEntity = MemoryInfos.Find(x => x.name == memoryName).entity;
-        return memoryEntity;
-    }
 
-    public List<MemoryEntity> GetMemoryEntities()
+    public MemoryBlock GetMemoryBlock(int index)
     {
-        List<MemoryEntity> entities = new List<MemoryEntity>();
-        foreach(MemoryInfo memoryInfo in MemoryInfos)
+        if(index < 0 || index >= MemoryInfos.Count)
         {
-            entities.Add(memoryInfo.entity);
+            return null;
         }
-        return entities;
-    }
-
-    public void ReplaceMemory(int index, string newName, MemoryEntity newEntity)
-    {
-        MemoryInfos[index] = new MemoryInfo(newName, newEntity);
+        return MemoryInfos[index].Block;
     }
 
     public MemoryInfo GetMemoryInfo(int index)
@@ -130,15 +85,16 @@ public class MemoryData
         return MemoryInfos[index];
     }
 
-    public MemoryInfo GetMemoryInfo(string memoryName)
-    {
-        MemoryInfo memoryInfo = MemoryInfos.Find(x => x.name == memoryName);
-        return memoryInfo;
-    }
 
     public MemoryInfo GetMemoryInfo(Entity memoryEntity)
     {
-        MemoryInfo memoryInfo = MemoryInfos.Find(x => x.entity == memoryEntity);
+        MemoryInfo memoryInfo = MemoryInfos.Find(x => x.Entity == memoryEntity);
+        return memoryInfo;
+    }
+
+    public MemoryInfo GetMemoryInfo(MemoryBlock memoryBlock)
+    {
+        MemoryInfo memoryInfo = MemoryInfos.Find(x => x.Block == memoryBlock);
         return memoryInfo;
     }
 
@@ -147,21 +103,4 @@ public class MemoryData
         return MemoryInfos.Count;
     }
 
-    public float GetMemoryEntityIntegrityPercentage(int index)
-    {
-        if(index < 0 || index >= MemoryInfos.Count)
-        {
-            return 0;
-        }
-        MemoryInfo memoryInfo = MemoryInfos[index];
-        float result = memoryInfo.entity.Health / memoryInfo.entity.MaxHealth * 100;
-        return result;
-    }
-
-    public float GetMemoryEntityIntegrityPercentage(string memoryName)
-    {
-        MemoryInfo memoryInfo = MemoryInfos.Find(x => x.name == memoryName);
-        float result = memoryInfo.entity.Health / memoryInfo.entity.MaxHealth * 100;
-        return result;
-    }
 }

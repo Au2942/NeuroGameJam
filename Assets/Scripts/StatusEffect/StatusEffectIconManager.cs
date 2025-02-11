@@ -40,14 +40,7 @@ public class StatusEffectIconManager : MonoBehaviour
     {
         if(StatusEffectManager.Instance.TryGetStatusEffectDataByID(id, out StatusEffectData data))
         {
-            icon.SetIcon(data.Icon);
-            StringBuilder descriptionSB = new StringBuilder();
-            descriptionSB.Append(data.Description);
-            if(data.Stackable)
-            {
-                descriptionSB.Append("\nStacks: ").Append(data.Stack);
-            }
-            icon.SetTooltip(data.Name, descriptionSB.ToString());
+            icon.SetupStatusEffectIcon(data);
         }
     }
     public StatusEffectIcon GetStatusEffectIcon(string id)

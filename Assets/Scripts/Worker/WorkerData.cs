@@ -107,9 +107,9 @@ public class WorkerData
         TempStats.MaxHealth += addedStats.MaxHealth;
         TempStats.RegenTime += addedStats.RegenTime;
         TempStats.RestoreAmount += addedStats.RestoreAmount;
-        TempStats.TaskAmount += addedStats.TaskAmount;
+        TempStats.TaskExecutionCount += addedStats.TaskExecutionCount;
         TempStats.TaskSuccessChance += addedStats.TaskSuccessChance;
-        TempStats.DamageIgnoreChance += addedStats.DamageIgnoreChance;
+        TempStats.OperationReliability += addedStats.OperationReliability;
         TempStats.TaskTime += addedStats.TaskTime;
         TempStats.ResponseTime += addedStats.ResponseTime;
         UpdateTotalStats();
@@ -122,9 +122,9 @@ public class WorkerData
         stats.MaxHealth = attributes.Heart * statPerAttribute.MaxHealth;
         stats.RegenTime = attributes.Heart * statPerAttribute.RegenTime;
         stats.RestoreAmount = attributes.ErrorRecovery * statPerAttribute.RestoreAmount;
-        stats.TaskAmount = attributes.Accuracy * statPerAttribute.TaskAmount;
+        stats.TaskExecutionCount = attributes.Accuracy * statPerAttribute.TaskExecutionCount;
         stats.TaskSuccessChance = attributes.Accuracy * statPerAttribute.TaskSuccessChance;
-        stats.DamageIgnoreChance = attributes.Accuracy * statPerAttribute.DamageIgnoreChance;
+        stats.OperationReliability = attributes.Accuracy * statPerAttribute.OperationReliability;
         stats.TaskTime = attributes.Latency * statPerAttribute.TaskTime;
         stats.ResponseTime = attributes.Latency * statPerAttribute.ResponseTime;
         return stats;
@@ -222,21 +222,21 @@ public struct WorkerStats
     public float MaxHealth;
     public float RegenTime; //time to regen full health
     public float RestoreAmount; //heal amount, damage amount per task
-    public int TaskAmount; //how many tasks can be done per work
+    public int TaskExecutionCount; //how many tasks can be done per work
     public float TaskSuccessChance; 
-    public float DamageIgnoreChance;
+    public float OperationReliability;
     public float TaskTime; //time to complete a task
     public float ResponseTime; //time to wait before starting new work
     
-    public WorkerStats(float maxHealth, float regenTime, float restoreAmount, int workAmount, float workSuccessChance, float damageIgnoreChance, float workTime, float responseTime)
+    public WorkerStats(float maxHealth, float regenTime, float restoreAmount, int taskExecutionCount, float taskSuccessChance, float operationReliability, float taskTime, float responseTime)
     {
         MaxHealth = maxHealth;
         RegenTime = regenTime;
         RestoreAmount = restoreAmount;
-        TaskAmount = workAmount;
-        TaskSuccessChance = workSuccessChance;
-        DamageIgnoreChance = damageIgnoreChance;
-        TaskTime = workTime;
+        TaskExecutionCount = taskExecutionCount;
+        TaskSuccessChance = taskSuccessChance;
+        OperationReliability = operationReliability;
+        TaskTime = taskTime;
         ResponseTime = responseTime;
     }
 
@@ -246,9 +246,9 @@ public struct WorkerStats
             a.MaxHealth + b.MaxHealth, 
             a.RegenTime + b.RegenTime,
             a.RestoreAmount + b.RestoreAmount,
-            a.TaskAmount + b.TaskAmount,
+            a.TaskExecutionCount + b.TaskExecutionCount,
             a.TaskSuccessChance + b.TaskSuccessChance,
-            a.DamageIgnoreChance + b.DamageIgnoreChance,
+            a.OperationReliability + b.OperationReliability,
             a.TaskTime + b.TaskTime,
             a.ResponseTime + b.ResponseTime
         );
@@ -260,9 +260,9 @@ public struct WorkerStats
             a.MaxHealth - b.MaxHealth, 
             a.RegenTime - b.RegenTime, 
             a.RestoreAmount - b.RestoreAmount, 
-            a.TaskAmount - b.TaskAmount,
+            a.TaskExecutionCount - b.TaskExecutionCount,
             a.TaskSuccessChance - b.TaskSuccessChance, 
-            a.DamageIgnoreChance - b.DamageIgnoreChance, 
+            a.OperationReliability - b.OperationReliability, 
             a.TaskTime - b.TaskTime, 
             a.ResponseTime - b.ResponseTime
         );
@@ -274,9 +274,9 @@ public struct WorkerStats
             a.MaxHealth * b, 
             a.RegenTime * b, 
             a.RestoreAmount * b, 
-            a.TaskAmount * (int)b,
+            a.TaskExecutionCount * (int)b,
             a.TaskSuccessChance * b,
-            a.DamageIgnoreChance * b, 
+            a.OperationReliability * b, 
             a.TaskTime * b, 
             a.ResponseTime * b
         );
@@ -288,9 +288,9 @@ public struct WorkerStats
             a.MaxHealth / b,
             a.RegenTime / b,
             a.RestoreAmount / b, 
-            a.TaskAmount / (int)b,
+            a.TaskExecutionCount / (int)b,
             a.TaskSuccessChance / b,
-            a.DamageIgnoreChance / b, 
+            a.OperationReliability / b, 
             a.TaskTime / b, 
             a.ResponseTime / b
         );
@@ -302,9 +302,9 @@ public struct WorkerStats
             -a.MaxHealth, 
             -a.RegenTime, 
             -a.RestoreAmount, 
-            -a.TaskAmount,
+            -a.TaskExecutionCount,
             -a.TaskSuccessChance,
-            -a.DamageIgnoreChance, 
+            -a.OperationReliability, 
             -a.TaskTime, 
             -a.ResponseTime
         );

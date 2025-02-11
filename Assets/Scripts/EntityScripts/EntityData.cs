@@ -35,4 +35,16 @@ public class EntityData : MonoBehaviour
     [SerializeField] public List<AnimatorClipsPair> GlitchAnimatorClips = new();
     [SerializeField] public Entity.AnimState CurrentAnimationState = Entity.AnimState.Default;
 
+
+    public float HealthPercentage()
+    {
+        return Health / MaxHealth;
+    }
+
+    public float CorruptionPercentage()
+    {
+        return Corruption / MaxCorruption;
+    }
+
+
 }

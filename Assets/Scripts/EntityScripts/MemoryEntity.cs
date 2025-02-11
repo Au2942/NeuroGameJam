@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class MemoryEntity : Entity, ICombatant
 {
     [SerializeField] protected MemoryEntityData memoryEntityData;
+    public MemoryBlock MemoryBlock {get => memoryEntityData.MemoryBlock; set => memoryEntityData.MemoryBlock = value;}
     protected GlitchOverlay GlitchEffect {get => memoryEntityData.GlitchEffect; set => memoryEntityData.GlitchEffect = value;}
     public float AttackDamage {get => memoryEntityData.AttackDamage; set => memoryEntityData.AttackDamage = value;}
     public float AttackRate {get => memoryEntityData.AttackRate; set => memoryEntityData.AttackRate = value;}
@@ -77,6 +78,7 @@ public abstract class MemoryEntity : Entity, ICombatant
         InFocus = focus;
         DialogueManager.Interactable = focus;
         DialogueManager.PlaySound = focus;
+        MemoryBlock.EnableBlockClickDetector(!focus);
     }
 
     protected override void ClickInteract(GameObject clickedObject)
@@ -101,10 +103,7 @@ public abstract class MemoryEntity : Entity, ICombatant
         }
     }
 
-    public virtual void MaintainSuccess(Worker worker)
-    {
-        
-    }
+    public virtual void MaintainSuccess(Worker worker) {}
 
     public virtual void WorkSuccess(Worker worker)
     {
@@ -119,11 +118,7 @@ public abstract class MemoryEntity : Entity, ICombatant
         }
     }
 
-
-    public virtual void Recall(Worker worker)
-    {
-
-    }
+    public virtual void Recall(Worker worker) {}
 
     public virtual void MaintainFail(Worker worker)
     {
@@ -228,12 +223,12 @@ public abstract class MemoryEntity : Entity, ICombatant
         return false;
     }
 
-    public virtual void DealDamage(ICombatant target)
+    public virtual void DealDamage(ICombatant target, DamageType damageType = DamageType.Normal)
     {
-        target.TakeDamage(AttackDamage, this);
+        target.TakeDamage(AttackDamage, damageType, this);
     }
 
-    public virtual bool TakeDamage(float value, ICombatant attacker)
+    public virtual bool TakeDamage(float value, DamageType damageType = DamageType.Normal, ICombatant attacker = null)
     {
         DamageCorruption(value);
         Debug.Log(name + " corruption is " + Corruption);

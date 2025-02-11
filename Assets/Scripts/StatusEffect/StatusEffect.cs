@@ -26,6 +26,6 @@ public class StatusEffectData
     public int MaxStack = 1;
     [Header("Lifetime")]
     public bool ExpireAfterLifetime = true;
-    public float ModifierLifetime;
+    public float Lifetime;
     public bool ExpireNextUpdate = false;
 }

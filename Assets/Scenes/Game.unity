@@ -1005,7 +1005,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 63, y: 48}
+  m_SizeDelta: {x: 48, y: 48}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &162033367
 MonoBehaviour:
@@ -1027,7 +1027,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: F
+  m_text: F(E)(D)
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1054,11 +1054,11 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
+  m_fontSize: 14.3
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 18
+  m_fontSizeMin: 12
   m_fontSizeMax: 36
   m_fontStyle: 0
   m_HorizontalAlignment: 2
@@ -1190,7 +1190,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 63, y: 48}
+  m_SizeDelta: {x: 48, y: 48}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &254254818
 MonoBehaviour:
@@ -1212,7 +1212,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: F
+  m_text: F(E)(D)
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1239,11 +1239,11 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
+  m_fontSize: 14.3
   m_fontSizeBase: 32
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 18
+  m_fontSizeMin: 12
   m_fontSizeMax: 36
   m_fontStyle: 0
   m_HorizontalAlignment: 2
@@ -1625,6 +1625,7 @@ GameObject:
   - component: {fileID: 312654542}
   - component: {fileID: 312654541}
   - component: {fileID: 312654540}
+  - component: {fileID: 312654543}
   m_Layer: 5
   m_Name: SWARMDetails
   m_TagString: Untagged
@@ -1717,6 +1718,54 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &312654543
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 312654538}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47aff1ee05254684699ee2e2812a399f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  workerDetailsRect: {fileID: 312654539}
+  SideButtonsRect: {fileID: 1582309616}
+  statusEffectsRect: {fileID: 1849274969}
+  workerNameText: {fileID: 86398865}
+  ResetButton: {fileID: 581664546}
+  DeleteButton: {fileID: 1150894935}
+  NewButton: {fileID: 741008197}
+  HeartAddButton: {fileID: 1624605189}
+  HeartSubtractButton: {fileID: 1993028719}
+  heartText: {fileID: 759929138}
+  AddErrorRecoveryButton: {fileID: 1874782615}
+  SubtractErrorRecoveryButton: {fileID: 1036702525}
+  errorRecoveryText: {fileID: 162033367}
+  AccuracyAddButton: {fileID: 1564884379}
+  AccuracySubtractButton: {fileID: 1989806316}
+  accuracyText: {fileID: 254254818}
+  LatencyAddButton: {fileID: 904740196}
+  LatencySubtractButton: {fileID: 1505722507}
+  latencyText: {fileID: 915016705}
+  HeartTooltip: {fileID: 887938270}
+  HeartBaseTooltip: Robustness of the worker.
+  ErrorRecoveryTooltip: {fileID: 1474524428}
+  ErrorRecoveryBaseTooltip: Error Restoration Metric. Memory restoration capability
+    of the worker.
+  AccuracyTooltip: {fileID: 424223851}
+  AccuracyBaseTooltip: Accuracy in identifying problem of the worker.
+  LatencyTooltip: {fileID: 995998927}
+  LatencyBaseTooltip: Task Update, Transmission and Execution Latency. Responsiveness
+    of the worker.
+  AllocColor: {r: 0.1745283, g: 0.96593374, b: 1, a: 1}
+  BuffColor: {r: 0.4540922, g: 1, b: 0.3160377, a: 1}
+  DebuffColor: {r: 0.764151, g: 0, b: 0.014417977, a: 1}
+  statusEffectIcons: []
+  AllocColorHex: 
+  BuffColorHex: 
+  DebuffColorHex: 
 --- !u!1 &313560233
 GameObject:
   m_ObjectHideFlags: 0
@@ -3644,7 +3693,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 63, y: 48}
+  m_SizeDelta: {x: 48, y: 48}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &759929138
 MonoBehaviour:
@@ -3666,7 +3715,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: F
+  m_text: F(E)(D)
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3693,11 +3742,11 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
+  m_fontSize: 14.3
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 18
+  m_fontSizeMin: 12
   m_fontSizeMax: 36
   m_fontStyle: 0
   m_HorizontalAlignment: 2
@@ -4323,7 +4372,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 25
+  m_AdditionalShaderChannelsFlag: 1
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -4562,7 +4611,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 63, y: 48}
+  m_SizeDelta: {x: 48, y: 48}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &915016705
 MonoBehaviour:
@@ -4584,7 +4633,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: F
+  m_text: F(E)(D)
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4611,11 +4660,11 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
+  m_fontSize: 14.3
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
-  m_fontSizeMin: 18
+  m_fontSizeMin: 12
   m_fontSizeMax: 36
   m_fontStyle: 0
   m_HorizontalAlignment: 2
@@ -6398,8 +6447,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1356682140}
   - component: {fileID: 1356682142}
-  - component: {fileID: 1356682141}
-  - component: {fileID: 1356682143}
   - component: {fileID: 1356682144}
   m_Layer: 5
   m_Name: SWARMUI
@@ -6429,51 +6476,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 512, y: 436}
   m_Pivot: {x: 0, y: 1}
---- !u!114 &1356682141
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1356682139}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47aff1ee05254684699ee2e2812a399f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  workerDetailsRect: {fileID: 312654539}
-  SideButtonsRect: {fileID: 1582309616}
-  statusEffectsRect: {fileID: 1849274969}
-  workerNameText: {fileID: 86398865}
-  ResetButton: {fileID: 581664546}
-  DeleteButton: {fileID: 1150894935}
-  NewButton: {fileID: 741008197}
-  HeartAddButton: {fileID: 1624605189}
-  HeartSubtractButton: {fileID: 1993028719}
-  heartText: {fileID: 759929138}
-  AddErrorRecoveryButton: {fileID: 1874782615}
-  SubtractErrorRecoveryButton: {fileID: 1036702525}
-  errorRecoveryText: {fileID: 162033367}
-  AccuracyAddButton: {fileID: 1564884379}
-  AccuracySubtractButton: {fileID: 1989806316}
-  accuracyText: {fileID: 254254818}
-  LatencyAddButton: {fileID: 904740196}
-  LatencySubtractButton: {fileID: 1505722507}
-  latencyText: {fileID: 915016705}
-  HeartTooltip: {fileID: 887938270}
-  HeartBaseTooltip: Robustness of the worker.
-  ErrorRecoveryTooltip: {fileID: 1474524428}
-  ErrorRecoveryBaseTooltip: Error Restoration Metric. Memory restoration capability
-    of the worker.
-  AccuracyTooltip: {fileID: 424223851}
-  AccuracyBaseTooltip: Accuracy in identifying problem of the worker.
-  LatencyTooltip: {fileID: 995998927}
-  LatencyBaseTooltip: Task Update, Transmission and Execution Latency. Responsiveness
-    of the worker.
-  allocColor: {r: 0.4292453, g: 0.91718477, b: 1, a: 0}
-  buffColor: {r: 0.49770963, g: 1, b: 0.28773582, a: 1}
-  debuffColor: {r: 0.6698113, g: 0.14698198, b: 0.13585795, a: 1}
-  statusEffectIcons: []
 --- !u!114 &1356682142
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6486,27 +6488,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c636ca2e5701034b956a74bbc772bea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  WorkerDetails: {fileID: 1356682141}
-  WorkerScroller: {fileID: 1356682143}
+  WorkerDetails: {fileID: 312654543}
+  WorkerScroller: {fileID: 1426730883}
   WorkerAppearanceGenerator: {fileID: 1356682144}
   WorkerLayout: {fileID: 1389714919}
   Workers: []
   MaxLevel: 5
   WorkerPrefab: {fileID: 6816021588467933377, guid: bfb1eb88a84a9c04baf7e416814342b2, type: 3}
   SelectedWorker: {fileID: 0}
---- !u!114 &1356682143
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1356682139}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 781c50ec94f2acc45a996dbbdf80cc1b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  scrollRect: {fileID: 1426730882}
 --- !u!114 &1356682144
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6801,6 +6790,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1426730881}
   - component: {fileID: 1426730882}
+  - component: {fileID: 1426730883}
   m_Layer: 5
   m_Name: SWARMScrollRect
   m_TagString: Untagged
@@ -6858,6 +6848,19 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1426730883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1426730880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 781c50ec94f2acc45a996dbbdf80cc1b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scrollRect: {fileID: 1426730882}
 --- !u!1 &1466268758
 GameObject:
   m_ObjectHideFlags: 0

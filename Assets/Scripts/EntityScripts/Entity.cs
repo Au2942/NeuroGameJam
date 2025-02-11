@@ -79,19 +79,10 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
         GameManager.Instance.OnStartStream += OnStartStream;
         GameManager.Instance.OnEndStream += OnEndStream;
     }
-    protected virtual void OnStartStream()
-    {
 
-    }
-    protected virtual void OnEndStream()
-    {
-        
-    }
-    protected virtual void ClickInteract(GameObject clickedObject)
-    {
-
-    }
-
+    protected virtual void OnStartStream() {}
+    protected virtual void OnEndStream() {}
+    protected virtual void ClickInteract(GameObject clickedObject) {}
 
     protected virtual void Update()
     {
@@ -213,8 +204,6 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
         CurrentAnimationState = AnimState.Idle;
     }
 
-
-
     protected virtual void SetNormalAppearance()
     {
         foreach(AnimatorClipsPair animatorClipsPair in NormalAnimatorClips)
@@ -240,7 +229,6 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
             }
         }
     }
-
 
     protected void PlayAnimation(Animator animator, AnimationClip clip, int layer = 0)
     {
@@ -274,12 +262,7 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
         SharedBehavior();
     }
 
-    protected virtual void SharedBehavior()
-    {
-
-    }
-
-
+    protected virtual void SharedBehavior() {}
 
     public virtual void EnterGlitchState()
     {
@@ -317,12 +300,12 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
 
     public float HealthPercentage()
     {
-        return Health / MaxHealth;
+        return entityData.HealthPercentage();
     }
 
     public float CorruptionPercentage()
     {
-        return Corruption / MaxCorruption;
+        return entityData.CorruptionPercentage();
     }
 
     public virtual void Converse()
@@ -409,22 +392,12 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
         }
 
     }
-    protected virtual void OnDestroy()
-    {
+    protected virtual void OnDestroy() {}
 
+    public void ApplyStatusEffect(StatusEffect statusEffect, IStatusEffectSource source = null) {}
 
-    }
+    public void RemoveStatusEffect(StatusEffect statusEffect) {}
 
-    public void ApplyStatusEffect(StatusEffect statusEffect, IStatusEffectSource source = null)
-    {
-    }
-
-    public void RemoveStatusEffect(StatusEffect statusEffect)
-    {
-    }
-
-    public void ChangeStatusEffectStack(StatusEffect statusEffect, int stack)
-    {
-    }
+    public void ChangeStatusEffectStack(StatusEffect statusEffect, int stack) {}
 
 }

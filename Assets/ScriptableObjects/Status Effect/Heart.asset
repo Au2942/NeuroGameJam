@@ -16,13 +16,12 @@ MonoBehaviour:
     ID: heartSE
     Icon: {fileID: 21300000, guid: bf16c3ce063cb41468925496b65e68a4, type: 3}
     Name: Heart
-    Description: Increase your Heart attribute but be ready to devote yourself to
-      the giver...
+    Description: Be careful not to break it...
     Stackable: 1
-    Stack: 5
+    Stack: 1
     MaxStack: 5
     ExpireAfterLifetime: 0
-    ModifierLifetime: 0
+    Lifetime: 0
     ExpireNextUpdate: 0
     BuffAttributes:
       Heart: 1
@@ -37,9 +36,9 @@ MonoBehaviour:
       MaxHealth: 0
       RegenTime: 0
       RestoreAmount: 0
-      TaskAmount: 0
+      TaskExecutionCount: 0
       TaskSuccessChance: 0
-      DamageIgnoreChance: 0
+      OperationReliability: 0
       TaskTime: 0
       ResponseTime: 0
     heartBroken: 0

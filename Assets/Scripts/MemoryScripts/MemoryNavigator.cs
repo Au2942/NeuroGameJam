@@ -19,7 +19,7 @@ public class MemoryNavigator : MonoBehaviour
     private int nearestIndex = -1;
     private float cooldownTimer = 0f;
     private float scrollDelta = 0f;
-    private bool isDraggingScroll = false;
+    public bool IsDraggingScroll = false;
     private Coroutine smoothScrollCoroutine;
 
     private System.Action<PointerEventData> BeginDragEventHandler;
@@ -28,8 +28,8 @@ public class MemoryNavigator : MonoBehaviour
 
     void Awake()
     {
-        BeginDragEventHandler = (t) => {isDraggingScroll = true;};
-        EndDragEventHandler = (t) => {isDraggingScroll = false;};
+        BeginDragEventHandler = (t) => {SetIsDraggingScroll(true);};
+        EndDragEventHandler = (t) => {SetIsDraggingScroll(false);};
         ScrollEventHandler = (t) => {UpdateScrollingInput(t);};
     }
     void Start()
@@ -53,9 +53,14 @@ public class MemoryNavigator : MonoBehaviour
         Navigate(navigationInput);
         scrollDelta = 0;
     }
-    private void UpdateScrollingInput(PointerEventData eventData)
+    public void UpdateScrollingInput(PointerEventData eventData)
     {
         scrollDelta = -eventData.scrollDelta.y;
+    }
+
+    public void SetIsDraggingScroll(bool isDragging)
+    {
+        IsDraggingScroll = isDragging;
     }
 
     private void Navigate(float input)
@@ -117,7 +122,7 @@ public class MemoryNavigator : MonoBehaviour
         for(int i = 0; i < MemoryCount; i++)
         {
             MemoryInfo memoryInfo = MemoryData.GetMemoryInfo(i);
-            MemoryEntity entity = memoryInfo.entity;
+            MemoryEntity entity = memoryInfo.Entity;
             if (i == index)
             {
                 entity.SetInFocus(true);
@@ -156,15 +161,12 @@ public class MemoryNavigator : MonoBehaviour
         healthIndicator.SetEntity(entity);
     }
 
-    public void SetupMemoryBlock(MemoryEntity memory, MemoryInfo memoryInfo)
+    public void SetupMemoryBlock(string memoryName, MemoryInfo memoryInfo)
     {
-
+        MemoryEntity memory = memoryInfo.Entity;
+        MemoryBlock memoryBlock = memoryInfo.Block;
         memory.transform.SetParent(memoryContent);
-
-        MemoryBlock memoryBlock = memory.GetComponent<MemoryBlock>();
-        memoryBlock.SetupMemoryBlock(memoryInfo.name, MemoryCount-1);
-
-        ScrollRect.onValueChanged.AddListener(delegate {memoryBlock.UpdateBlockOnScroll();});
+        memoryBlock.SetupMemoryBlock(memoryName, MemoryCount-1);
         memory.transform.SetSiblingIndex(2 + MemoryCount-1);
 
     }
@@ -205,9 +207,9 @@ public class MemoryNavigator : MonoBehaviour
             {
                 yield return null;
             }
-            if(isDraggingScroll)
+            if(IsDraggingScroll)
             {
-                while(isDraggingScroll)
+                while(IsDraggingScroll)
                 {
                     yield return new WaitForSeconds(0.1f);
                 }

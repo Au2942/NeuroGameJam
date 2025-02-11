@@ -15,7 +15,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] public Tooltip Tooltip;
     public int MemoryCount => MemoryManager.Instance.MemoryData.GetMemoryCount();
     public int CurrentMemoryIndex => MemoryManager.Instance.CurrentMemoryIndex;
-    public List<MemoryEntity> MemoryEntities => MemoryManager.Instance.MemoryData.GetMemoryEntities();
 
     public bool isPause { get; set; } = false;
 

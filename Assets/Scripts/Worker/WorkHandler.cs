@@ -83,7 +83,7 @@ public class WorkHandler
     private IEnumerator Maintaining()
     {
         int failCount = 0;
-        for(int i = 0; i < worker.TotalStats.TaskAmount; i++)
+        for(int i = 0; i < worker.TotalStats.TaskExecutionCount; i++)
         {
             //implement a system to recall worker before they finish maintaining
             yield return worker.StartCoroutine(MoveToDoTask()); 
@@ -94,7 +94,7 @@ public class WorkHandler
             if(entity == null || entity.Health >= entity.MaxHealth) break;
         }
 
-        if(failCount > worker.TotalStats.TaskAmount/2)
+        if(failCount > worker.TotalStats.TaskExecutionCount/2)
         {
             OnWorkFail();
         }
@@ -157,7 +157,11 @@ public class WorkHandler
         {
             statusEffect.OnMaintainFail();
         }
+
+        float reliabilityRollCheck = Random.Range(0, 100);
+
         entity.MaintainFail(worker);
+
     }
 
     public virtual void FinishMaintaining()
@@ -198,7 +202,7 @@ public class WorkHandler
     {
         while(entity.Corruption > 0)
         {
-            for(int i = 0; i < worker.TotalStats.TaskAmount; i++)
+            for(int i = 0; i < worker.TotalStats.TaskExecutionCount; i++)
             {
                 yield return worker.StartCoroutine(MoveToDoTask());
                 RollRepairSuccessChance();

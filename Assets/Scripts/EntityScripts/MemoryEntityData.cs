@@ -4,6 +4,7 @@ using UnityEngine;
 [System.Serializable]
 public class MemoryEntityData : MonoBehaviour
 {
+    [SerializeField] public MemoryBlock MemoryBlock;
     [SerializeField] public GlitchOverlay GlitchEffect;
     
     [Header("Combat")]

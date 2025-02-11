@@ -66,8 +66,8 @@ public abstract class WorkerStatusEffect<DataType> : WorkerStatusEffect
     {
         if (Data.ExpireAfterLifetime)
         {
-            Data.ModifierLifetime -= deltaTime;
-            if (Data.ModifierLifetime <= 0)
+            Data.Lifetime -= deltaTime;
+            if (Data.Lifetime <= 0)
             {
                 Data.ExpireNextUpdate = true;
             }
