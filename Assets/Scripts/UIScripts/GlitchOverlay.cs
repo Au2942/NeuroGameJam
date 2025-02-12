@@ -108,38 +108,6 @@ public class GlitchOverlay : MonoBehaviour
         blockShuffleRate = Mathf.Lerp(30, 60, percentage);
     }
 
-    // public void Flicker(bool show)
-    // {
-    //     if(show)
-    //     {
-    //         glitchEffect.material.SetFloat("_NoiseStrength", flickerStrength);
-    //     }
-    //     else
-    //     {
-    //         glitchEffect.material.SetFloat("_NoiseStrength", 0);
-    //     }
-    // }
-
-    // public void Scanline(bool show)
-    // {
-    //     if(show)
-    //     {
-    //         glitchEffect.material.SetFloat("_ScanlineStrength", scanlineStrength);
-    //     }
-    //     else
-    //     {
-    //         glitchEffect.material.SetFloat("_ScanlineStrength", 0);
-    //     }
-    // }
-
-    // public void FlickerAndScanline(bool show)
-    // {
-    //     Flicker(show);
-    //     Scanline(show);
-    // }
-
-
-
     public void UpdateParameters()
     {
         if(!manageValue)

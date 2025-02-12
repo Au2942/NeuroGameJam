@@ -7,18 +7,19 @@ public class MemoryBlock : MonoBehaviour, IScrollHandler, IInitializePotentialDr
 {
 
     [SerializeField] public TextMeshProUGUI MemoryDisplayNameText;
-    [SerializeField] private HealthIndicator healthIndicator;
+    //[SerializeField] private HealthIndicator healthIndicator;
     [SerializeField] private UIEventHandler clickBlockDetector;
+    public PlaybackTimeline PlaybackTimeline;
     public MemoryNavigator MemoryNavigator => MemoryManager.Instance.MemoryNavigator;
-    public ScrollRect ScrollRect => MemoryNavigator.ScrollRect;
+    public ScrollRect NavigatorScrollRect => MemoryNavigator.ScrollRect;
     public string MemoryDisplayName;
     public int MemoryIndex = -1;
-    System.Action<PointerEventData> pointerUpEventHandler;
-    UnityEngine.Events.UnityAction<Vector2> scrollRectValueChangeEventHandler;
+    System.Action<PointerEventData> pointerUpDelegate;
+    UnityEngine.Events.UnityAction<Vector2> scrollRectValueChangeDelegate;
     void Awake()
     {
-        pointerUpEventHandler = (t) => OnPointerUp();
-        scrollRectValueChangeEventHandler = (t) => UpdateBlockOnScroll();
+        pointerUpDelegate = (t) => OnPointerUp();
+        scrollRectValueChangeDelegate = (t) => UpdateBlockOnScroll();
     }
 
     void OnEnable()
@@ -29,13 +30,13 @@ public class MemoryBlock : MonoBehaviour, IScrollHandler, IInitializePotentialDr
         }
         if(clickBlockDetector != null)
         {
-            clickBlockDetector.OnPointerUpEvent += pointerUpEventHandler;
+            clickBlockDetector.OnPointerUpEvent += pointerUpDelegate;
             clickBlockDetector.OnScrollEvent += OnScroll;
             clickBlockDetector.OnBeginDragEvent += OnBeginDrag;
             clickBlockDetector.OnDragEvent += OnDrag;
             clickBlockDetector.OnEndDragEvent += OnEndDrag;
         }
-        ScrollRect.onValueChanged.AddListener(scrollRectValueChangeEventHandler);
+        NavigatorScrollRect.onValueChanged.AddListener(scrollRectValueChangeDelegate);
     }
 
     public void OnPointerUp()
@@ -48,7 +49,8 @@ public class MemoryBlock : MonoBehaviour, IScrollHandler, IInitializePotentialDr
     {
         MemoryIndex = newIndex;
         SetMemoryDisplayName(name);
-        healthIndicator.SetEntity(MemoryManager.Instance.MemoryData.MemoryInfos[newIndex].Entity);
+        //healthIndicator.SetEntity(MemoryManager.Instance.MemoryData.MemoryInfos[newIndex].Entity);
+        PlaybackTimeline.SetupPlaybackTimeline(MemoryManager.Instance.MemoryData.MemoryInfos[newIndex].Entity.Playback);
     }
 
     public void EnableBlockClickDetector(bool enable)
@@ -84,13 +86,13 @@ public class MemoryBlock : MonoBehaviour, IScrollHandler, IInitializePotentialDr
     {
         if(clickBlockDetector != null)
         {
-            clickBlockDetector.OnPointerUpEvent -= pointerUpEventHandler;
+            clickBlockDetector.OnPointerUpEvent -= pointerUpDelegate;
             clickBlockDetector.OnScrollEvent -= MemoryNavigator.UpdateScrollingInput;
             clickBlockDetector.OnBeginDragEvent -= OnBeginDrag;
             clickBlockDetector.OnDragEvent -= OnDrag;
             clickBlockDetector.OnEndDragEvent -= OnEndDrag;
         }
-        ScrollRect.onValueChanged.RemoveListener(scrollRectValueChangeEventHandler);
+        NavigatorScrollRect.onValueChanged.RemoveListener(scrollRectValueChangeDelegate);
     }
 
     public void OnScroll(PointerEventData eventData)
@@ -101,27 +103,27 @@ public class MemoryBlock : MonoBehaviour, IScrollHandler, IInitializePotentialDr
 
     public void OnInitializePotentialDrag(PointerEventData eventData)
     {
-        eventData.pointerDrag = ScrollRect.gameObject;
-        ScrollRect.OnInitializePotentialDrag(eventData);
+        eventData.pointerDrag = NavigatorScrollRect.gameObject;
+        NavigatorScrollRect.OnInitializePotentialDrag(eventData);
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        eventData.pointerDrag = ScrollRect.gameObject;
-        ScrollRect.OnBeginDrag(eventData);
+        eventData.pointerDrag = NavigatorScrollRect.gameObject;
+        NavigatorScrollRect.OnBeginDrag(eventData);
         if(MemoryManager.Instance.MemoryNavigator == null) return;
         MemoryNavigator.SetIsDraggingScroll(true);
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        eventData.pointerDrag = ScrollRect.gameObject;
-        ScrollRect.OnDrag(eventData);
+        eventData.pointerDrag = NavigatorScrollRect.gameObject;
+        NavigatorScrollRect.OnDrag(eventData);
     }
     public void OnEndDrag(PointerEventData eventData)
     {
-        eventData.pointerDrag = ScrollRect.gameObject;
-        ScrollRect.OnEndDrag(eventData);
+        eventData.pointerDrag = NavigatorScrollRect.gameObject;
+        NavigatorScrollRect.OnEndDrag(eventData);
         if(MemoryManager.Instance.MemoryNavigator == null) return;
         MemoryNavigator.SetIsDraggingScroll(false);
     }

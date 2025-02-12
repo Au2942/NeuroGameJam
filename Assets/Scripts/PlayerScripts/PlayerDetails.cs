@@ -20,11 +20,11 @@ public class PlayerDetails : MonoBehaviour
     private float DisplayRemainingStreamTime = 0f;
     private StringBuilder sb = new StringBuilder();
 
-    private System.Action<string> OnChangeStreamNameEventHandler;
+    private System.Action<string> OnChangeStreamNameDelegate;
     void Start()
     {
-        OnChangeStreamNameEventHandler = (t) => UpdateStreamNameText(t);
-        PlayerManager.Instance.OnChangeStreamNameEvent += OnChangeStreamNameEventHandler;
+        OnChangeStreamNameDelegate = (t) => UpdateStreamNameText(t);
+        PlayerManager.Instance.OnChangeStreamNameEvent += OnChangeStreamNameDelegate;
         DisplayRemainingStreamTime = PlayerManager.Instance.RemainingStreamTime;
         StartCoroutine(PeriodicValueSync());
     }
@@ -97,6 +97,6 @@ public class PlayerDetails : MonoBehaviour
 
     void OnDestroy()
     {
-        PlayerManager.Instance.OnChangeStreamNameEvent -= OnChangeStreamNameEventHandler;
+        PlayerManager.Instance.OnChangeStreamNameEvent -= OnChangeStreamNameDelegate;
     }
 }

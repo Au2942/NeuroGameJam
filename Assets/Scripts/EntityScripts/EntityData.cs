@@ -5,35 +5,40 @@ using UnityEngine;
 public class EntityData : MonoBehaviour
 {
     [Header("Core")]
-    [SerializeField] public RectTransform EntityBody;
-    [SerializeField] public RectTransform EntityCell;
-    [SerializeField] public List<UIEventHandler> ClickInteractDetectors = new();
+    public RectTransform EntityBody;
+    public RectTransform EntityCell;
+    public List<UIEventHandler> ClickInteractDetectors = new();
     
     [Header("Dialogue")]
-    [SerializeField] public DialogueManager DialogueManager;
-    [SerializeField] public List<DialogueSet> DialogueSets = new();
-    [SerializeField] public int dialogueSetIndex = 0;
-    [SerializeField] public bool TalkInOrder = true;
-    [SerializeField] public bool TalkRepeatable = true;
-    [SerializeField] public float TalkRollInterval = 2f;
-    [SerializeField] public float TalkChance = 0.25f;
+    public DialogueManager DialogueManager;
+    public List<DialogueSet> DialogueSets = new();
+    public int dialogueSetIndex = 0;
+    public bool TalkInOrder = true;
+    public bool TalkRepeatable = true;
+    public float TalkRollInterval = 2f;
+    public float TalkChance = 0.25f;
+    public float talkRollTimer = 0f;
+    public int talkCounter = 0;
     
     [Header("Gameplay")]
-    [SerializeField] public float Health = 100;
-    [SerializeField] public float MaxHealth = 100;
-    [SerializeField] public float Corruption = 100; //to use when repairing / resetting
-    [SerializeField] public float MaxCorruption = 100;
-    [SerializeField] public float CorruptionCooldown = 10f; //cooldown after glitching out
-    [SerializeField] public float GlitchRollThreshold = 0.7f; //start rolling at this integrity
+    public float Health = 100;
+    public float MaxHealth = 100;
+    public float ErrorIndex = 100; //to use when repairing / resetting
+    public float MaxErrorIndex = 100;
+    public float CorruptionCooldown = 10f; //cooldown after glitching out
+    public float CorruptionCooldownTimer = 0f;
+    public float GlitchRollThreshold = 0.7f; //start rolling at this integrity
+    public List<StatusEffect> StatusEffects = new List<StatusEffect>(); 
+
 
     [Header("Animation")]
-    [SerializeField] public List<AnimatorClipsPair> DefaultAnimatorClips = new();
-    [SerializeField] public List<AnimatorClipsPair> IdleAnimatorClips = new();
-    [SerializeField] public List<AnimatorClipsPair> DialoguePlayingAnimation = new(); //plays while dialogue is playing
-    [SerializeField] public List<AnimatorClipsPair> DialogueTypingAnimation = new(); //plays when playing a typing sound
-    [SerializeField] public List<AnimatorClipsPair> NormalAnimatorClips = new();
-    [SerializeField] public List<AnimatorClipsPair> GlitchAnimatorClips = new();
-    [SerializeField] public Entity.AnimState CurrentAnimationState = Entity.AnimState.Default;
+    public List<AnimatorClipsPair> DefaultAnimatorClips = new();
+    public List<AnimatorClipsPair> IdleAnimatorClips = new();
+    public List<AnimatorClipsPair> DialoguePlayingAnimation = new(); //plays while dialogue is playing
+    public List<AnimatorClipsPair> DialogueTypingAnimation = new(); //plays when playing a typing sound
+    public List<AnimatorClipsPair> NormalAnimatorClips = new();
+    public List<AnimatorClipsPair> GlitchAnimatorClips = new();
+    public Entity.AnimState CurrentAnimationState = Entity.AnimState.Default;
 
 
     public float HealthPercentage()
@@ -43,7 +48,43 @@ public class EntityData : MonoBehaviour
 
     public float CorruptionPercentage()
     {
-        return Corruption / MaxCorruption;
+        return ErrorIndex / MaxErrorIndex;
+    }
+
+    public void RestoreHealth(float amount)
+    {
+        Health += amount;
+        if (Health > MaxHealth)
+        {
+            Health = MaxHealth;
+        }
+        if (Health < 0)
+        {
+            Health = 0;
+        }
+    }
+
+    public void DamageHealth(float amount)
+    {
+        RestoreHealth(-amount);
+    }
+
+    public void RestoreCorruption(float amount)
+    {
+        ErrorIndex += amount;
+        if (ErrorIndex > MaxErrorIndex)
+        {
+            ErrorIndex = MaxErrorIndex;
+        }
+        if (ErrorIndex < 0)
+        {
+            ErrorIndex = 0;
+        }
+    }
+
+    public void DamageCorruption(float amount)
+    {
+        RestoreCorruption(-amount);
     }
 
 

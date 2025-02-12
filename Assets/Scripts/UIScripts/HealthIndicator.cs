@@ -16,8 +16,8 @@ public class HealthIndicator : MonoBehaviour
         healthBar.material = tempMaterial;
         healthBar.materialForRendering.SetFloat("_Seed", Time.time);
         healthBar.materialForRendering.SetFloat("_Frequency", frequency);
-        healthBar.materialForRendering.SetColor("_Color1", colors[0]);
-        healthBar.materialForRendering.SetColor("_Color2", colors[2]);
+        healthBar.materialForRendering.SetColor("_ColorA", colors[0]);
+        healthBar.materialForRendering.SetColor("_ColorB", colors[2]);
         healthBar.materialForRendering.SetFloat("_Fill", 0);
     }
 
@@ -38,16 +38,16 @@ public class HealthIndicator : MonoBehaviour
         {
             if(!entity.Glitched)
             {
-                healthBar.materialForRendering.SetColor("_Color1", colors[0]);
-                healthBar.materialForRendering.SetColor("_Color2", colors[2]);
+                healthBar.materialForRendering.SetColor("_ColorA", colors[0]);
+                healthBar.materialForRendering.SetColor("_ColorB", colors[2]);
                 float percentage = entity.HealthPercentage();
                 healthBar.materialForRendering.SetFloat("_Fill", 1-percentage);
             }
             else
             {
-                healthBar.materialForRendering.SetColor("_Color1", colors[1]);
-                healthBar.materialForRendering.SetColor("_Color2", colors[2]);
-                healthBar.materialForRendering.SetFloat("_Fill", entity.Corruption/entity.MaxHealth); //corruption goes from maxhealth - health to 0
+                healthBar.materialForRendering.SetColor("_ColorA", colors[1]);
+                healthBar.materialForRendering.SetColor("_ColorB", colors[2]);
+                healthBar.materialForRendering.SetFloat("_Fill", entity.ErrorIndex/entity.MaxHealth); //corruption goes from maxhealth - health to 0
             }
             
         }

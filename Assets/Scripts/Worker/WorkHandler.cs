@@ -200,13 +200,13 @@ public class WorkHandler
 
     private IEnumerator Repairing()
     {
-        while(entity.Corruption > 0)
+        while(entity.ErrorIndex > 0)
         {
             for(int i = 0; i < worker.TotalStats.TaskExecutionCount; i++)
             {
                 yield return worker.StartCoroutine(MoveToDoTask());
                 RollRepairSuccessChance();
-                if(entity == null || entity.Corruption <= 0) break;
+                if(entity == null || entity.ErrorIndex <= 0) break;
             }
             yield return new WaitForSeconds(worker.TotalStats.ResponseTime); //cooldown before next repair
         }
@@ -252,7 +252,7 @@ public class WorkHandler
         {
             statusEffect.OnRepairSuccess();
         }
-        entity.DamageCorruption(worker.TotalStats.RestoreAmount);
+        entity.IncreaseErrorIndex(worker.TotalStats.RestoreAmount);
     }
 
     private void OnRepairFail()

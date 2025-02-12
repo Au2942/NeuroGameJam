@@ -136,10 +136,10 @@ public class PlayerManager : MonoBehaviour, IStatusEffectable
 
     private IEnumerator Resetting()
     {
-        while(StreamEntity.Corruption < StreamEntity.MaxCorruption)
+        while(StreamEntity.ErrorIndex < StreamEntity.MaxErrorIndex)
         {
             yield return null;
-            StreamEntity.RestoreCorruption(StabilityRecoverRate * Time.deltaTime);
+            StreamEntity.ReduceErrorIndex(StabilityRecoverRate * Time.deltaTime);
         }
         FinishResetting();
     }

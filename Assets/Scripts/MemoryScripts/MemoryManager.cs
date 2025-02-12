@@ -61,6 +61,7 @@ public class MemoryManager : MonoBehaviour
         }
 
         MemoryEntity memory = Instantiate(stream.memory);
+        memory.Playback = new Playback(PlayerManager.Instance.CurrentStreamTimer);
         MemoryInfo memoryInfo = MemoryData.AddMemory(memory);
         
         MemoryNavigator.SetupMemoryBlock("Memory of " + stream.name + "stream #" + MemoryTypesCount[stream.name], memoryInfo);

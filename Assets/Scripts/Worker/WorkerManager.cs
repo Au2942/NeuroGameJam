@@ -18,7 +18,7 @@ public class WorkerManager : MonoBehaviour
 
     public event System.Action<Worker> OnWorkerSelectEvent;
     public event System.Action OnWorkerDeselectedEvent;
-    public System.Action OnSelectedWorkerDetailsChangedEventHandler;
+    public System.Action OnSelectedWorkerDetailsChangedDelegate;
 
     void Awake()
     {

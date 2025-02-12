@@ -36,36 +36,36 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
     public event System.Action<Worker> OnSelectEvent; 
     public event System.Action<Worker> OnDieEvent; 
     public event System.Action OnDetailsChanged;
-    private System.Action<PointerEventData> OnWorkerClickEventHandler;
-    private System.Action<PointerEventData> OnWorkerMouseEnterEventHandler;
-    private System.Action<PointerEventData> OnWorkerMouseExitEventHandler;
-    private System.Action<PointerEventData> OnIconClickEventHandler;
+    private System.Action<PointerEventData> OnWorkerClickDelegate;
+    private System.Action<PointerEventData> OnWorkerMouseEnterDelegate;
+    private System.Action<PointerEventData> OnWorkerMouseExitDelegate;
+    private System.Action<PointerEventData> OnIconClickDelegate;
 
 
 
     void Awake()
     {
-        OnWorkerMouseEnterEventHandler = (eventData) => WorkerAppearance.ShowOutline(true);
-        OnWorkerMouseExitEventHandler = (eventData) => {if(WorkerManager.Instance.SelectedWorker != this) WorkerAppearance.ShowOutline(false); };
-        OnIconClickEventHandler = (eventData) => Select();
-        Icon.ClickDetector.OnLeftClickEvent += OnIconClickEventHandler;
+        OnWorkerMouseEnterDelegate = (eventData) => WorkerAppearance.ShowOutline(true);
+        OnWorkerMouseExitDelegate = (eventData) => {if(WorkerManager.Instance.SelectedWorker != this) WorkerAppearance.ShowOutline(false); };
+        OnIconClickDelegate = (eventData) => Select();
+        Icon.ClickDetector.OnLeftClickEvent += OnIconClickDelegate;
 
     }
     
     void OnEnable()
     {
         workerData.UpdateTotalAttribute();
-        WorkerClickDetector.OnLeftClickEvent += OnWorkerClickEventHandler;
-        WorkerClickDetector.OnPointerEnterEvent += OnWorkerMouseEnterEventHandler;
-        WorkerClickDetector.OnPointerExitEvent += OnWorkerMouseExitEventHandler;
+        WorkerClickDetector.OnLeftClickEvent += OnWorkerClickDelegate;
+        WorkerClickDetector.OnPointerEnterEvent += OnWorkerMouseEnterDelegate;
+        WorkerClickDetector.OnPointerExitEvent += OnWorkerMouseExitDelegate;
 
     }
     void OnDisable()
     {
-        WorkerClickDetector.OnLeftClickEvent -= OnWorkerClickEventHandler;
-        WorkerClickDetector.OnPointerEnterEvent -= OnWorkerMouseEnterEventHandler;
-        WorkerClickDetector.OnPointerExitEvent -= OnWorkerMouseExitEventHandler;
-        Icon.ClickDetector.OnLeftClickEvent -= OnIconClickEventHandler;
+        WorkerClickDetector.OnLeftClickEvent -= OnWorkerClickDelegate;
+        WorkerClickDetector.OnPointerEnterEvent -= OnWorkerMouseEnterDelegate;
+        WorkerClickDetector.OnPointerExitEvent -= OnWorkerMouseExitDelegate;
+        Icon.ClickDetector.OnLeftClickEvent -= OnIconClickDelegate;
     }
 
     void Start()

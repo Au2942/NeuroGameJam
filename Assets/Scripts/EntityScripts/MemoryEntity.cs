@@ -7,21 +7,18 @@ public abstract class MemoryEntity : Entity, ICombatant
     [SerializeField] protected MemoryEntityData memoryEntityData;
     public MemoryBlock MemoryBlock {get => memoryEntityData.MemoryBlock; set => memoryEntityData.MemoryBlock = value;}
     protected GlitchOverlay GlitchEffect {get => memoryEntityData.GlitchEffect; set => memoryEntityData.GlitchEffect = value;}
+    public Playback Playback {get => memoryEntityData.Playback; set => memoryEntityData.Playback = value;}
     public float AttackDamage {get => memoryEntityData.AttackDamage; set => memoryEntityData.AttackDamage = value;}
     public float AttackRate {get => memoryEntityData.AttackRate; set => memoryEntityData.AttackRate = value;}
     protected float TimeToShutup {get => memoryEntityData.TimeToShutup; set => memoryEntityData.TimeToShutup = value;}
     public bool DealAOEDamage {get => memoryEntityData.DealAOEDamage; set => memoryEntityData.DealAOEDamage = value;}
-    public bool InFocus = false;
-    public bool IsBeingMaintained = false;
+    public bool InFocus {get => memoryEntityData.InFocus; set => memoryEntityData.InFocus = value;}
+    public bool IsBeingMaintained {get => memoryEntityData.IsBeingMaintained; set => memoryEntityData.IsBeingMaintained = value;}
+    protected float ShutupTimer {get => memoryEntityData.shutupTimer; set => memoryEntityData.shutupTimer = value;}
+    public List<ICombatant> CombatTargets {get => memoryEntityData.combatTargets; set => memoryEntityData.combatTargets = value;}
+    float ICombatant.Health { get => ErrorIndex; set => ErrorIndex = value; }
+    float ICombatant.MaxHealth { get => MaxErrorIndex; set => MaxErrorIndex = value; }
 
-    protected List<ICombatant> combatTargets = new List<ICombatant>();
-    protected float shutupTimer = 0f;
-
-    float ICombatant.Health { get => Corruption; set => Corruption = value; }
-    float ICombatant.MaxHealth { get => MaxCorruption; set => MaxCorruption = value; }
-    float ICombatant.AttackDamage { get => AttackDamage; set => AttackDamage = value; }
-    float ICombatant.AttackRate { get => AttackRate; set => AttackRate = value; }
-    List<ICombatant> ICombatant.CombatTargets { get => combatTargets; set => combatTargets = value; }
 
     protected override void Awake()
     {
@@ -38,12 +35,12 @@ public abstract class MemoryEntity : Entity, ICombatant
 
     public virtual void AddCombatTarget(ICombatant target)
     {
-        combatTargets.Add(target);
+        CombatTargets.Add(target);
     }
 
     public virtual void RemoveCombatTarget(ICombatant target)
     {
-        combatTargets.Remove(target);
+        CombatTargets.Remove(target);
     }
 
     protected virtual void SubmitInteract()
@@ -133,6 +130,15 @@ public abstract class MemoryEntity : Entity, ICombatant
     protected override void OnHealthChanged(float amount)
     {
         base.OnHealthChanged(amount);
+        if(amount < 0)
+        {
+            AddCorruptSegment(-amount/MaxHealth);
+        }
+        else
+        {
+            RemoveCorruptSegment(Playback.CurrentPlaybackTime, amount);
+        }
+
         if(GlitchEffect != null)
         {
             if(HealthPercentage() <= GlitchRollThreshold)
@@ -143,6 +149,16 @@ public abstract class MemoryEntity : Entity, ICombatant
             }
             else GlitchEffect.Hide();
         }
+    }
+
+    protected virtual void AddCorruptSegment(float percentage)
+    {
+        Playback.AddRandomCorruptPart(percentage*Playback.PlaybackDuration);
+    }
+
+    protected virtual void RemoveCorruptSegment(float start, float duration)
+    {
+        Playback.RemoveCorruptPart(start, start + duration);
     }
 
     protected virtual void InFocusBehavior()
@@ -158,12 +174,12 @@ public abstract class MemoryEntity : Entity, ICombatant
     {
         if (DialogueManager.IsDialoguePlaying)
         {
-            if (shutupTimer >= TimeToShutup)
+            if (ShutupTimer >= TimeToShutup)
             {
                 ShutUp();
-                shutupTimer = 0f;
+                ShutupTimer = 0f;
             }
-            else shutupTimer += Time.deltaTime;
+            else ShutupTimer += Time.deltaTime;
         }
     }
 
@@ -200,17 +216,17 @@ public abstract class MemoryEntity : Entity, ICombatant
     }
     public virtual void Attack()
     {
-        if(combatTargets.Count == 0) return;
+        if(CombatTargets.Count == 0) return;
         if(DealAOEDamage)
         {
-            foreach(ICombatant target in combatTargets)
+            foreach(ICombatant target in CombatTargets)
             {
                 DealDamage(target);
             }
         }
         else
         {
-            DealDamage(combatTargets[0]);
+            DealDamage(CombatTargets[0]);
         }
     }
 
@@ -230,8 +246,8 @@ public abstract class MemoryEntity : Entity, ICombatant
 
     public virtual bool TakeDamage(float value, DamageType damageType = DamageType.Normal, ICombatant attacker = null)
     {
-        DamageCorruption(value);
-        Debug.Log(name + " corruption is " + Corruption);
+        IncreaseErrorIndex(value);
+        Debug.Log(name + " corruption is " + ErrorIndex);
         return true;
     }
 }

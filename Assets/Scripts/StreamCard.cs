@@ -15,21 +15,21 @@ public class StreamCard : MonoBehaviour
     private Color transparentColor;
 
     public event System.Action<StreamSO> OnSelect;
-    public System.Action<PointerEventData> OnPointerUpEventHandler;
-    public System.Action<PointerEventData> OnPointerEnterHandler;
-    public System.Action<PointerEventData> OnPointerExitHandler;
+    public System.Action<PointerEventData> OnPointerUpDelegate;
+    public System.Action<PointerEventData> OnPointerEnterDelegate;
+    public System.Action<PointerEventData> OnPointerExitDelegate;
 
     void Awake()
     {
-        OnPointerUpEventHandler = (t) => Select();
-        OnPointerEnterHandler = (t) => outline.color = originalColor;
-        OnPointerExitHandler = (t) => outline.color = transparentColor;
+        OnPointerUpDelegate = (t) => Select();
+        OnPointerEnterDelegate = (t) => outline.color = originalColor;
+        OnPointerExitDelegate = (t) => outline.color = transparentColor;
     }
     void OnEnable()
     {
-        cardEventHandler.OnPointerUpEvent += OnPointerUpEventHandler;
-        cardEventHandler.OnPointerEnterEvent += OnPointerEnterHandler;
-        cardEventHandler.OnPointerExitEvent += OnPointerExitHandler;
+        cardEventHandler.OnPointerUpEvent += OnPointerUpDelegate;
+        cardEventHandler.OnPointerEnterEvent += OnPointerEnterDelegate;
+        cardEventHandler.OnPointerExitEvent += OnPointerExitDelegate;
     }
     void Start()
     {
@@ -57,8 +57,8 @@ public class StreamCard : MonoBehaviour
 
     void OnDisable()
     {
-        cardEventHandler.OnPointerUpEvent -= OnPointerUpEventHandler;
-        cardEventHandler.OnPointerEnterEvent -= OnPointerEnterHandler;
-        cardEventHandler.OnPointerExitEvent -= OnPointerExitHandler;
+        cardEventHandler.OnPointerUpEvent -= OnPointerUpDelegate;
+        cardEventHandler.OnPointerEnterEvent -= OnPointerEnterDelegate;
+        cardEventHandler.OnPointerExitEvent -= OnPointerExitDelegate;
     }
 }

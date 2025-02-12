@@ -22,21 +22,21 @@ public class MemoryNavigator : MonoBehaviour
     public bool IsDraggingScroll = false;
     private Coroutine smoothScrollCoroutine;
 
-    private System.Action<PointerEventData> BeginDragEventHandler;
-    private System.Action<PointerEventData> EndDragEventHandler;
-    private System.Action<PointerEventData> ScrollEventHandler;
+    private System.Action<PointerEventData> BeginDragDelegate;
+    private System.Action<PointerEventData> EndDragDelegate;
+    private System.Action<PointerEventData> ScrollDelegate;
 
     void Awake()
     {
-        BeginDragEventHandler = (t) => {SetIsDraggingScroll(true);};
-        EndDragEventHandler = (t) => {SetIsDraggingScroll(false);};
-        ScrollEventHandler = (t) => {UpdateScrollingInput(t);};
+        BeginDragDelegate = (t) => {SetIsDraggingScroll(true);};
+        EndDragDelegate = (t) => {SetIsDraggingScroll(false);};
+        ScrollDelegate = (t) => {UpdateScrollingInput(t);};
     }
     void Start()
     {
-        scrollRectEventHandler.OnBeginDragEvent += BeginDragEventHandler;
-        scrollRectEventHandler.OnEndDragEvent += EndDragEventHandler;
-        scrollRectEventHandler.OnScrollEvent += ScrollEventHandler;
+        scrollRectEventHandler.OnBeginDragEvent += BeginDragDelegate;
+        scrollRectEventHandler.OnEndDragEvent += EndDragDelegate;
+        scrollRectEventHandler.OnScrollEvent += ScrollDelegate;
         distanceBetweenIndex = memoryWidth + memoryContent.GetComponent<HorizontalLayoutGroup>().spacing;
         StartCoroutine(SnapToNearestMemoryRoutine());
     }
@@ -254,8 +254,8 @@ public class MemoryNavigator : MonoBehaviour
 
     void OnDestroy()
     {
-        scrollRectEventHandler.OnBeginDragEvent -= BeginDragEventHandler;
-        scrollRectEventHandler.OnEndDragEvent -= EndDragEventHandler;
-        scrollRectEventHandler.OnScrollEvent -= ScrollEventHandler;
+        scrollRectEventHandler.OnBeginDragEvent -= BeginDragDelegate;
+        scrollRectEventHandler.OnEndDragEvent -= EndDragDelegate;
+        scrollRectEventHandler.OnScrollEvent -= ScrollDelegate;
     }
 }

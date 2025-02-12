@@ -5,6 +5,7 @@ using System.Collections;
 
 public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSource, ISpeaker
 {
+    #region Fields
     [SerializeField] protected EntityData entityData;
     public RectTransform EntityBody { get => entityData.EntityBody; set => entityData.EntityBody = value; }
     public RectTransform EntityCell { get => entityData.EntityCell; set => entityData.EntityCell = value; }
@@ -16,11 +17,14 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
     protected bool TalkRepeatable { get => entityData.TalkRepeatable; set => entityData.TalkRepeatable = value; }
     protected float TalkRollInterval { get => entityData.TalkRollInterval; set => entityData.TalkRollInterval = value; }
     protected float TalkChance { get => entityData.TalkChance; set => entityData.TalkChance = value; }
+    protected float talkRollTimer { get => entityData.talkRollTimer; set => entityData.talkRollTimer = value; }
+    protected int talkCounter { get => entityData.talkCounter; set => entityData.talkCounter = value; }
     public float Health { get => entityData.Health; set => entityData.Health = value; }
     public float MaxHealth { get => entityData.MaxHealth; set => entityData.MaxHealth = value; }
-    public float Corruption { get => entityData.Corruption; set => entityData.Corruption = value; }
-    public float MaxCorruption { get => entityData.MaxCorruption; set => entityData.MaxCorruption = value; }
+    public float ErrorIndex { get => entityData.ErrorIndex; set => entityData.ErrorIndex = value; }
+    public float MaxErrorIndex { get => entityData.MaxErrorIndex; set => entityData.MaxErrorIndex = value; }
     public float CorruptionCooldown { get => entityData.CorruptionCooldown; set => entityData.CorruptionCooldown = value; }
+    public float CorruptionCooldownTimer { get => entityData.CorruptionCooldownTimer; set => entityData.CorruptionCooldownTimer = value; }
     public bool Interactable = true;
     public bool Glitched = false;
     protected float GlitchRollThreshold { get => entityData.GlitchRollThreshold; set => entityData.GlitchRollThreshold = value; }
@@ -31,24 +35,18 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
     public List<AnimatorClipsPair> NormalAnimatorClips { get => entityData.NormalAnimatorClips; set => entityData.NormalAnimatorClips = value; }
     public List<AnimatorClipsPair> GlitchAnimatorClips { get => entityData.GlitchAnimatorClips; set => entityData.GlitchAnimatorClips = value; }
     public AnimState CurrentAnimationState { get => entityData.CurrentAnimationState; set => entityData.CurrentAnimationState = value; }
-
-    public List<StatusEffect> StatusEffects = new List<StatusEffect>(); 
-    List<StatusEffect> IStatusEffectable.StatusEffects { get => StatusEffects; set => StatusEffects = value; }
-
+    public List<StatusEffect> StatusEffects { get => entityData.StatusEffects; set => entityData.StatusEffects = value; }
     public enum AnimState
     {
         Default,
         Idle,
     }
-    protected float talkRollTimer = 0f;
-    protected int talkCounter = 0;
-    public float CorruptionCooldownTimer = 0f;
     public event System.Action<float> OnHealthChangedEvent;
-    public event System.Action<float> OnCorruptionChangedEvent;
+    public event System.Action<float> OnErrorIndexChangedEvent;
     public event System.Action OnEnterGlitchEvent;
     public event System.Action OnExitGlitchEvent;
-    protected List<System.Action<PointerEventData>> OnClickInteractHandlers = new();
-    protected System.Action<PointerEventData> OnClickDialogueHandlers;
+    protected List<System.Action<PointerEventData>> OnClickInteractDelegates = new();
+    #endregion
 
     protected virtual void Awake()
     {
@@ -73,8 +71,8 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
         for(int i = 0; i < ClickInteractDetectors.Count; i++)
         {
             int index = i;
-            OnClickInteractHandlers.Add((t) => ClickInteract(ClickInteractDetectors[index].gameObject));
-            ClickInteractDetectors[index].OnLeftClickEvent += OnClickInteractHandlers[index];
+            OnClickInteractDelegates.Add((t) => ClickInteract(ClickInteractDetectors[index].gameObject));
+            ClickInteractDetectors[index].OnLeftClickEvent += OnClickInteractDelegates[index];
         }
         GameManager.Instance.OnStartStream += OnStartStream;
         GameManager.Instance.OnEndStream += OnEndStream;
@@ -98,6 +96,59 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
         }
     }
 
+#region Health & Corruption
+    public void RestoreHealth(float amount)
+    {
+        entityData.RestoreHealth(amount);
+        OnHealthChanged(amount);
+    }
+
+    public void DamageHealth(float amount)
+    {
+        RestoreHealth(-amount);
+    }
+
+    public void ReduceErrorIndex(float amount)
+    {
+        entityData.RestoreCorruption(amount);
+        OnErrorIndexChanged(amount);
+    }
+
+    public void IncreaseErrorIndex(float amount)
+    {
+        ReduceErrorIndex(-amount);
+    }
+
+    protected virtual void OnHealthChanged(float amount)
+    {
+        if(!Glitched && amount < 0)
+        {
+            RollChanceToGlitch();
+        }
+        OnHealthChangedEvent?.Invoke(Health);
+    }
+
+    protected virtual void OnErrorIndexChanged(float amount)
+    {
+        if(Glitched && ErrorIndex <= 0)
+        {
+            ExitGlitchState();
+        }
+        OnErrorIndexChangedEvent?.Invoke(ErrorIndex);
+    }
+
+    public float HealthPercentage()
+    {
+        return entityData.HealthPercentage();
+    }
+
+    public float CorruptionPercentage()
+    {
+        return entityData.CorruptionPercentage();
+    }
+#endregion
+
+#region Animation
     public virtual void SetAnimationState(AnimState state, bool force = false)
     {
         if (force || CurrentAnimationState != state)
@@ -118,64 +169,6 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
                 break;
         }
     }
-
-    public void RestoreHealth(float amount)
-    {
-        Health += amount;
-        if (Health > MaxHealth)
-        {
-            Health = MaxHealth;
-        }
-        if (Health < 0)
-        {
-            Health = 0;
-        }
-        OnHealthChanged(amount);
-    }
-
-    public void DamageHealth(float amount)
-    {
-        RestoreHealth(-amount);
-    }
-
-    public void RestoreCorruption(float amount)
-    {
-        Corruption += amount;
-        if (Corruption > MaxCorruption)
-        {
-            Corruption = MaxCorruption;
-        }
-        if (Corruption < 0)
-        {
-            Corruption = 0;
-        }
-        OnCorruptionChanged(amount);
-    }
-
-    public void DamageCorruption(float amount)
-    {
-        RestoreCorruption(-amount);
-    }
-
-    protected virtual void OnHealthChanged(float amount)
-    {
-        if(!Glitched && amount < 0)
-        {
-            RollChanceToGlitch();
-        }
-        OnHealthChangedEvent?.Invoke(Health);
-    }
-
-    protected virtual void OnCorruptionChanged(float amount)
-    {
-        if(Glitched && Corruption <= 0)
-        {
-            ExitGlitchState();
-        }
-        OnCorruptionChangedEvent?.Invoke(Corruption);
-    }
-
-
     protected virtual void PlayDefaultAnimation()
     {
         for(int i = 0; i < DefaultAnimatorClips.Count; i++)
@@ -235,21 +228,7 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
         if (animator == null || clip == null) return;
         animator.CrossFade(clip.name, 0.2f, layer);
     }
-
-    protected virtual void RollChanceToTalk()
-    {
-        if(!DialogueManager.IsDialoguePlaying)
-        {
-            if(talkRollTimer < Time.time)
-            {
-                if(Random.Range(0f, 1f) < TalkChance)
-                {
-                    Speak();
-                }
-                talkRollTimer = Time.time + TalkRollInterval;
-            }
-        }
-    }
+#endregion
 
     protected virtual void NormalBehavior()
     {
@@ -267,8 +246,8 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
     public virtual void EnterGlitchState()
     {
         Glitched = true;
-        MaxCorruption = MaxHealth - Health;
-        Corruption = MaxCorruption;
+        MaxErrorIndex = MaxHealth - Health;
+        ErrorIndex = MaxErrorIndex;
 
         DialogueSetIndex = 1;
         ShutUp();
@@ -298,16 +277,6 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
         }
     }
 
-    public float HealthPercentage()
-    {
-        return entityData.HealthPercentage();
-    }
-
-    public float CorruptionPercentage()
-    {
-        return entityData.CorruptionPercentage();
-    }
-
     public virtual void Converse()
     {
         Talk(DialogueSetIndex);
@@ -318,6 +287,9 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
         Talk(DialogueSetIndex, false);      
     }
 
+    /// <summary>
+    /// Talk using the dialogue set at the specified index
+    /// </summary>
     protected virtual void Talk(int dialogueSet = 0, bool playerInitiated = true)
     {
         if (DialogueManager == null || DialogueSetIndex >= DialogueSets.Count)
@@ -356,7 +328,10 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
         }
     }
 
-    protected virtual void Talk(int dialogueSet, int dialogueIndex, bool playerInitiated = true)
+    /// <summary>
+    /// Say a specific dialogue from a specific dialogue set
+    /// </summary>
+    protected virtual void Say(int dialogueSet, int dialogueIndex, bool playerInitiated = true)
     {
         if (DialogueManager == null || DialogueSets == null)
         {
@@ -372,19 +347,33 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
         DialogueManager.PlayDialogue(dialogue, playerInitiated);
     }
 
-
     public void ShutUp()
     {
         DialogueManager.EndDialogue();
+    }
+
+        protected virtual void RollChanceToTalk()
+    {
+        if(!DialogueManager.IsDialoguePlaying)
+        {
+            if(talkRollTimer < Time.time)
+            {
+                if(Random.Range(0f, 1f) < TalkChance)
+                {
+                    Speak();
+                }
+                talkRollTimer = Time.time + TalkRollInterval;
+            }
+        }
     }
 
     protected virtual void OnDisable()
     {
         for(int i = 0; i < ClickInteractDetectors.Count; i++)
         {
-            ClickInteractDetectors[i].OnLeftClickEvent -= OnClickInteractHandlers[i];
+            ClickInteractDetectors[i].OnLeftClickEvent -= OnClickInteractDelegates[i];
         }
-        OnClickInteractHandlers.Clear();
+        OnClickInteractDelegates.Clear();
         if(GameManager.Instance != null)
         {
             GameManager.Instance.OnStartStream -= OnStartStream;

@@ -1,25 +1,28 @@
 //modified from glitch effect in Kino by Keijiro Takahashi https://github.com/keijiro/Kino
 
-Shader "CustomEffects/Shuffle_Stripes_Shader"
+Shader "CustomEffects/Color_Stripes_Shader"
 {
 
     Properties
     {
-        _Frequency ("Frequency", float) = 20
-        _Fill ("Fill", Range(0, 1)) = 0.5
-        _Seed ("Seed", Float) = 0
+        [HideInInspector] _MainTex ("Base Map", 2D) = "white" {}
         _ColorA ("ColorA", Color) = (0,1,0,1)
         _ColorB ("ColorB", Color) = (1,0,0,1)
+        _Frequency ("Frequency", Integer) = 100
+        _Bitmask1 ("Bitmask1", Integer) = 0
+        _Bitmask2 ("Bitmask2", Integer) = 0
+        _Bitmask3 ("Bitmask3", Integer) = 0
+        _Bitmask4 ("Bitmask4", Integer) = 0
         [Toggle] _Horizontal("Horizontal?", Float) = 0
-        [HideInInspector]  _StencilComp ("Stencil Comparison", Float) = 8.000000
-        [HideInInspector]  _Stencil ("Stencil ID", Float) = 0.000000
-        [HideInInspector]  _StencilOp ("Stencil Operation", Float) = 0.000000
-        [HideInInspector]  _StencilWriteMask ("Stencil Write Mask", Float) = 255.000000
-        [HideInInspector]  _StencilReadMask ("Stencil Read Mask", Float) = 255.000000
-        [HideInInspector]  _ColorMask ("ColorMask", Float) = 15.000000
-        [HideInInspector]  _ClipRect ("ClipRect", Vector) = (0.000000,0.000000,0.000000,0.000000)
-        [HideInInspector]  _UIMaskSoftnessX ("UIMaskSoftnessX", Float) = 1.000000
-        [HideInInspector]  _UIMaskSoftnessY ("UIMaskSoftnessY", Float) = 1.000000
+        [HideInInspector] _StencilComp ("Stencil Comparison", Float) = 8.000000
+        [HideInInspector] _Stencil ("Stencil ID", Float) = 0.000000
+        [HideInInspector] _StencilOp ("Stencil Operation", Float) = 0.000000
+        [HideInInspector] _StencilWriteMask ("Stencil Write Mask", Float) = 255.000000
+        [HideInInspector] _StencilReadMask ("Stencil Read Mask", Float) = 255.000000
+        [HideInInspector] _ColorMask ("ColorMask", Float) = 15.000000
+        [HideInInspector] _ClipRect ("ClipRect", Vector) = (0.000000,0.000000,0.000000,0.000000)
+        [HideInInspector] _UIMaskSoftnessX ("UIMaskSoftnessX", Float) = 1.000000
+        [HideInInspector] _UIMaskSoftnessY ("UIMaskSoftnessY", Float) = 1.000000
     }
     SubShader
     {		
@@ -73,53 +76,37 @@ Shader "CustomEffects/Shuffle_Stripes_Shader"
                 Output.uv = IN.texcoord;
                 return Output;
             }
-
-            float _Frequency;
-            float _Fill;
-            float _Seed;
+            
             float4 _ColorA;
             float4 _ColorB;
+            float _Frequency;
             float _Horizontal;
-
-
-            float FRandom(uint seed)
-            {
-                return GenerateHashedRandomFloat(seed);
-            }
-
-            float shuffle_float(float x,float div,float i,float seed){
-                float original = x;
-                i += seed;
-                float from = float(floor(FRandom((i)*.22)*div));
-                float to = float(floor(FRandom(i*.82)*div));
-                if(original==from){x=to;}
-                if(original==to){x=from;}
-                return x;
-            }
+            int _Bitmask1;
+            int _Bitmask2;
+            int _Bitmask3;
+            int _Bitmask4;
             
-            float cell(float x, float div, float seed)
-            {
-                float a = floor(x*div);
-                for(float i=0.;i<70.;i++){
-                    a = shuffle_float(a,div,i,seed);
-                }
-                return a;
-            }
-            
-
             float4 frag(Varyings input) : SV_Target
             {
                 float2 uv = input.uv;
+
                 if(_Horizontal==1) {
                     uv = uv.yx;
                 }
+                
+                // Get the chunk index
+                uint chunkIndex = floor(uv.x * _Frequency);
+                int bitIndex = chunkIndex % 32; 
+                uint groupIndex = chunkIndex / 32;
+                uint mask = 1 << bitIndex; 
 
-                float a;
-                a = cell(uv.x,_Frequency,1.);
-                a = (a+frac(uv.x*_Frequency))/_Frequency;
-                float4 color = lerp(_ColorA, _ColorB, step(a,_Fill));
+                uint isToggled = (groupIndex == 0) ? (_Bitmask1 & mask) :
+                                (groupIndex == 1) ? (_Bitmask2 & mask) :
+                                (groupIndex == 2) ? (_Bitmask3 & mask) :
+                                                    (_Bitmask4 & mask);
 
-                return color;
+                // Select the correct color
+                return (isToggled != 0) ? _ColorB : _ColorA;
             }
             ENDHLSL
         }

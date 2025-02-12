@@ -12,15 +12,15 @@ public class LavaLamp : MonoBehaviour
     [SerializeField] private TooltipTrigger tooltipTrigger;
     private Material tempMaterial;
 
-    private System.Action<float> HealthChangedEventHandler;
+    private System.Action<float> HealthChangedDelegate;
 
     void Awake()
     {
-        HealthChangedEventHandler = (t) => UpdateLavaLamp();
+        HealthChangedDelegate = (t) => UpdateLavaLamp();
     }
     void OnEnable()
     {
-        PlayerManager.Instance.OnHealthChangedEvent += HealthChangedEventHandler;
+        PlayerManager.Instance.OnHealthChangedEvent += HealthChangedDelegate;
     }
     void Start()
     {
@@ -51,7 +51,7 @@ public class LavaLamp : MonoBehaviour
 
     void OnDisable()
     {
-        PlayerManager.Instance.OnHealthChangedEvent -= HealthChangedEventHandler;
+        PlayerManager.Instance.OnHealthChangedEvent -= HealthChangedDelegate;
     }
 
     void OnDestroy()
