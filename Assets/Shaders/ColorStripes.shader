@@ -8,11 +8,17 @@ Shader "CustomEffects/Color_Stripes_Shader"
         [HideInInspector] _MainTex ("Base Map", 2D) = "white" {}
         _ColorA ("ColorA", Color) = (0,1,0,1)
         _ColorB ("ColorB", Color) = (1,0,0,1)
+        _ColorC ("ColorB", Color) = (0,0,1,1)
+        _ColorD ("ColorB", Color) = (1,1,1,1)
         _Frequency ("Frequency", Integer) = 100
-        _Bitmask1 ("Bitmask1", Integer) = 0
-        _Bitmask2 ("Bitmask2", Integer) = 0
-        _Bitmask3 ("Bitmask3", Integer) = 0
-        _Bitmask4 ("Bitmask4", Integer) = 0
+        _BitmaskA1 ("BitmaskA1", Integer) = 0
+        _BitmaskA2 ("BitmaskA2", Integer) = 0
+        _BitmaskA3 ("BitmaskA3", Integer) = 0
+        _BitmaskA4 ("BitmaskA4", Integer) = 0
+        _BitmaskB1 ("BitmaskB1", Integer) = 0
+        _BitmaskB2 ("BitmaskB2", Integer) = 0
+        _BitmaskB3 ("BitmaskB3", Integer) = 0
+        _BitmaskB4 ("BitmaskB4", Integer) = 0
         [Toggle] _Horizontal("Horizontal?", Float) = 0
         [HideInInspector] _StencilComp ("Stencil Comparison", Float) = 8.000000
         [HideInInspector] _Stencil ("Stencil ID", Float) = 0.000000
@@ -77,14 +83,15 @@ Shader "CustomEffects/Color_Stripes_Shader"
                 return Output;
             }
             
-            float4 _ColorA;
-            float4 _ColorB;
+            float4 _ColorA; //00
+            float4 _ColorB; //01
+            float4 _ColorC; //10
+            float4 _ColorD; //11
             float _Frequency;
             float _Horizontal;
-            int _Bitmask1;
-            int _Bitmask2;
-            int _Bitmask3;
-            int _Bitmask4;
+            int _BitmaskA1, _BitmaskA2, _BitmaskA3, _BitmaskA4; // LSB
+            int _BitmaskB1, _BitmaskB2, _BitmaskB3, _BitmaskB4; // MSB
+            
             
             float4 frag(Varyings input) : SV_Target
             {
@@ -100,13 +107,24 @@ Shader "CustomEffects/Color_Stripes_Shader"
                 uint groupIndex = chunkIndex / 32;
                 uint mask = 1 << bitIndex; 
 
-                uint isToggled = (groupIndex == 0) ? (_Bitmask1 & mask) :
-                                (groupIndex == 1) ? (_Bitmask2 & mask) :
-                                (groupIndex == 2) ? (_Bitmask3 & mask) :
-                                                    (_Bitmask4 & mask);
+                // Extract LSB (bitmaskA) and MSB (bitmaskB)
+                uint bitA = (groupIndex == 0) ? (_BitmaskA1 & mask) :
+                            (groupIndex == 1) ? (_BitmaskA2 & mask) :
+                            (groupIndex == 2) ? (_BitmaskA3 & mask) :
+                                                (_BitmaskA4 & mask);
+
+                uint bitB = (groupIndex == 0) ? (_BitmaskB1 & mask) :
+                            (groupIndex == 1) ? (_BitmaskB2 & mask) :
+                            (groupIndex == 2) ? (_BitmaskB3 & mask) :
+                                                (_BitmaskB4 & mask);
+
+                uint colorIndex = (bitA != 0) + 2 * (bitB != 0); // Converts bits to an index: 00=0, 01=1, 10=2, 11=3
 
                 // Select the correct color
-                return (isToggled != 0) ? _ColorB : _ColorA;
+                return (colorIndex == 1) ? _ColorB :  // 01
+                    (colorIndex == 2) ? _ColorC : // 10
+                    (colorIndex == 3) ? _ColorD : // 11
+                    _ColorA; // Default 00
             }
             ENDHLSL
         }

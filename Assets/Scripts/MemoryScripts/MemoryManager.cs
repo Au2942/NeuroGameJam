@@ -33,7 +33,7 @@ public class MemoryManager : MonoBehaviour
         List<MemoryEntity> targets = new();
         foreach(var memoryInfo in MemoryData.MemoryInfos)
         {
-            if(memoryInfo.Entity.CorruptionCooldownTimer <= 0 && !memoryInfo.Entity.IsBeingMaintained)
+            if(memoryInfo.Entity.CorruptionCooldownTimer <= 0 && !memoryInfo.Entity.IsBeingWorkedOn)
             {
                 targets.Add(memoryInfo.Entity);
             }
@@ -43,7 +43,7 @@ public class MemoryManager : MonoBehaviour
             return;
         }
         int randomIndex = Random.Range(0, targets.Count);
-        targets[randomIndex].DamageHealth(corruptionAmount);
+        targets[randomIndex].CorruptPlayback(corruptionAmount);
     }
 
 
@@ -61,7 +61,7 @@ public class MemoryManager : MonoBehaviour
         }
 
         MemoryEntity memory = Instantiate(stream.memory);
-        memory.Playback = new Playback(PlayerManager.Instance.CurrentStreamTimer);
+        memory.PlaybackTimeline.SetupPlaybackTimeline(PlayerManager.Instance.CurrentStreamTimer);
         MemoryInfo memoryInfo = MemoryData.AddMemory(memory);
         
         MemoryNavigator.SetupMemoryBlock("Memory of " + stream.name + "stream #" + MemoryTypesCount[stream.name], memoryInfo);

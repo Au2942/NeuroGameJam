@@ -9,6 +9,7 @@ public class WorkHandler
     public Worker worker;
     public WorkState workState;
     private RectTransform entityCell;
+    private PlaybackTimeline entityPlaybackTimeline;
     private RectTransform workerAppearanceRect;
 
     public enum WorkState
@@ -18,29 +19,58 @@ public class WorkHandler
         Repairing
     }
 
-    private IEnumerator MoveToEnterCell()
+    private void InitializeWork(MemoryEntity entity, Worker worker)
     {
+        this.entity = entity;
+        this.worker = worker;
+        worker.SetAvailability(false);
         worker.WorkerAppearance.gameObject.SetActive(true);
         entityCell = entity.EntityCell != null ? entity.EntityCell : entity.transform as RectTransform;
+        entityPlaybackTimeline = entity.PlaybackTimeline;
+        entityPlaybackTimeline.PausePlayback(true);
         workerAppearanceRect = worker.WorkerAppearance.AppearanceRect;
+    }
+
+    private IEnumerator MoveToEnterCell()
+    {
 
         Vector2 mousePosition = (Vector2)Camera.main.ScreenToWorldPoint(InputManager.Instance.Point.ReadValue<Vector2>());
-        
-        
         workerAppearanceRect.position = mousePosition;
         workerAppearanceRect.SetParent(entityCell);
         workerAppearanceRect.SetAsLastSibling();
         workerAppearanceRect.localScale = Vector3.one;
 
         yield return worker.StartCoroutine(worker.WorkerAppearance.PlayTeleportEffect(worker.TotalStats.ResponseTime));
+
+        entity.IsBeingWorkedOn = true;
+        entity.Interactable = false;
     }
 
     private IEnumerator MoveToDoTask()
     {
+        if(entityPlaybackTimeline != null && entityPlaybackTimeline.ActivePlayback != null)
+        {
+            if(!entityPlaybackTimeline.ActivePlayback.InCorruptedPart())
+            {
+                float currentTime = entityPlaybackTimeline.ActivePlayback.CurrentPlaybackTimePercentage;
+                float targetTime = entityPlaybackTimeline.ActivePlayback.CorruptedParts[0].Start;
+                float timeToMove = targetTime - currentTime;
+                yield return Tween.Custom(
+                    currentTime, 
+                    targetTime,
+                    (1+timeToMove) * worker.TotalStats.TaskTime,
+                    onValueChange: newVal => entityPlaybackTimeline.SetActivePlaybackTime(newVal)
+                ).ToYieldInstruction();
+            }
+        }
+        
         Vector2 taskPosition = new Vector3(Random.Range(-entityCell.rect.width/2, entityCell.rect.width/2), Random.Range(-entityCell.rect.height/2, entityCell.rect.height/2));
         //TODO make taskPosition distance based on worker's speed
+        entityPlaybackTimeline.LockScrollbar(true);
         yield return Tween.UIAnchoredPosition(workerAppearanceRect, taskPosition, worker.TotalStats.TaskTime/2, ease: Ease.InSine).ToYieldInstruction();
         yield return new WaitForSeconds(worker.TotalStats.TaskTime/2);
+        entityPlaybackTimeline.LockScrollbar(false);
+
     }
 
     private void OnWorkSuccess()
@@ -64,13 +94,9 @@ public class WorkHandler
     public IEnumerator StartMaintaining(MemoryEntity entity, Worker worker)
     {
         workState = WorkState.Maintaining;
-        this.entity = entity;
-        this.worker = worker;
-        worker.SetAvailability(false);
+        InitializeWork(entity, worker);
 
         yield return worker.StartCoroutine(MoveToEnterCell());
-        entity.IsBeingMaintained = true;
-        entity.Interactable = false;
 
         foreach(WorkerStatusEffect statusEffect in worker.StatusEffects)
         {
@@ -84,7 +110,7 @@ public class WorkHandler
     {
         int failCount = 0;
         for(int i = 0; i < worker.TotalStats.TaskExecutionCount; i++)
-        {
+        {   
             //implement a system to recall worker before they finish maintaining
             yield return worker.StartCoroutine(MoveToDoTask()); 
             if(!RollMaintainSuccessChance())
@@ -147,7 +173,7 @@ public class WorkHandler
         {
             statusEffect.OnMaintainSuccess();
         }
-        entity.RestoreHealth(worker.TotalStats.RestoreAmount);
+        entity.RestorePlayback(worker.TotalStats.RestoreAmount);
         entity.MaintainSuccess(worker);
     }
 
@@ -168,7 +194,7 @@ public class WorkHandler
     {
         if(entity == null) return;
         entity.Interactable = true;
-        entity.IsBeingMaintained = false;
+        entity.IsBeingWorkedOn = false;
         foreach(WorkerStatusEffect statusEffect in worker.StatusEffects)
         {
             statusEffect.OnFinishMaintain();
@@ -181,12 +207,10 @@ public class WorkHandler
     public IEnumerator StartRepairing(MemoryEntity entity, Worker worker)
     {
         workState = WorkState.Repairing;
-        this.entity = entity;
-        this.worker = worker;
-        worker.SetAvailability(false);
+        InitializeWork(entity, worker);
 
         yield return worker.StartCoroutine(MoveToEnterCell());
-        entity.Interactable = false;
+
         entity.AddCombatTarget(worker);
 
         foreach(WorkerStatusEffect statusEffect in worker.StatusEffects)
@@ -252,7 +276,7 @@ public class WorkHandler
         {
             statusEffect.OnRepairSuccess();
         }
-        entity.IncreaseErrorIndex(worker.TotalStats.RestoreAmount);
+        entity.RepairPlayback(worker.TotalStats.RestoreAmount);
     }
 
     private void OnRepairFail()
@@ -265,7 +289,7 @@ public class WorkHandler
     private void FinishRepairing()
     {
         if(entity == null) return;
-        entity.RestoreHealth(worker.TotalStats.RestoreAmount);
+        entity.RestorePlayback(worker.TotalStats.RestoreAmount);
         entity.Interactable = true;
         foreach(WorkerStatusEffect statusEffect in worker.StatusEffects)
         {
@@ -300,6 +324,7 @@ public class WorkHandler
 
     public void ReturnWorker()
     {
+        entityPlaybackTimeline.PausePlayback(false);
         entity = null;
         worker.SetAvailability(true);
         worker.Icon.SetCooldownOverlay(1);

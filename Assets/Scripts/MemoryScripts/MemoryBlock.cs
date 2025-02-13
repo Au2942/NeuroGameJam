@@ -7,9 +7,9 @@ public class MemoryBlock : MonoBehaviour, IScrollHandler, IInitializePotentialDr
 {
 
     [SerializeField] public TextMeshProUGUI MemoryDisplayNameText;
-    //[SerializeField] private HealthIndicator healthIndicator;
+    [SerializeField] public GlitchEffect GlitchEffect;
+    [SerializeField] public PlaybackTimeline PlaybackTimeline;
     [SerializeField] private UIEventHandler clickBlockDetector;
-    public PlaybackTimeline PlaybackTimeline;
     public MemoryNavigator MemoryNavigator => MemoryManager.Instance.MemoryNavigator;
     public ScrollRect NavigatorScrollRect => MemoryNavigator.ScrollRect;
     public string MemoryDisplayName;
@@ -42,6 +42,7 @@ public class MemoryBlock : MonoBehaviour, IScrollHandler, IInitializePotentialDr
     public void OnPointerUp()
     {
         if(MemoryNavigator == null || MemoryNavigator.IsDraggingScroll) return;
+        if(MemoryNavigator.CurrentMemoryIndex != MemoryIndex)
         MemoryNavigator.SetCurrentMemoryIndex(MemoryIndex);
     }
 
@@ -50,7 +51,6 @@ public class MemoryBlock : MonoBehaviour, IScrollHandler, IInitializePotentialDr
         MemoryIndex = newIndex;
         SetMemoryDisplayName(name);
         //healthIndicator.SetEntity(MemoryManager.Instance.MemoryData.MemoryInfos[newIndex].Entity);
-        PlaybackTimeline.SetupPlaybackTimeline(MemoryManager.Instance.MemoryData.MemoryInfos[newIndex].Entity.Playback);
     }
 
     public void EnableBlockClickDetector(bool enable)

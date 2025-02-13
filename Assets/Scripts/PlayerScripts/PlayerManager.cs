@@ -136,7 +136,7 @@ public class PlayerManager : MonoBehaviour, IStatusEffectable
 
     private IEnumerator Resetting()
     {
-        while(StreamEntity.ErrorIndex < StreamEntity.MaxErrorIndex)
+        while(StreamEntity.ErrorIndex > 0)
         {
             yield return null;
             StreamEntity.ReduceErrorIndex(StabilityRecoverRate * Time.deltaTime);

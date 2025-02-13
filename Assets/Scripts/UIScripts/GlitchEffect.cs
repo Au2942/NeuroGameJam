@@ -4,7 +4,7 @@ using CompositeCanvas;
 
 
 
-public class GlitchOverlay : MonoBehaviour
+public class GlitchEffect : MonoBehaviour
 {
     [SerializeField] private CompositeCanvasRenderer glitchEffect;
     [SerializeField] Material glitchMaterial;

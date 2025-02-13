@@ -16,7 +16,6 @@ public class PlayerDetails : MonoBehaviour
     [SerializeField] private float popupNumberDuration = 2f;
     
     private float timeMultiplier => TimescaleManager.Instance.displayTimeMultiplier;
-
     private float DisplayRemainingStreamTime = 0f;
     private StringBuilder sb = new StringBuilder();
 
@@ -43,9 +42,8 @@ public class PlayerDetails : MonoBehaviour
         {
             ForceSyncRemainingStreamTime();
         }
-        remainingStreamTime.text = FloatToTimeString(DisplayRemainingStreamTime*timeMultiplier);
-        elapsedStreamTime.text = FloatToTimeString(PlayerManager.Instance.ElapsedStreamTime*timeMultiplier);
-
+        remainingStreamTime.text = TimescaleManager.Instance.FormatTimeString(DisplayRemainingStreamTime);
+        elapsedStreamTime.text = TimescaleManager.Instance.FormatTimeString(PlayerManager.Instance.ElapsedStreamTime);
     }
 
     private void UpdateStreamNameText(string streamName)
@@ -66,16 +64,6 @@ public class PlayerDetails : MonoBehaviour
     public void ForceSyncRemainingStreamTime()
     {
         DisplayRemainingStreamTime = PlayerManager.Instance.RemainingStreamTime;
-    }
-
-    private string FloatToTimeString(float timeInSeconds)
-    {
-        int hours = Mathf.FloorToInt(timeInSeconds / 3600F);
-        int minutes = Mathf.FloorToInt((timeInSeconds - hours * 3600) / 60F);
-        int seconds = Mathf.FloorToInt(timeInSeconds - hours * 3600 - minutes * 60);
-        sb.Clear();
-        sb.Append(hours.ToString("00")).Append(":").Append(minutes.ToString("00")).Append(":").Append(seconds.ToString("00"));
-        return sb.ToString(); 
     }
 
     public IEnumerator SpawnSubPopupNumber(int times)

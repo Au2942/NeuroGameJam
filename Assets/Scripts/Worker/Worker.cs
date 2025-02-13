@@ -95,19 +95,21 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
             workerData.Health = workerData.TotalStats.MaxHealth;
             value = workerData.TotalStats.MaxHealth - workerData.Health;
         }
-
-        if(WorkerAppearance.gameObject.activeSelf)
-        {
-            PopupTextSpawner.Instance.SpawnPopupText(WorkerAppearance.transform, WorkerAppearance.transform.position, value.ToString(), 0.5f, value > 0 ? Color.green : Color.red);
-        }
-
         Icon.SetDamageBar(1 - workerData.Health / workerData.TotalStats.MaxHealth);
-
-        if(workerData.Health <= 0)
+        
+        if(workerData.Health > 0)
+        {
+            if(WorkerAppearance.gameObject.activeSelf)
+            {
+                PopupTextSpawner.Instance.SpawnPopupText(WorkerAppearance.transform, WorkerAppearance.transform.position, value.ToString(), 0.5f, value > 0 ? Color.green : Color.red);
+            }
+            OnDetailsChanged?.Invoke();
+        }
+        else
         {
             Die();
         }
-        OnDetailsChanged?.Invoke();
+
     }
 
     public int AllocateAttributes(WorkerAttributes attributes)

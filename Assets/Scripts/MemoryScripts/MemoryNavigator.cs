@@ -126,14 +126,6 @@ public class MemoryNavigator : MonoBehaviour
             if (i == index)
             {
                 entity.SetInFocus(true);
-                if(entity.Glitched)
-                {
-                    GameManager.Instance.ScreenEffectController.Show();
-                }
-                else
-                {
-                    GameManager.Instance.ScreenEffectController.Hide();
-                }
             }
             else
             {

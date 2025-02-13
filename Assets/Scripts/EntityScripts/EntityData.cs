@@ -24,7 +24,6 @@ public class EntityData : MonoBehaviour
     public float Health = 100;
     public float MaxHealth = 100;
     public float ErrorIndex = 100; //to use when repairing / resetting
-    public float MaxErrorIndex = 100;
     public float CorruptionCooldown = 10f; //cooldown after glitching out
     public float CorruptionCooldownTimer = 0f;
     public float GlitchRollThreshold = 0.7f; //start rolling at this integrity
@@ -46,9 +45,9 @@ public class EntityData : MonoBehaviour
         return Health / MaxHealth;
     }
 
-    public float CorruptionPercentage()
+    public float ErrorIndexPercentage()
     {
-        return ErrorIndex / MaxErrorIndex;
+        return ErrorIndex / MaxHealth;
     }
 
     public void RestoreHealth(float amount)
@@ -64,28 +63,17 @@ public class EntityData : MonoBehaviour
         }
     }
 
-    public void DamageHealth(float amount)
-    {
-        RestoreHealth(-amount);
-    }
-
-    public void RestoreCorruption(float amount)
+    public void IncreaseErrorIndex(float amount)
     {
         ErrorIndex += amount;
-        if (ErrorIndex > MaxErrorIndex)
+        if (ErrorIndex > MaxHealth)
         {
-            ErrorIndex = MaxErrorIndex;
+            ErrorIndex = MaxHealth;
         }
         if (ErrorIndex < 0)
         {
             ErrorIndex = 0;
         }
     }
-
-    public void DamageCorruption(float amount)
-    {
-        RestoreCorruption(-amount);
-    }
-
 
 }

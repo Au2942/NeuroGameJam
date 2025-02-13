@@ -22,7 +22,6 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
     public float Health { get => entityData.Health; set => entityData.Health = value; }
     public float MaxHealth { get => entityData.MaxHealth; set => entityData.MaxHealth = value; }
     public float ErrorIndex { get => entityData.ErrorIndex; set => entityData.ErrorIndex = value; }
-    public float MaxErrorIndex { get => entityData.MaxErrorIndex; set => entityData.MaxErrorIndex = value; }
     public float CorruptionCooldown { get => entityData.CorruptionCooldown; set => entityData.CorruptionCooldown = value; }
     public float CorruptionCooldownTimer { get => entityData.CorruptionCooldownTimer; set => entityData.CorruptionCooldownTimer = value; }
     public bool Interactable = true;
@@ -96,7 +95,7 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
         }
     }
 
-#region Health & Corruption
+#region Health & ErrorIndex
     public void RestoreHealth(float amount)
     {
         entityData.RestoreHealth(amount);
@@ -108,15 +107,15 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
         RestoreHealth(-amount);
     }
 
-    public void ReduceErrorIndex(float amount)
+    public void IncreaseErrorIndex(float amount)
     {
-        entityData.RestoreCorruption(amount);
+        entityData.IncreaseErrorIndex(amount);
         OnErrorIndexChanged(amount);
     }
 
-    public void IncreaseErrorIndex(float amount)
+    public void ReduceErrorIndex(float amount)
     {
-        ReduceErrorIndex(-amount);
+        IncreaseErrorIndex(-amount);
     }
 
     protected virtual void OnHealthChanged(float amount)
@@ -142,9 +141,9 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
         return entityData.HealthPercentage();
     }
 
-    public float CorruptionPercentage()
+    public float ErrorIndexPercentage()
     {
-        return entityData.CorruptionPercentage();
+        return entityData.ErrorIndexPercentage();
     }
 #endregion
 
@@ -246,8 +245,7 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
     public virtual void EnterGlitchState()
     {
         Glitched = true;
-        MaxErrorIndex = MaxHealth - Health;
-        ErrorIndex = MaxErrorIndex;
+        ErrorIndex = MaxHealth - Health;;
 
         DialogueSetIndex = 1;
         ShutUp();
