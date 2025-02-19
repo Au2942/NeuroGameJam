@@ -249,6 +249,7 @@ GameObject:
   - component: {fileID: 4038350569715900827}
   - component: {fileID: 5289921443925214403}
   - component: {fileID: 1289120473476705605}
+  - component: {fileID: 6193356150926373215}
   m_Layer: 5
   m_Name: Bar
   m_TagString: Untagged
@@ -380,6 +381,18 @@ MonoBehaviour:
   ColorStripesMaterial: {fileID: 2100000, guid: 1085868e278c52240a53068353ca8a4d, type: 2}
   BaseImage: {fileID: 4038350569715900827}
   Frequency: 100
+--- !u!114 &6193356150926373215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3122692825417835863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a97ff6f1776746d44994a3d39755e472, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5479267919968295871
 GameObject:
   m_ObjectHideFlags: 0
@@ -865,19 +878,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfe60d659c6b1fe4fbaca8b2f51f00b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ActivePlayback:
-    CurrentPlaybackTimePercentage: 0
-    PlaybackDuration: 0
-    CorruptedParts: []
   BasePlayback:
     CurrentPlaybackTimePercentage: 0
     PlaybackDuration: 0
-    CorruptedParts: []
+    CorruptedSegments: []
   ErrorPlayback:
     CurrentPlaybackTimePercentage: 0
     PlaybackDuration: 0
-    CorruptedParts: []
+    CorruptedSegments: []
   PlaybackScroll: {fileID: 5289921443925214403}
+  PlaybackScrollDragDetector: {fileID: 6193356150926373215}
+  IsDraggingScroll: 0
+  IsPaused: 0
   CurrentTimeText: {fileID: 5209874390739351889}
   DurationText: {fileID: 1958831202540397997}
   ColorStripesEffect: {fileID: 1289120473476705605}
@@ -1008,7 +1020,7 @@ MonoBehaviour:
   InFocus: 0
   IsBeingMaintained: 0
   AttackDamage: 1
-  AttackRate: 1
+  AttackRate: 10
   TimeToShutup: 5
   DealAOEDamage: 0
 --- !u!1 &8014136801951313175

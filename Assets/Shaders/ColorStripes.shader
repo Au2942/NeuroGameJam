@@ -1,5 +1,3 @@
-//modified from glitch effect in Kino by Keijiro Takahashi https://github.com/keijiro/Kino
-
 Shader "CustomEffects/Color_Stripes_Shader"
 {
 

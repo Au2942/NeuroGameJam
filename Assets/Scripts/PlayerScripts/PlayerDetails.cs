@@ -76,9 +76,10 @@ public class PlayerDetails : MonoBehaviour
             Vector3 randomOffset = new Vector3(Random.Range(rangeMin.x, rangeMax.x), Random.Range(rangeMin.y, rangeMax.y), 0);
             Vector3 worldPosition = remainingStreamTime.rectTransform.TransformPoint(randomOffset);
             PopupTextSpawner.Instance.SpawnPopupText(
-                remainingStreamTime.transform ,worldPosition, 
-                "+" + Mathf.FloorToInt(PlayerManager.Instance.StreamTimeIncrease*timeMultiplier),
-                0.5f);
+                worldPosition, 
+                "+" + Mathf.FloorToInt(PlayerManager.Instance.StreamTimeIncrease*timeMultiplier), 
+                0.5f
+            );
             yield return new WaitForSeconds(popupNumberDuration/amount);
         }
     }

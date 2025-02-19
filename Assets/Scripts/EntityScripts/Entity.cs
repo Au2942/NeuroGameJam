@@ -120,10 +120,10 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
 
     protected virtual void OnHealthChanged(float amount)
     {
-        if(!Glitched && amount < 0)
-        {
-            RollChanceToGlitch();
-        }
+        // if(!Glitched && amount < 0)
+        // {
+        //     RollChanceToGlitch();
+        // }
         OnHealthChangedEvent?.Invoke(Health);
     }
 
@@ -245,11 +245,6 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
     public virtual void EnterGlitchState()
     {
         Glitched = true;
-        ErrorIndex = MaxHealth - Health;;
-
-        DialogueSetIndex = 1;
-        ShutUp();
-
         SetGlitchAppearance();
         OnEnterGlitchEvent?.Invoke();
     }
@@ -259,20 +254,21 @@ public abstract class Entity : MonoBehaviour, IStatusEffectable, IStatusEffectSo
     {
         Glitched = false;
         CorruptionCooldownTimer = CorruptionCooldown;
-        DialogueSetIndex = 0;
         SetNormalAppearance();
         OnExitGlitchEvent?.Invoke();
     }
 
-    public virtual void RollChanceToGlitch()
+    public virtual bool RollChanceToGlitch()
     {
         if (HealthPercentage() < GlitchRollThreshold)
         {
             if (Random.Range(0f, 1f) < 1-HealthPercentage())
             {
                 EnterGlitchState();
+                return true;
             }
         }
+        return false;
     }
 
     public virtual void Converse()

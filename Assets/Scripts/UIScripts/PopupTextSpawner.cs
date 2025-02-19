@@ -47,7 +47,7 @@ public class PopupTextSpawner : MonoBehaviour
         }
     }
 
-    public void SpawnPopupText(Transform parent, Vector3 position, string text, float duration, Color color, bool reuseActive = true)
+    public void SpawnPopupText(Vector3 position, string text, float duration, Color color, bool reuseActive = true)
     {
         GameObject popupText;
         if (popupTextPool.Count == 0)
@@ -62,7 +62,7 @@ public class PopupTextSpawner : MonoBehaviour
         {
             popupText = popupTextPool.Dequeue();
         }
-        popupText.transform.SetParent(parent);
+        //popupText.transform.SetParent(parent);
         popupText.transform.position = position;
         popupText.SetActive(true);
         TextMeshProUGUI textMesh = popupText.GetComponent<TextMeshProUGUI>();
@@ -75,17 +75,17 @@ public class PopupTextSpawner : MonoBehaviour
         StartCoroutine(ReturnToPool(popupText, duration));
     }
 
-    public void SpawnPopupText(Transform parent, Vector3 position, string text, float duration, bool reuseActive = true)
+    public void SpawnPopupText( Vector3 position, string text, float duration, bool reuseActive = true)
     {
-        SpawnPopupText(parent, position, text, duration, defaultColor, reuseActive);
+        SpawnPopupText(position, text, duration, defaultColor, reuseActive);
     }
-    public void SpawnPopupText(Transform parent, Vector3 position, string text,  bool reuseActive = true)
+    public void SpawnPopupText( Vector3 position, string text,  bool reuseActive = true)
     {
-        SpawnPopupText(parent, position, text, defaultDuration, defaultColor, reuseActive);
+        SpawnPopupText(position, text, defaultDuration, defaultColor, reuseActive);
     }
-    public void SpawnPopupText(Transform parent, Vector3 position, string text, Color color, bool reuseActive = true)
+    public void SpawnPopupText(Vector3 position, string text, Color color, bool reuseActive = true)
     {
-        SpawnPopupText(parent, position, text, defaultDuration, color, reuseActive);
+        SpawnPopupText(position, text, defaultDuration, color, reuseActive);
     }
 
     private IEnumerator ReturnToPool(GameObject popupText, float duration)
@@ -98,7 +98,4 @@ public class PopupTextSpawner : MonoBehaviour
         popupText.SetActive(false);
         popupTextPool.Enqueue(popupText);
     }
-
-
-
 }

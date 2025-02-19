@@ -1,14 +1,17 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 using System.Collections.Generic;
+using System.Collections;
 
 public class PlaybackTimeline : MonoBehaviour
 {
-    public Playback ActivePlayback;
     public Playback BasePlayback = new Playback();
     public Playback ErrorPlayback = new Playback();
     public Scrollbar PlaybackScroll;
+    public UIEventHandler PlaybackScrollDragDetector;
+    public bool IsDraggingScroll = false;
     public bool IsPaused = false;
     public TextMeshProUGUI CurrentTimeText;
     public TextMeshProUGUI DurationText;
@@ -19,23 +22,46 @@ public class PlaybackTimeline : MonoBehaviour
     UnityEngine.Events.UnityAction<float> playbackTimeDelegate;
     System.Action<float, float> onBaseAddCorruptPartDelegate;
     System.Action<float, float> onBaseRemoveCorruptPartDelegate;
-    System.Action<float, float> onErrorRemoveCorruptPartDelegate;
+    System.Action<PointerEventData> onBeginDragScrollDelegate;
+    System.Action<PointerEventData> onEndDragScrollDelegate;
+    public float NormalizedDeltaTime => BasePlayback.NormalizeTime(Time.deltaTime);
+    private Coroutine addCorruptedSegmentRoutine;
+    private Coroutine addErrorSegmentRoutine;
+
 
     void Awake()
     {
         BasePlayback ??= new Playback();  
         ErrorPlayback ??= new Playback(); 
-        playbackTimeDelegate = (t) => ActivePlayback.SetCurrentPlaybackTime(t);
-        onBaseRemoveCorruptPartDelegate = (s, e) => {SetColorStripesChunk(s, e, 0); if(ActivePlayback == ErrorPlayback) ErrorPlayback.RemoveCorruptPart(s, e);};
-        onBaseAddCorruptPartDelegate = (s, e) => {SetColorStripesChunk(s, e, 1); if(ActivePlayback == ErrorPlayback) ErrorPlayback.AddCorruptPart(s, e);};
-        onErrorRemoveCorruptPartDelegate = (s, e) => {if(ActivePlayback == ErrorPlayback) SetColorStripesChunk(s, e, 2);};
+        playbackTimeDelegate = (t) => BasePlayback.SetCurrentPlaybackTime(t);
+        onBaseRemoveCorruptPartDelegate = (s, e) => SetColorStripesChunk(s, e, 0);
+        onBaseAddCorruptPartDelegate = (s, e) => SetColorStripesChunk(s, e, 1);
+        onBeginDragScrollDelegate = (t) => SetDraggingScroll(true);
+        onEndDragScrollDelegate = (t) => SetDraggingScroll(false);
 
         if(PlaybackScroll != null) PlaybackScroll.onValueChanged.AddListener(playbackTimeDelegate);
         BasePlayback.OnCorruptPartAdd += onBaseAddCorruptPartDelegate;
         BasePlayback.OnCorruptPartRemove += onBaseRemoveCorruptPartDelegate;
-        ErrorPlayback.OnCorruptPartRemove += onErrorRemoveCorruptPartDelegate;
+        PlaybackScrollDragDetector.OnBeginDragEvent += onBeginDragScrollDelegate;
+        PlaybackScrollDragDetector.OnEndDragEvent += onEndDragScrollDelegate;
+    }
+    void OnDestroy()
+    {
+        PlaybackScroll.onValueChanged.RemoveListener(playbackTimeDelegate);
+        BasePlayback.OnCorruptPartAdd -= onBaseAddCorruptPartDelegate;
+        BasePlayback.OnCorruptPartRemove -= onBaseRemoveCorruptPartDelegate;
+        PlaybackScrollDragDetector.OnBeginDragEvent -= onBeginDragScrollDelegate;
+        PlaybackScrollDragDetector.OnEndDragEvent -= onEndDragScrollDelegate;
+    }
 
-        ActivePlayback = BasePlayback;
+    public bool HasCorruptedSegments()
+    {
+        return BasePlayback.CorruptedSegments.Count > 0;
+    }
+
+    public void SetDraggingScroll(bool state)
+    {
+        IsDraggingScroll = state;
     }
 
     public void PausePlayback(bool state)
@@ -48,21 +74,80 @@ public class PlaybackTimeline : MonoBehaviour
         PlaybackScroll.interactable = !state;
     }
 
-    public void SetActivePlaybackTime(float time)
+    public bool RoutineIsRunning()
     {
-        PlaybackScroll.value = time;
+        return addCorruptedSegmentRoutine != null || addErrorSegmentRoutine != null;
     }
 
-    public void SetupErrorPlayback()
+    public float GetCurrentPlaybackTime()
     {
-        ErrorPlayback.PlaybackDuration = BasePlayback.PlaybackDuration;
-        ErrorPlayback.CorruptedParts.Clear();
-        foreach(PlaybackSegment segment in BasePlayback.CorruptedParts)
+        return BasePlayback.CurrentPlaybackTimePercentage;
+    }
+
+    public float NormalizeTime(float time)
+    {
+        return BasePlayback.NormalizeTime(time);
+    }
+
+    public void SetPlaybackScrollValue(float time)
+    {
+        if(IsDraggingScroll) return;
+        PlaybackScroll.value = time > 1 ? time%1 : time;
+    }
+
+    public PlaybackSegment CheckOverlappedSegment(float point)
+    {
+        return BasePlayback.GetContainedCorruptedSegment(point);
+    }
+
+    public void StopAddCorruptedSegmentRoutine()
+    {
+        if(addCorruptedSegmentRoutine != null) StopCoroutine(addCorruptedSegmentRoutine);
+        if(addErrorSegmentRoutine != null) StopCoroutine(addErrorSegmentRoutine);
+    }
+    
+    public void AddCorruptedSegment(float start, float duration, bool errorPlayback = false)
+    {
+        if(errorPlayback) ErrorPlayback.AddCorruptedSegment(start, duration);
+        else BasePlayback.AddCorruptedSegment(start, duration);
+    }
+
+    //<summary> Adds a corrupted segment over specified playback normalized duration </summary>
+    public void AddCorruptedSegmentOvertime(float duration)
+    {
+        if(addCorruptedSegmentRoutine != null) StopCoroutine(addCorruptedSegmentRoutine);
+        addCorruptedSegmentRoutine = StartCoroutine(AddCorruptedSegmentRoutine(duration));
+    }
+
+    //<summary> Add error segment over specified playback normalized duration </summary>
+    public void AddErrorSegmentOvertime(float duration)
+    {
+        if(addErrorSegmentRoutine != null) StopCoroutine(addErrorSegmentRoutine);
+        addErrorSegmentRoutine = StartCoroutine(AddCorruptedSegmentRoutine(duration, true));
+    }
+
+    private IEnumerator AddCorruptedSegmentRoutine(float duration, bool errorPlayback = false)
+    {
+        //Debug.Log("Adding corrupted segment");
+        float start = BasePlayback.CurrentPlaybackTimePercentage;
+        float normalizedDuration = BasePlayback.NormalizeTime(duration);
+        float elapsedDuration = 0;
+        while(normalizedDuration > elapsedDuration)
         {
-            ErrorPlayback.AddCorruptPart(segment);
+            yield return null;
+            AddCorruptedSegment(start, elapsedDuration, errorPlayback);
+            elapsedDuration += NormalizedDeltaTime;
         }
-        ErrorPlayback.SetCurrentPlaybackTime(BasePlayback.CurrentPlaybackTimePercentage);
-        ActivePlayback = ErrorPlayback;
+        AddCorruptedSegment(start, normalizedDuration, errorPlayback); 
+    }
+
+
+    public void RemoveCorruptedSegment(float amount)
+    {
+        float point = BasePlayback.CurrentPlaybackTimePercentage;
+        float normalizedAmount = BasePlayback.NormalizeTime(amount);
+        BasePlayback.RemoveCorruptedPart(point, normalizedAmount);
+        ErrorPlayback.RemoveCorruptedPart(point, normalizedAmount);
     }
 
     void Start()
@@ -75,15 +160,14 @@ public class PlaybackTimeline : MonoBehaviour
         }
     }
 
-    public void ClearErrorPlayback()
-    {
-        ErrorPlayback.CorruptedParts.Clear();
-        foreach(PlaybackSegment segment in BasePlayback.CorruptedParts)
-        {
-            SetColorStripesChunk(segment.Start, segment.End, 1);
-        }
-        ActivePlayback = BasePlayback;
-    }
+    // public void ClearErrorPlayback()
+    // {
+    //     // ErrorPlayback.CorruptedSegments.Clear();
+    //     // foreach(PlaybackSegment segment in ActivePlayback.CorruptedSegments)
+    //     // {
+    //     //     SetColorStripesChunk(segment.Start, segment.End, 1);
+    //     // }
+    // }
 
     public void SetupPlaybackTimeline(float duration)
     {   
@@ -91,16 +175,11 @@ public class PlaybackTimeline : MonoBehaviour
         ErrorPlayback.PlaybackDuration = duration;
     }
 
-    void OnDestroy()
-    {
-        PlaybackScroll.onValueChanged.RemoveListener(playbackTimeDelegate);
-        BasePlayback.OnCorruptPartAdd -= onBaseAddCorruptPartDelegate;
-        BasePlayback.OnCorruptPartRemove -= onBaseRemoveCorruptPartDelegate;
-    }
+
     public void SetColorStripesChunk(float start, float end, int value)
     {
-        int startIndex = Mathf.FloorToInt(start * ColorStripesEffect.Frequency);
-        int endIndex = Mathf.FloorToInt(end * ColorStripesEffect.Frequency);
+        int startIndex = Mathf.RoundToInt(start * ColorStripesEffect.Frequency);
+        int endIndex = Mathf.RoundToInt(end * ColorStripesEffect.Frequency);
         ColorStripesEffect.SetChunkRange(startIndex, endIndex, value);
     }
 
@@ -108,23 +187,23 @@ public class PlaybackTimeline : MonoBehaviour
     {
         if(!IsPaused)
         {
-            PlaybackScroll.value += ActivePlayback.NormalizeTime(Time.deltaTime);
+            PlaybackScroll.value += BasePlayback.NormalizeTime(Time.deltaTime);
             PlaybackScroll.value = PlaybackScroll.value > 1 ? PlaybackScroll.value%1 : PlaybackScroll.value;    
         }
-        CurrentTimeText.text = TimescaleManager.Instance.FormatTimeString(ActivePlayback.AbsoluteCurrentTime());
-        DurationText.text = TimescaleManager.Instance.FormatTimeString(ActivePlayback.PlaybackDuration);
+        CurrentTimeText.text = TimescaleManager.Instance.FormatTimeString(BasePlayback.AbsoluteCurrentTime());
+        DurationText.text = TimescaleManager.Instance.FormatTimeString(BasePlayback.PlaybackDuration);
     }
 
 
 }
 
-
+#region Playback
 [System.Serializable]
 public class Playback
 {
     public float CurrentPlaybackTimePercentage = 0f; //0 to 1
     public float PlaybackDuration = 0f;
-    public List<PlaybackSegment> CorruptedParts = new List<PlaybackSegment>();
+    public List<PlaybackSegment> CorruptedSegments = new List<PlaybackSegment>();
     public event System.Action<float, float> OnCorruptPartAdd;
     public event System.Action<float, float> OnCorruptPartRemove;
 
@@ -140,7 +219,7 @@ public class Playback
 
     public bool InCorruptedPart()
     {
-        foreach(PlaybackSegment segment in CorruptedParts)
+        foreach(PlaybackSegment segment in CorruptedSegments)
         {
             if(CurrentPlaybackTimePercentage >= segment.Start && CurrentPlaybackTimePercentage <= segment.End)
             {
@@ -166,70 +245,70 @@ public class Playback
     public float GetCorruptedPercentage()
     {
         float percentage = 0;
-        foreach(PlaybackSegment segment in CorruptedParts)
+        foreach(PlaybackSegment segment in CorruptedSegments)
         {
             percentage += segment.Duration();
         }
         return percentage;
     }
 
-    public float GetCorruptedPartsDuration()
+    public float GetCorruptedSegmentsDuration()
     {
         return AbsoluteTime(GetCorruptedPercentage());
     }
 
-    public PlaybackSegment AddRandomCorruptPart(float percentage)
+    public PlaybackSegment GetContainedCorruptedSegment(float point)
     {
-        if (GetCorruptedPercentage() >= 1) return null;
-
-        float start = Random.Range(0f, 1f - percentage);
-        float end = start + percentage;
-        return AddCorruptPart(start, end);
+        foreach(PlaybackSegment segment in CorruptedSegments)
+        {
+            if(point >= segment.Start && point <= segment.End)
+            {
+                return segment;
+            }
+        }
+        return null;
     }
 
-    public PlaybackSegment AddCorruptPart(float start, float end)
+    public void AddCorruptedSegment(float start, float duration)
     {
-        if (GetCorruptedPercentage() >= 1) return null;
-        if(start < 0f) 
+        if (GetCorruptedPercentage() >= 1) return;
+        float end = start + duration;
+        if(end <= 1)
         {
-            start = 0f;
+           AddCorruptedSegment(new PlaybackSegment(start, end)); 
         }
-        if(end > 1f)
+        else
         {
-            end = 1f;
+            AddCorruptedSegment(new PlaybackSegment(start, 1));
+            AddCorruptedSegment(new PlaybackSegment(0, end%1));
         }
-        PlaybackSegment newSegment = new PlaybackSegment(start, end);
-        return AddCorruptPart(newSegment);
     }
 
-    public PlaybackSegment AddCorruptPart(PlaybackSegment checkSegment)
+    public void AddCorruptedSegment(PlaybackSegment checkSegment)
     {
-        if (GetCorruptedPercentage() >= 1 || CorruptedParts.Contains(checkSegment)) return null;
+        if (GetCorruptedPercentage() >= 1 || CorruptedSegments.Contains(checkSegment)) return;
 
         float segmentDuration = checkSegment.Duration();
         float newStart = checkSegment.Start;
         float newEnd = checkSegment.End;
-        float overflowStart = 0;
-        float overflowEnd = 0;
+
+        // float overflowStart = 0;
+        // float overflowEnd = 0;
         List<PlaybackSegment> toRemove = new List<PlaybackSegment>();
 
-        foreach (PlaybackSegment segment in CorruptedParts)
+        foreach (PlaybackSegment segment in CorruptedSegments)
         {
             // Check if the new segment overlaps with existing ones
-            if (!(newEnd < segment.Start || newStart > segment.End)) 
+            if (segment.IsOverlapping(checkSegment)) 
             {
-                // Merge logic: Extend in the same direction as checkSegment
+                // Merge logic
                 if (checkSegment.Start >= segment.Start) 
                 {
-                    // Extend forward by segmentDuration
                     newStart = segment.Start;
-                    newEnd = segment.End + segmentDuration;
                 }
                 else 
                 {
-                    // Extend backward by segmentDuration
                     newEnd = segment.End;
-                    newStart = segment.Start - segmentDuration;
                 }
 
                 toRemove.Add(segment); // Mark for removal
@@ -237,105 +316,109 @@ public class Playback
         }
 
         // Ensure wrapping around if needed
-        if (newEnd > 1f)
-        {
-            float overflow = newEnd - 1f;
-            newEnd = 1f;
-            overflowStart = 0;
-            overflowEnd = overflow;
-        }
+        // if (newEnd > 1f)
+        // {
+        //     float overflow = newEnd - 1f;
+        //     newEnd = 1f;
+        //     overflowStart = 0;
+        //     overflowEnd = overflow;
+        // }
 
-        if (newStart < 0)
-        {
-            float overflow = -newStart;
-            newStart = 0;
-            overflowStart = 1f - overflow;
-            overflowEnd = 1f;
-        }
+        // if (newStart < 0)
+        // {
+        //     float overflow = -newStart;
+        //     newStart = 0;
+        //     overflowStart = 1f - overflow;
+        //     overflowEnd = 1f;
+        // }
 
         // Remove merged segments
         foreach (PlaybackSegment segment in toRemove)
         {
-            CorruptedParts.Remove(segment);
+            CorruptedSegments.Remove(segment);
         }
 
         // Add the newly extended range
         PlaybackSegment newSegment = new PlaybackSegment(newStart, newEnd);
-        CorruptedParts.Add(newSegment);
-        CorruptedParts.Sort((a, b) => a.Start.CompareTo(b.Start));
+        CorruptedSegments.Add(newSegment);
+        CorruptedSegments.Sort((a, b) => a.Start.CompareTo(b.Start));
 
-        // Add the overflow part
-        if(overflowStart != overflowEnd)
-        {
-            AddCorruptPart(overflowStart, overflowEnd);
-        }
+        // // Add the overflow part
+        // if(overflowStart != overflowEnd)
+        // {
+        //     AddCorruptedSegment(overflowStart, overflowEnd);
+        // }
 
-        OnCorruptPartAdd?.Invoke(newSegment.Start, newSegment.End);
-        return newSegment;
+        OnCorruptPartAdd?.Invoke(newStart, newEnd);
     }
 
-    public void RemoveCorruptPart(float point, float percentage)
+    public void RemoveCorruptedPart(float point, float duration)
     {
-        float removeSegmentDuration = percentage;
-        if (removeSegmentDuration <= 0 || CorruptedParts.Count == 0) return;
+        if (duration <= 0 || CorruptedSegments.Count == 0) return;
 
-        // Find the segment where the point is located
-        PlaybackSegment targetSegment = null;
-        foreach (PlaybackSegment segment in CorruptedParts)
+        float removeSegmentStart = point;
+        float removeSegmentEnd = point + duration;
+        float removeSegmentDuration = duration;
+        // Find the segments that overlaps with the given range
+        List<PlaybackSegment> targetSegments = new();
+
+        foreach (PlaybackSegment segment in CorruptedSegments)
         {
-            if (point >= segment.Start && point <= segment.End)
+            if (segment.IsOverlapping(removeSegmentStart, removeSegmentEnd))
             {
-                targetSegment = segment;
-                break; // Found the segment, no need to continue
+                targetSegments.Add(segment);
             }
         }
 
         // If no segment was found where start time falls within, skip
-        if (targetSegment == null) return;
+        if (targetSegments.Count == 0) return;
 
-        // Remove duration from the found segment within the given range
-        float removeSegmentStart = point - percentage/2;
-        float removeSegmentEnd = point + percentage/2;
+        foreach(PlaybackSegment targetSegment in targetSegments)
+        {
+            // Remove duration from the found segments within the given range
 
-        if(removeSegmentStart < targetSegment.Start)
-        {
-            removeSegmentStart = targetSegment.Start;
-            removeSegmentEnd = removeSegmentStart + removeSegmentDuration;
-        }
-        else if(removeSegmentEnd > targetSegment.End)
-        {
-            removeSegmentEnd = targetSegment.End;
-            removeSegmentStart = removeSegmentEnd - removeSegmentDuration;
-        }
+            if(removeSegmentStart < targetSegment.Start)
+            {
+                removeSegmentStart = targetSegment.Start;
+                removeSegmentEnd = removeSegmentStart + removeSegmentDuration;
+            }
+            else if(removeSegmentEnd > targetSegment.End)
+            {
+                removeSegmentEnd = targetSegment.End;
+                removeSegmentStart = removeSegmentEnd - removeSegmentDuration;
+            }
 
+            // Remove entire segment or adjust start/end as necessary
 
-        // Remove entire segment or adjust start/end as necessary
-
-        if (targetSegment.Start >= removeSegmentStart && targetSegment.End <= removeSegmentEnd)
-        {
-            // Remove the entire segment if fully overlapped
-            CorruptedParts.Remove(targetSegment);
+            if (targetSegment.Start >= removeSegmentStart && targetSegment.End <= removeSegmentEnd)
+            {
+                // Remove the entire segment if fully overlapped
+                CorruptedSegments.Remove(targetSegment); 
+            }
+            else if (targetSegment.Start == removeSegmentStart)
+            {
+                // Shrink from the start
+                targetSegment.Start = removeSegmentEnd;
+                
+            }
+            else if (targetSegment.End == removeSegmentEnd)
+            {
+                // Shrink from the end
+                targetSegment.End = removeSegmentStart;
+            }
+            else
+            {
+                // Split into two if the duration to remove is in the middle
+                targetSegment.End = removeSegmentStart;
+                AddCorruptedSegment(new PlaybackSegment(removeSegmentEnd, targetSegment.End));
+            }
+            removeSegmentDuration -= removeSegmentStart - removeSegmentEnd;
+            OnCorruptPartRemove?.Invoke(removeSegmentStart, removeSegmentEnd);
         }
-        else if (targetSegment.Start == removeSegmentStart)
-        {
-            // Shrink from the start
-            targetSegment.Start = removeSegmentEnd;
-        }
-        else if (targetSegment.End == removeSegmentEnd)
-        {
-            // Shrink from the end
-            targetSegment.End = removeSegmentStart;
-        }
-        else
-        {
-            // Split into two if the duration to remove is in the middle
-            targetSegment.End = removeSegmentStart;
-            AddCorruptPart(new PlaybackSegment(removeSegmentEnd, targetSegment.End));
-        }
-
-        OnCorruptPartRemove?.Invoke(removeSegmentStart, removeSegmentEnd);
+       
     }
 }
+#endregion
 
 [System.Serializable]
 public class PlaybackSegment
@@ -352,6 +435,15 @@ public class PlaybackSegment
     public float Duration()
     {
         return End - Start;
+    }
+
+    public bool IsOverlapping(PlaybackSegment segment)
+    {
+        return Start <= segment.End && End >= segment.Start;
+    }
+    public bool IsOverlapping(float checkStart, float checkEnd)
+    {
+        return Start <= checkEnd && End >= checkStart;
     }
 
 }

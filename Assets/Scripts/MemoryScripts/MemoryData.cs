@@ -66,6 +66,15 @@ public class MemoryData
         return MemoryInfos[index].Entity;
     }
 
+    public List<MemoryEntity> GetMemoryEntities()
+    {
+        List<MemoryEntity> memoryEntities = new List<MemoryEntity>();
+        foreach(MemoryInfo memoryInfo in MemoryInfos)
+        {
+            memoryEntities.Add(memoryInfo.Entity);
+        }
+        return memoryEntities;
+    }
 
     public MemoryBlock GetMemoryBlock(int index)
     {

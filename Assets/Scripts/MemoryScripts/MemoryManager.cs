@@ -24,26 +24,19 @@ public class MemoryManager : MonoBehaviour
         }
     }
 
-    public void CorruptRandomMemory(float corruptionAmount)
+    public void ReadRandomMemory(float corruptionAmount)
     {
         if(MemoryCount == 0)
         {
             return;
         }
-        List<MemoryEntity> targets = new();
-        foreach(var memoryInfo in MemoryData.MemoryInfos)
-        {
-            if(memoryInfo.Entity.CorruptionCooldownTimer <= 0 && !memoryInfo.Entity.IsBeingWorkedOn)
-            {
-                targets.Add(memoryInfo.Entity);
-            }
-        }
+        List<MemoryEntity> targets = MemoryData.GetMemoryEntities().FindAll(x => !x.IsBeingRead);
         if(targets.Count == 0)
         {
             return;
         }
         int randomIndex = Random.Range(0, targets.Count);
-        targets[randomIndex].CorruptPlayback(corruptionAmount);
+        targets[randomIndex].Read(true);
     }
 
 
@@ -61,7 +54,7 @@ public class MemoryManager : MonoBehaviour
         }
 
         MemoryEntity memory = Instantiate(stream.memory);
-        memory.PlaybackTimeline.SetupPlaybackTimeline(PlayerManager.Instance.CurrentStreamTimer);
+        memory.PlaybackTL.SetupPlaybackTimeline(PlayerManager.Instance.CurrentStreamTimer);
         MemoryInfo memoryInfo = MemoryData.AddMemory(memory);
         
         MemoryNavigator.SetupMemoryBlock("Memory of " + stream.name + "stream #" + MemoryTypesCount[stream.name], memoryInfo);

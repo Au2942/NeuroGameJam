@@ -58,18 +58,18 @@ public class WorkerAppearance : MonoBehaviour
         }
         ShowOutline(false);
         isTeleporting = true;
-        tempTPMaterial.SetFloat("_Seed", Random.Range(0, 1000));
+        tempTPMaterial.SetInteger("_Seed", Random.Range(0, 1000));
         CompositeRenderer.material = tempTPMaterial;
         float elapsedTime = 0f;
         while(elapsedTime < duration)
         {
-            float progress = reverse ? 1 - elapsedTime / duration : elapsedTime / duration;
+            float progress = reverse ? elapsedTime / duration : 1 - elapsedTime / duration;
             CompositeRenderer.material.SetFloat("_Progress", progress);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
 
-        CompositeRenderer.material.SetFloat("_Progress", reverse ? 0 : 1);
+        CompositeRenderer.material.SetFloat("_Progress", reverse ? 1 : 0);
         CompositeRenderer.material = CompositeRenderer.defaultMaterial;
 
         isTeleporting = false;

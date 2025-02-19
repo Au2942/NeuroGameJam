@@ -1,7 +1,6 @@
 {
   "dependencies": {
     "com.coffee.composite-canvas-renderer": "https://github.com/mob-sakai/CompositeCanvasRenderer.git?path=Packages/src",
-    "com.coffee.ui-effect": "https://github.com/mob-sakai/UIEffect.git?path=Packages/src",
     "com.kyrylokuzyk.primetween": "file:../Assets/Plugins/PrimeTween/internal/com.kyrylokuzyk.primetween.tgz",
     "com.unity.collab-proxy": "2.6.0",
     "com.unity.feature.2d": "2.0.1",

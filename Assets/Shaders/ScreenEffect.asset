@@ -31,6 +31,37 @@ MonoBehaviour:
   scanlineAmount:
     m_OverrideState: 1
     m_Value: 600
+--- !u!114 &-6818327421351508731
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d87478c99ff42d41bfb482b3ea00778, type: 3}
+  m_Name: ScreenEffectVolumeComponent
+  m_EditorClassIdentifier: 
+  active: 1
+  intensity:
+    m_OverrideState: 1
+    m_Value: 0
+  noiseStrength:
+    m_OverrideState: 1
+    m_Value: 1
+  noiseAmount:
+    m_OverrideState: 1
+    m_Value: 50
+  noiseIntensity:
+    m_OverrideState: 1
+    m_Value: 0.1
+  scanlineStrength:
+    m_OverrideState: 1
+    m_Value: 1
+  scanlineAmount:
+    m_OverrideState: 1
+    m_Value: 600
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -44,4 +75,4 @@ MonoBehaviour:
   m_Name: ScreenEffect
   m_EditorClassIdentifier: 
   components:
-  - {fileID: -7172421417217195208}
+  - {fileID: -6818327421351508731}

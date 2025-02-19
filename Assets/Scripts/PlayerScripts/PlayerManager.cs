@@ -23,8 +23,8 @@ public class PlayerManager : MonoBehaviour, IStatusEffectable
     public float CurrentStreamTimer {get => PlayerData.CurrentStreamTimer; set => PlayerData.CurrentStreamTimer = value;}
     public float ElapsedStreamTime {get => PlayerData.ElapsedStreamTime; set => PlayerData.ElapsedStreamTime = value;}
     public float NewStreamCD {get => PlayerData.NewStreamCD; set => PlayerData.NewStreamCD = value;}
-    public float MemoryCorruptionInterval {get => PlayerData.MemoryCorruptionInterval; set => PlayerData.MemoryCorruptionInterval = value;}
-    public float MemoryCorruptionDegree {get => PlayerData.MemoryCorruptionDegree; set => PlayerData.MemoryCorruptionDegree = value;}
+    public float MemoryReadInterval {get => PlayerData.MemoryCorruptionInterval; set => PlayerData.MemoryCorruptionInterval = value;}
+    public float MemoryReadCorruptAmount {get => PlayerData.MemoryCorruptionDegree; set => PlayerData.MemoryCorruptionDegree = value;}
     public int CurrentViewers {get => PlayerData.CurrentViewers; set => PlayerData.CurrentViewers = value;}
     public int PeakViewers {get => PlayerData.PeakViewers; set => PlayerData.PeakViewers = value;}
     public int Subscriptions {get => PlayerData.Subscriptions; set => PlayerData.Subscriptions = value;}
@@ -72,7 +72,7 @@ public class PlayerManager : MonoBehaviour, IStatusEffectable
     }
     void Start()
     {
-        StartCoroutine(CorruptMemory());
+        StartCoroutine(ReadMemory());
         StartCoroutine(UpdateInterests());
         StartCoroutine(ViewersHandler.SimulateViewers());
         StartCoroutine(ViewersHandler.SimulateViewersMovement());
@@ -144,16 +144,17 @@ public class PlayerManager : MonoBehaviour, IStatusEffectable
         FinishResetting();
     }
 
-    private IEnumerator CorruptMemory()
+    private IEnumerator ReadMemory()
     {
         while(true)
         {
+            float randomInterval = Random.Range(0, MemoryReadInterval);
             while(State == PlayerState.sleep)
             {
                 yield return null;
             }
-            yield return new WaitForSeconds(MemoryCorruptionInterval);
-            MemoryManager.Instance.CorruptRandomMemory(MemoryCorruptionDegree);
+            yield return new WaitForSeconds(randomInterval);
+            MemoryManager.Instance.ReadRandomMemory(MemoryReadCorruptAmount);
         }
     }
 

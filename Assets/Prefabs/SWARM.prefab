@@ -676,7 +676,7 @@ MonoBehaviour:
   CompositeRenderer: {fileID: 8208430704090379674}
   AppearanceRect: {fileID: 5436776509048930272}
   outlineMaterial: {fileID: 2100000, guid: 3978f062a338edf4ab283b04bc8f233d, type: 2}
-  tpMaterial: {fileID: 2100000, guid: 12c88c13de672814ba230e3c3f5305c2, type: 2}
+  tpMaterial: {fileID: 2100000, guid: bf15a5238e1f6184984acf1016bfcfea, type: 2}
 --- !u!58 &6204306462595967581
 CircleCollider2D:
   m_ObjectHideFlags: 0

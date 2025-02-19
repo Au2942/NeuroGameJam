@@ -101,7 +101,7 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
         {
             if(WorkerAppearance.gameObject.activeSelf)
             {
-                PopupTextSpawner.Instance.SpawnPopupText(WorkerAppearance.transform, WorkerAppearance.transform.position, value.ToString(), 0.5f, value > 0 ? Color.green : Color.red);
+                PopupTextSpawner.Instance.SpawnPopupText(WorkerAppearance.transform.position, value.ToString(), 0.5f, value > 0 ? Color.green : Color.red);
             }
             OnDetailsChanged?.Invoke();
         }
@@ -234,7 +234,7 @@ public class Worker : MonoBehaviour, ICombatant, IStatusEffectable
 
         if(WorkerAppearance.gameObject.activeSelf && resistCount > 0)
         {
-            PopupTextSpawner.Instance.SpawnPopupText(WorkerAppearance.transform, WorkerAppearance.transform.position, "Resist X" + resistCount, 0.5f, Color.white);
+            PopupTextSpawner.Instance.SpawnPopupText(WorkerAppearance.transform.position, "Resist X" + resistCount, 0.5f, Color.white);
             damage /= resistCount;
         }
 

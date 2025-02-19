@@ -5,22 +5,32 @@ using UnityEngine;
 public abstract class MemoryEntity : Entity, ICombatant
 {
     [SerializeField] protected MemoryEntityData memoryEntityData;
+    [Header("Memory Block")]
     public MemoryBlock MemoryBlock {get => memoryEntityData.MemoryBlock; set => memoryEntityData.MemoryBlock = value;}
     protected GlitchEffect GlitchEffect {get => MemoryBlock.GlitchEffect; set => MemoryBlock.GlitchEffect = value;}
-    public PlaybackTimeline PlaybackTimeline {get => MemoryBlock.PlaybackTimeline; set => MemoryBlock.PlaybackTimeline = value;}
-    public Playback BasePlayback => PlaybackTimeline.BasePlayback;
-    public Playback ErrorPlayback => PlaybackTimeline.ErrorPlayback;
-    public float AttackDamage {get => memoryEntityData.AttackDamage; set => memoryEntityData.AttackDamage = value;}
-    public float AttackRate {get => memoryEntityData.AttackRate; set => memoryEntityData.AttackRate = value;}
+    [Header("Playback Timeline")]
+    public PlaybackTimeline PlaybackTL {get => MemoryBlock.PlaybackTimeline; set => MemoryBlock.PlaybackTimeline = value;}
+    public Playback BasePlayback => PlaybackTL.BasePlayback;
+    public Playback ErrorPlayback => PlaybackTL.ErrorPlayback;
+    public float MemoryDuration => BasePlayback.PlaybackDuration;
+    public bool IsBeingRead {get => memoryEntityData.IsBeingRead; set => memoryEntityData.IsBeingRead = value;}
+    public float ReadCorruptAmount {get => memoryEntityData.ReadCorruptAmount; set => memoryEntityData.ReadCorruptAmount = value;}
+    public float ReadCorruptInterval {get => memoryEntityData.ReadCorruptInterval; set => memoryEntityData.ReadCorruptInterval = value;}
+    [Header("Behaviour")]
     protected float TimeToShutup {get => memoryEntityData.TimeToShutup; set => memoryEntityData.TimeToShutup = value;}
-    public bool DealAOEDamage {get => memoryEntityData.DealAOEDamage; set => memoryEntityData.DealAOEDamage = value;}
+    protected float ShutupTimer {get => memoryEntityData.shutupTimer; set => memoryEntityData.shutupTimer = value;}
     public bool InFocus {get => memoryEntityData.InFocus; set => memoryEntityData.InFocus = value;}
     public bool IsBeingWorkedOn {get => memoryEntityData.IsBeingMaintained; set => memoryEntityData.IsBeingMaintained = value;}
-    protected float ShutupTimer {get => memoryEntityData.shutupTimer; set => memoryEntityData.shutupTimer = value;}
+    [Header("Combat")]
+    public float AttackDamage {get => memoryEntityData.AttackDamage; set => memoryEntityData.AttackDamage = value;}
+    public float AttackRate {get => memoryEntityData.AttackRate; set => memoryEntityData.AttackRate = value;}
+    public bool DealAOEDamage {get => memoryEntityData.DealAOEDamage; set => memoryEntityData.DealAOEDamage = value;}
     public List<ICombatant> CombatTargets {get => memoryEntityData.combatTargets; set => memoryEntityData.combatTargets = value;}
     float ICombatant.Health { get => ErrorIndex; set => ErrorIndex = value; }
     float ICombatant.MaxHealth { get => MaxHealth; set => MaxHealth = value; }
 
+    private Coroutine ReadCorruptCoroutine;
+    System.Action<float, float> onCorruptPartChangeDelegate;
 
     protected override void Awake()
     {
@@ -33,6 +43,14 @@ public abstract class MemoryEntity : Entity, ICombatant
                 memoryEntityData = gameObject.AddComponent<MemoryEntityData>();
             }
         }
+        onCorruptPartChangeDelegate = (s,e) => SyncHealthWithPlayback();
+        if(PlaybackTL != null)
+        {
+            PlaybackTL.BasePlayback.OnCorruptPartAdd += onCorruptPartChangeDelegate;
+            PlaybackTL.BasePlayback.OnCorruptPartRemove += onCorruptPartChangeDelegate;
+            PlaybackTL.ErrorPlayback.OnCorruptPartRemove += onCorruptPartChangeDelegate;
+        } 
+        
     }
 
     public virtual void AddCombatTarget(ICombatant target)
@@ -129,40 +147,23 @@ public abstract class MemoryEntity : Entity, ICombatant
         RollChanceToGlitch();
     }
 
-    public virtual void CorruptPlayback(float amount)
+    public virtual void SyncHealthWithPlayback()
     {
-        float percentage = amount / MaxHealth;
-
-        //TODO add a logic where if it's already corrupted, it will instead do a rollchance to glitch and become error
-
-        AddCorruptSegment(BasePlayback, percentage);
         float healthDiff = Health - MaxHealth*( 1 - BasePlayback.GetCorruptedPercentage());
+        float errorDiff = ErrorIndex - MaxHealth * ErrorPlayback.GetCorruptedPercentage();
         if(healthDiff != 0)
         {
             DamageHealth(healthDiff);
+        }
+        if(errorDiff != 0)
+        {
+            ReduceErrorIndex(errorDiff);
         }
     }
 
     public virtual void RestorePlayback(float amount)
     {
-        float percentage = amount / MaxHealth;
-        RemoveCorruptSegment(BasePlayback, BasePlayback.CurrentPlaybackTimePercentage, percentage);
-        float healthDiff = Health - MaxHealth*( 1 - BasePlayback.GetCorruptedPercentage());
-        if(healthDiff != 0)
-        {
-            DamageHealth(healthDiff);
-        }
-    }
-
-    public virtual void RepairPlayback(float amount)
-    {
-        float percentage = amount / MaxHealth;
-        RemoveCorruptSegment(ErrorPlayback, ErrorPlayback.CurrentPlaybackTimePercentage, percentage);
-        float errorDiff = ErrorIndex - MaxHealth*ErrorPlayback.GetCorruptedPercentage();
-        if(errorDiff != 0)
-        {
-            ReduceErrorIndex(errorDiff);
-        }
+        PlaybackTL.RemoveCorruptedSegment(amount);
     }
 
     protected override void OnHealthChanged(float amount)
@@ -170,14 +171,63 @@ public abstract class MemoryEntity : Entity, ICombatant
         base.OnHealthChanged(amount);
     }
 
-    protected virtual void AddCorruptSegment(Playback playback, float percentage)
+    protected virtual void AddCorruptSegment(float amount)
     {
-        playback.AddRandomCorruptPart(percentage);
+        float point = PlaybackTL.BasePlayback.CurrentPlaybackTimePercentage;
+        PlaybackSegment overlappedSegment = PlaybackTL.CheckOverlappedSegment(point);
+        if(overlappedSegment != null)
+        {
+            if(RollChanceToGlitch())
+            {
+                PlaybackTL.AddErrorSegmentOvertime(amount);
+            }
+        }
+        else
+        {
+            PlaybackTL.AddCorruptedSegmentOvertime(amount);
+        }
     }
 
-    protected virtual void RemoveCorruptSegment(Playback playback, float point, float percentage)
+    public virtual void Read(bool read)
     {
-        playback.RemoveCorruptPart(point, percentage);
+        IsBeingRead = read;
+        if(read)
+        {
+            ReadCorruptCoroutine = StartCoroutine(ReadCorruptMemory());
+        }
+        else
+        {
+            if(ReadCorruptCoroutine != null)
+            {
+                StopCoroutine(ReadCorruptCoroutine);
+            }
+        }
+    }
+
+    public IEnumerator ReadCorruptMemory()
+    {
+        while(IsBeingRead)
+        {
+            float elapsedTime = 0;
+            float normalizedInterval = PlaybackTL.NormalizeTime(ReadCorruptInterval);
+            while(elapsedTime < normalizedInterval)
+            {
+                elapsedTime += PlaybackTL.NormalizedDeltaTime;
+                yield return null;
+            }
+            AddCorruptSegment(ReadCorruptAmount);
+
+            if(IsBeingWorkedOn)
+            {
+                PlaybackTL.StopAddCorruptedSegmentRoutine();
+                while(IsBeingWorkedOn)
+                {
+                    yield return null;
+                }
+            }
+            
+            yield return null;
+        }
     }
 
     protected virtual void InFocusBehavior()
@@ -201,13 +251,16 @@ public abstract class MemoryEntity : Entity, ICombatant
             else ShutupTimer += Time.deltaTime;
         }
     }
+    
+
 
     protected override void SharedBehavior()
     {
         base.SharedBehavior();
+
         if(GlitchEffect != null)
         {
-            if(PlaybackTimeline.ActivePlayback.InCorruptedPart())
+            if(PlaybackTL.BasePlayback.InCorruptedPart())
             {
                 GlitchEffect.Show();
                 GlitchEffect.SetBlockIntensity(1-HealthPercentage());
@@ -220,7 +273,7 @@ public abstract class MemoryEntity : Entity, ICombatant
     protected override void GlitchBehavior()
     {
         base.GlitchBehavior();
-        if(PlaybackTimeline.ActivePlayback.InCorruptedPart())
+        if(PlaybackTL.ErrorPlayback.InCorruptedPart())
         {
             GlitchEffect.SetGlitchIntensity(1-HealthPercentage());
         }
@@ -233,19 +286,12 @@ public abstract class MemoryEntity : Entity, ICombatant
     public override void EnterGlitchState()
     {
         base.EnterGlitchState();
-        
-        PlaybackTimeline.SetupErrorPlayback();
-
-        
         StartCoroutine(Attacking());
     }
 
     public override void ExitGlitchState()
     {
-        base.ExitGlitchState();
-
-        PlaybackTimeline.ClearErrorPlayback();
-        
+        base.ExitGlitchState();        
         GlitchEffect.SetGlitchIntensity(0);
     }
 

@@ -26,7 +26,7 @@ public class WorkHandler
         worker.SetAvailability(false);
         worker.WorkerAppearance.gameObject.SetActive(true);
         entityCell = entity.EntityCell != null ? entity.EntityCell : entity.transform as RectTransform;
-        entityPlaybackTimeline = entity.PlaybackTimeline;
+        entityPlaybackTimeline = entity.PlaybackTL;
         entityPlaybackTimeline.PausePlayback(true);
         workerAppearanceRect = worker.WorkerAppearance.AppearanceRect;
     }
@@ -48,28 +48,47 @@ public class WorkHandler
 
     private IEnumerator MoveToDoTask()
     {
-        if(entityPlaybackTimeline != null && entityPlaybackTimeline.ActivePlayback != null)
-        {
-            if(!entityPlaybackTimeline.ActivePlayback.InCorruptedPart())
+        if(entityPlaybackTimeline != null && entityPlaybackTimeline.BasePlayback != null)
+        {   
+            if(!entityPlaybackTimeline.HasCorruptedSegments())
             {
-                float currentTime = entityPlaybackTimeline.ActivePlayback.CurrentPlaybackTimePercentage;
-                float targetTime = entityPlaybackTimeline.ActivePlayback.CorruptedParts[0].Start;
-                float timeToMove = targetTime - currentTime;
-                yield return Tween.Custom(
-                    currentTime, 
-                    targetTime,
-                    (1+timeToMove) * worker.TotalStats.TaskTime,
-                    onValueChange: newVal => entityPlaybackTimeline.SetActivePlaybackTime(newVal)
-                ).ToYieldInstruction();
+                worker.StartCoroutine(ReturningWorker());
+                yield break;
+            } 
+            if(!entityPlaybackTimeline.BasePlayback.InCorruptedPart())
+            {
+                //TODO: have it choose the nearest corrupted segment
+                float targetTime = entityPlaybackTimeline.BasePlayback.CorruptedSegments[0].Start;
+                float timeToTarget = targetTime > entityPlaybackTimeline.GetCurrentPlaybackTime() ? 
+                    targetTime - entityPlaybackTimeline.GetCurrentPlaybackTime() : entityPlaybackTimeline.GetCurrentPlaybackTime() - targetTime;
+                float elapsedTime = 0;
+                while(elapsedTime < timeToTarget)
+                {
+                    float normalizedDeltaTime = entityPlaybackTimeline.BasePlayback.NormalizeTime(Time.deltaTime);
+                    float nextTime = entityPlaybackTimeline.GetCurrentPlaybackTime() + normalizedDeltaTime;
+                    elapsedTime += normalizedDeltaTime;
+                    entityPlaybackTimeline.SetPlaybackScrollValue(nextTime);
+                    yield return null;
+                }
+
+                entityPlaybackTimeline.SetPlaybackScrollValue(targetTime);
+
+                // float timeToMove = targetTime - currentTime;
+                // yield return Tween.Custom(
+                //     currentTime, 
+                //     targetTime,
+                //     (1+timeToMove) * worker.TotalStats.TaskTime,
+                //     onValueChange: newVal => entityPlaybackTimeline.SetActivePlaybackTime(newVal)
+                // ).ToYieldInstruction();
             }
+
+            entityPlaybackTimeline.LockScrollbar(true);
+            Vector2 taskPosition = new Vector3(Random.Range(-entityCell.rect.width/2, entityCell.rect.width/2), Random.Range(-entityCell.rect.height/2, entityCell.rect.height/2));
+            //TODO make taskPosition distance based on worker's speed
+            Tween.UIAnchoredPosition(workerAppearanceRect, taskPosition, worker.TotalStats.TaskTime/2, ease: Ease.InSine);
+            yield return new WaitForSeconds(worker.TotalStats.TaskTime);
+            entityPlaybackTimeline.LockScrollbar(false);
         }
-        
-        Vector2 taskPosition = new Vector3(Random.Range(-entityCell.rect.width/2, entityCell.rect.width/2), Random.Range(-entityCell.rect.height/2, entityCell.rect.height/2));
-        //TODO make taskPosition distance based on worker's speed
-        entityPlaybackTimeline.LockScrollbar(true);
-        yield return Tween.UIAnchoredPosition(workerAppearanceRect, taskPosition, worker.TotalStats.TaskTime/2, ease: Ease.InSine).ToYieldInstruction();
-        yield return new WaitForSeconds(worker.TotalStats.TaskTime/2);
-        entityPlaybackTimeline.LockScrollbar(false);
 
     }
 
@@ -276,7 +295,7 @@ public class WorkHandler
         {
             statusEffect.OnRepairSuccess();
         }
-        entity.RepairPlayback(worker.TotalStats.RestoreAmount);
+        entity.RestorePlayback(worker.TotalStats.RestoreAmount);
     }
 
     private void OnRepairFail()
@@ -290,7 +309,6 @@ public class WorkHandler
     {
         if(entity == null) return;
         entity.RestorePlayback(worker.TotalStats.RestoreAmount);
-        entity.Interactable = true;
         foreach(WorkerStatusEffect statusEffect in worker.StatusEffects)
         {
             statusEffect.OnFinishRepair();
@@ -300,6 +318,7 @@ public class WorkHandler
     }
     public IEnumerator ReturningWorker()
     {
+        entity.Interactable = true;
         float elapsedTime = 0f;
         worker.StartCoroutine(worker.WorkerAppearance.PlayTeleportEffect(worker.TotalStats.ResponseTime, true));
         while(elapsedTime < worker.TotalStats.ResponseTime)
