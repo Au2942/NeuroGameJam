@@ -11,6 +11,7 @@ public class WorkerManager : MonoBehaviour
     [SerializeField] public WorkerScroller WorkerScroller;
     [SerializeField] public WorkerAppearanceGenerator WorkerAppearanceGenerator;
     [SerializeField] public RectTransform WorkerLayout;
+    [SerializeField] public RectTransform Hub;
     [SerializeField] public List<Worker> Workers = new List<Worker>();
     [SerializeField] public int MaxLevel = 5;
     [SerializeField] private Worker WorkerPrefab; 
@@ -57,6 +58,8 @@ public class WorkerManager : MonoBehaviour
 
         WorkerAppearanceGenerator.GenerateAppearance(newWorker.WorkerAppearance);
         newWorker.Icon.Appearance.CopyData(newWorker.WorkerAppearance.WorkerAppearanceData);
+        newWorker.WorkerAppearance.transform.SetParent(Hub);
+        newWorker.WorkerAppearance.transform.position = Hub.position;
 
         newWorker.OnSelectEvent += SelectWorker;
 

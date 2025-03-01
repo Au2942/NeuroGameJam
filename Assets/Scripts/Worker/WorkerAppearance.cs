@@ -29,7 +29,6 @@ public class WorkerAppearance : MonoBehaviour
         {
             tempTPMaterial = new Material(tpMaterial);
         }
-        gameObject.SetActive(false);
     }
 
     public void ShowOutline(bool show)
@@ -50,7 +49,18 @@ public class WorkerAppearance : MonoBehaviour
 
     }
 
-    public IEnumerator PlayTeleportEffect(float duration, bool reverse = false)
+
+    public IEnumerator TeleportingTo(float duration, Transform parent, Vector2 position, bool newSeed = false)
+    {
+        yield return PlayTeleportEffect(duration/2, true, newSeed);
+        AppearanceRect.SetParent(parent);
+        AppearanceRect.SetAsLastSibling();
+        AppearanceRect.localScale = Vector3.one;
+        AppearanceRect.position = position;
+        yield return PlayTeleportEffect(duration/2);
+    }
+
+    public IEnumerator PlayTeleportEffect(float duration, bool reverse = false, bool newSeed = false)
     {
         if(tempTPMaterial == null)
         {
@@ -58,7 +68,7 @@ public class WorkerAppearance : MonoBehaviour
         }
         ShowOutline(false);
         isTeleporting = true;
-        tempTPMaterial.SetInteger("_Seed", Random.Range(0, 1000));
+        if(newSeed) tempTPMaterial.SetInteger("_Seed", Random.Range(0, 1000));
         CompositeRenderer.material = tempTPMaterial;
         float elapsedTime = 0f;
         while(elapsedTime < duration)

@@ -35,12 +35,8 @@ public class WorkHandler
     {
 
         Vector2 mousePosition = (Vector2)Camera.main.ScreenToWorldPoint(InputManager.Instance.Point.ReadValue<Vector2>());
-        workerAppearanceRect.position = mousePosition;
-        workerAppearanceRect.SetParent(entityCell);
-        workerAppearanceRect.SetAsLastSibling();
-        workerAppearanceRect.localScale = Vector3.one;
 
-        yield return worker.StartCoroutine(worker.WorkerAppearance.PlayTeleportEffect(worker.TotalStats.ResponseTime));
+        yield return worker.StartCoroutine(worker.WorkerAppearance.TeleportingTo(worker.TotalStats.ResponseTime, entityCell, mousePosition, true));
 
         entity.IsBeingWorkedOn = true;
         entity.Interactable = false;
@@ -347,24 +343,27 @@ public class WorkHandler
     {
         entity.Interactable = true;
         float elapsedTime = 0f;
-        worker.StartCoroutine(worker.WorkerAppearance.PlayTeleportEffect(worker.TotalStats.ResponseTime, true));
+        worker.StartCoroutine(MoveToHub());
         while(elapsedTime < worker.TotalStats.ResponseTime)
         {
             worker.Icon.SetCooldownOverlay(1-(elapsedTime / worker.TotalStats.ResponseTime));
             elapsedTime += Time.deltaTime;
             yield return null;
         }
-        ReturnWorkerAppearance();
-        ReturnWorker();
+        
     }
 
-    public void ReturnWorkerAppearance()
+    public IEnumerator MoveToHub()
     {
-        workerAppearanceRect.SetParent(worker.transform);
-        workerAppearanceRect.SetAsFirstSibling();
-        workerAppearanceRect.position = worker.transform.position;
+        yield return worker.StartCoroutine(worker.WorkerAppearance.PlayTeleportEffect(worker.TotalStats.ResponseTime/2, true));
+        workerAppearanceRect.SetParent(WorkerManager.Instance.Hub);
+        workerAppearanceRect.SetAsLastSibling();
         workerAppearanceRect.localScale = Vector3.one;
-        worker.WorkerAppearance.gameObject.SetActive(false);
+        workerAppearanceRect.position = WorkerManager.Instance.Hub.position;
+        ReturnWorker();
+        yield return worker.StartCoroutine(worker.WorkerAppearance.PlayTeleportEffect(worker.TotalStats.ResponseTime/2));
+        worker.SetAvailability(true);
+        worker.Icon.SetCooldownOverlay(1);
     }
 
 
@@ -372,8 +371,6 @@ public class WorkHandler
     {
         entityPlaybackTimeline.PausePlayback(false);
         entity = null;
-        worker.SetAvailability(true);
-        worker.Icon.SetCooldownOverlay(1);
         workState = WorkState.None;
         if(WorkerManager.Instance.SelectedWorker == worker)
         {
