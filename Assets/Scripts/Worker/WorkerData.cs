@@ -150,7 +150,17 @@ public class WorkerData
 
     private void UpdateTotalStats()
     {
-        TotalStats = BaseStats + TempStats + CalculateStatsFromAttributes(TempAttributes);
+        WorkerStats newTotalStats = BaseStats + TempStats + CalculateStatsFromAttributes(TempAttributes);
+        float healthCorrection = newTotalStats.MaxHealth - TotalStats.MaxHealth;
+        TotalStats = newTotalStats;
+        if(healthCorrection > 0)
+        {
+            Health += healthCorrection;
+        }
+        if(Health > TotalStats.MaxHealth)
+        {
+            Health = TotalStats.MaxHealth;
+        }
         OnAttributeOrStatChanged?.Invoke();
     }
 

@@ -159,8 +159,7 @@ public class MemoryNavigator : MonoBehaviour
         MemoryBlock memoryBlock = memoryInfo.Block;
         memory.transform.SetParent(memoryContent);
         memoryBlock.SetupMemoryBlock(memoryName, MemoryCount-1);
-        memory.transform.SetSiblingIndex(2 + MemoryCount-1);
-
+        //memory.transform.SetSiblingIndex(2 + MemoryCount-1);
     }
 
     public float GetMemoryWidth()
@@ -170,12 +169,12 @@ public class MemoryNavigator : MonoBehaviour
 
     public float GetMemoryBlockPosition(int index)
     {
-        return distanceBetweenIndex * (2 + MemoryCount - index);
+        return distanceBetweenIndex * (MemoryCount - index);
     }
 
     public float GetContentWidth()
     {
-        int blockCount = MemoryCount + 5; // 4 buffers and 1 extra from the 2x size middle memory
+        int blockCount = MemoryCount + 1; //MemoryCount + 5 4 buffers and 1 extra from the 2x size middle memory
         return blockCount * memoryWidth + (blockCount-1) * memoryContent.GetComponent<HorizontalLayoutGroup>().spacing;
     }
     

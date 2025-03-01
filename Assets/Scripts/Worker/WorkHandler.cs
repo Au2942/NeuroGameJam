@@ -57,21 +57,48 @@ public class WorkHandler
             } 
             if(!entityPlaybackTimeline.BasePlayback.InCorruptedPart())
             {
-                //TODO: have it choose the nearest corrupted segment
-                float targetTime = entityPlaybackTimeline.BasePlayback.CorruptedSegments[0].Start;
-                float timeToTarget = targetTime > entityPlaybackTimeline.GetCurrentPlaybackTime() ? 
-                    targetTime - entityPlaybackTimeline.GetCurrentPlaybackTime() : entityPlaybackTimeline.GetCurrentPlaybackTime() - targetTime;
-                float elapsedTime = 0;
-                while(elapsedTime < timeToTarget)
+                //have it choose the nearest corrupted segment
+                float minDistance = Mathf.Infinity;
+                float targetTime = 0;
+                float currentTime = entityPlaybackTimeline.GetCurrentPlaybackTime();
+                foreach(PlaybackSegment segment in entityPlaybackTimeline.BasePlayback.CorruptedSegments)
                 {
-                    float normalizedDeltaTime = entityPlaybackTimeline.BasePlayback.NormalizeTime(Time.deltaTime);
-                    float nextTime = entityPlaybackTimeline.GetCurrentPlaybackTime() + normalizedDeltaTime;
-                    elapsedTime += normalizedDeltaTime;
-                    entityPlaybackTimeline.SetPlaybackScrollValue(nextTime);
-                    yield return null;
+                    float startDistance = Mathf.Abs(segment.Start - currentTime);
+                    float endDistance = Mathf.Abs(segment.End - currentTime);
+                    if(startDistance > 0.5f)
+                    {
+                        startDistance = segment.Start + 1 - currentTime;
+                    }
+                    if(endDistance > 0.5f)
+                    {
+                        endDistance = segment.End + 1 - currentTime;
+                    }
+                    if(startDistance < minDistance)
+                    {
+                        minDistance = startDistance;
+                        targetTime = segment.Start;
+                    }
+                    if(endDistance < minDistance)
+                    {
+                        minDistance = endDistance;
+                        targetTime = segment.End;
+                    }
                 }
 
-                entityPlaybackTimeline.SetPlaybackScrollValue(targetTime);
+                while(true)
+                {
+                    currentTime = entityPlaybackTimeline.GetCurrentPlaybackTime();
+                    float normalizedDeltaTime = entityPlaybackTimeline.BasePlayback.NormalizeTime(Time.deltaTime);
+                    if(Mathf.Abs(currentTime - targetTime) > 0.5f)
+                    {
+                        normalizedDeltaTime = -normalizedDeltaTime;
+                    }
+                    float nextTime = currentTime < targetTime ? currentTime + normalizedDeltaTime : currentTime - normalizedDeltaTime;
+                    
+                    entityPlaybackTimeline.SetPlaybackScrollValue(nextTime);
+                    yield return null;
+                    if(entityPlaybackTimeline.BasePlayback.InCorruptedPart()) break;
+                }
 
                 // float timeToMove = targetTime - currentTime;
                 // yield return Tween.Custom(

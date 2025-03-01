@@ -1,4 +1,3 @@
-using UnityEngine;
 public abstract class WorkerStatusEffectSO: StatusEffectSO
 {
     public override StatusEffect CreateStatusEffect()

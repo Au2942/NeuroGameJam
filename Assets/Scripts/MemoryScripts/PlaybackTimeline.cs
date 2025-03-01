@@ -92,6 +92,7 @@ public class PlaybackTimeline : MonoBehaviour
     public void SetPlaybackScrollValue(float time)
     {
         if(IsDraggingScroll) return;
+        if(time < 0) time += 1;
         PlaybackScroll.value = time > 1 ? time%1 : time;
     }
 
